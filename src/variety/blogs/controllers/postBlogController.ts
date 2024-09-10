@@ -11,5 +11,5 @@ export const postBlogController = async (req: Request<{},{},BlogInputModel>, res
     if (blog)
         res.status(HTTP_STATUSES.CREATED_201).json(blog);
     else
-        res.sendStatus(HTTP_STATUSES.ERROR_500)
+        res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
 }

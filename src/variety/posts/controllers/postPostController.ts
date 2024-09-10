@@ -9,6 +9,6 @@ export const postPostController = async (req: Request<{},{},PostInputModel>, res
     if(post){
         res.status(HTTP_STATUSES.CREATED_201).json(post);
     }else
-        res.sendStatus(HTTP_STATUSES.ERROR_500);
+        res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
 
 }
