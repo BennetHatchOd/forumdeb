@@ -7,9 +7,10 @@ import { ObjectId } from "mongodb";
 export const postRepositoryMongo = {
  
     async find(id: string): Promise < PostViewModel | null > { // searches for a post by id and returns the post or null
-        if(!ObjectId.isValid(id))
-            return null;
+
         try{
+            if(!ObjectId.isValid(id))
+                throw("ID is incorrect");
             const searchItem: PostDBType | null = await postCollection.findOne({_id: new ObjectId(id)})
             
             if(searchItem) 
@@ -37,7 +38,8 @@ export const postRepositoryMongo = {
         }
         catch(err){
             console.log(err);
-            blogName = "blog  doesn't exist";
+            return null;
+            //blogName = "blog  doesn't exist";
         }
 
         const newPost: PostDBType = {
@@ -90,7 +92,8 @@ export const postRepositoryMongo = {
         }
         catch(err){
             console.log(err);
-            blogName = "blog  doesn't exist";
+            return false;
+            //blogName = "blog  doesn't exist";
         }
         if(!ObjectId.isValid(id))
             return false;

@@ -7,10 +7,11 @@ export const blogRepositoryMongo = {
 
  
     async find(id: string): Promise < BlogViewModel | null > {      // searches for a blog by id and returns this blog or null
-        if(!ObjectId.isValid(id))
-            return null;
         
         try{
+            if(!ObjectId.isValid(id))
+                throw("ID is incorrect");
+        
             const searchItem: BlogDBType | null = await blogCollection.findOne({_id: new ObjectId(id)})
             
             if(searchItem) 
@@ -48,9 +49,11 @@ export const blogRepositoryMongo = {
 
 
     async delete(id: string): Promise < boolean > {     // deletes a blog by Id, returns true if the blog existed    
-        if(!ObjectId.isValid(id))
-            return false;
+
         try{
+            if(!ObjectId.isValid(id))
+                throw("ID is incorrect");
+
             const answerDelete = await blogCollection.deleteOne({_id: new ObjectId(id)})
 
             if(answerDelete.deletedCount == 0)    
@@ -64,9 +67,10 @@ export const blogRepositoryMongo = {
     },
 
     async edit(id: string, correctItem: BlogInputModel): Promise < boolean >{// edits a blog by ID, if the blog is not found returns false    
-        if(!ObjectId.isValid(id))
-            return false;        
+
         try{
+            if(!ObjectId.isValid(id))
+                throw("ID is incorrect");
             const updateBlog: BlogDBType | null = await blogCollection.findOne({_id: new ObjectId(id)})
             
             if(updateBlog){

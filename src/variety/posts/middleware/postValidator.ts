@@ -13,7 +13,7 @@ export const contentValidator =  body('content').trim()
                                                 .isLength({min: 1, max: 100})
                                                 .withMessage("Not correct content's length")
 
-export const idValidator = body('blogId').custom(value => blogRepository.find(value))
+export const idValidator = body('blogId').custom(value => {blogRepository.find(value))
                                              .withMessage("BlogId isn't correct")
 
 export const postValidator = [
