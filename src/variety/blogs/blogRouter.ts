@@ -7,6 +7,8 @@ import { postBlogController } from './controllers/postBlogController';
 import { blogValidator } from './middleware/blogValidator';
 import { authorizator } from '../../midlleware/authorizator';
 import {checkInputValidation} from '../../midlleware/checkInputValidators'
+import {postPostToBlogController} from './controllers/postPostToBlogController';
+import { getPostToBlogController } from './controllers/getPostToBlogController';
 
 export const blogsRouter = Router({});
 
@@ -16,4 +18,6 @@ blogsRouter.delete('/:id', authorizator, deleteBlogByIdController);
 blogsRouter.put('/:id', authorizator, blogValidator, checkInputValidation, putBlogController);
 blogsRouter.post('/', authorizator, blogValidator, checkInputValidation, postBlogController);
 
+blogsRouter.get('/:id/post', getPostToBlogController);
+blogsRouter.post('/:id/post', postPostToBlogController);
   
