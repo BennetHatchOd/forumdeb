@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { postRepository } from "../repositories/index";
+import { postRepository } from "../repositories/postRepository";
 import {HTTP_STATUSES} from '../../../setting';
 import {PostViewModel} from '../../../types';
 

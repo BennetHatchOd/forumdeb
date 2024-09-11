@@ -1,5 +1,5 @@
 import {body} from 'express-validator'
-import { blogRepository } from "../../blogs/repositories/index";
+import { blogService } from "../../blogs/blogSevice";
 import { BlogViewModel } from '../../../types';
 import { ObjectId } from 'mongodb';
 
@@ -19,7 +19,7 @@ export const idValidator = body('blogId').custom(async(value) => {
                                                         if(!ObjectId.isValid(value)){
                                                             throw("BlogId isn't correct")
                                                     }
-                                                        const blog: BlogViewModel | null = await blogRepository.find(value)
+                                                        const blog: BlogViewModel | null = await blogService.find(value)
                                                         if(!blog)
                                                             throw("BlogId isn't correct")
                                                     })

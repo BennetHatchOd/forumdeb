@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import {HTTP_STATUSES} from '../../../setting';
-import { postRepository } from "../repositories/index";
+import { postRepository } from "../repositories/postRepository";
 
 export const deletePostByIdController = async (req: Request<{id: string}>, res: Response) =>{
     

@@ -1,6 +1,6 @@
 import {Response, Request } from "express";
 import {HTTP_STATUSES} from '../../../setting';
-import { postRepository } from "../repositories/index";
+import { postRepository } from "../repositories/postRepository";
 import {PostViewModel} from '../../../types';
 
 export const getPostController = async (req: Request, res: Response<PostViewModel[]>) =>{

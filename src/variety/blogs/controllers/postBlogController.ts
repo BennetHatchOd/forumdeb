@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { HTTP_STATUSES, SETTING } from "../../../setting";
 import {BlogViewModel, BlogInputModel, APIErrorResult } from '../../../types';
-import { blogRepository } from "../repositories/index";
+import { blogService } from "../blogSevice";
 
 
 
 export const postBlogController = async (req: Request<{},{},BlogInputModel>, res: Response<BlogViewModel|APIErrorResult>) =>{
     
-    const blog: BlogViewModel | null = await blogRepository.create(req.body);  
+    const blog: BlogViewModel | null = await blogService.create(req.body);  
     if (blog)
         res.status(HTTP_STATUSES.CREATED_201).json(blog);
     else
