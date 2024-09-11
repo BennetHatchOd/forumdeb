@@ -25,5 +25,4 @@ export const URL_PATH = {
     base:       '/',
     blogs:      '/blogs',
     posts:      '/posts',
-    deleteAll:  '/testing/all-data',
 }

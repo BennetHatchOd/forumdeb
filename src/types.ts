@@ -1,3 +1,4 @@
+import { SortDirection } from "mongodb"
 
  
 type FieldError = {
@@ -40,4 +41,20 @@ export type PostViewModel = {
     createdAt: string,
     blogId:	string,
     blogName:	string
+}
+
+export type QueryModel = {
+    searchNameTerm: string,
+    sortBy: string,
+    sortDirection: SortDirection,
+    pageNumber: number,
+    pageSize: number,
+}
+
+export type PaginatorModel<T> = {
+    pagesCount: number,
+    page: number,
+    pageSize: number,
+    totalCount: number,
+    items: Array<T>
 }
