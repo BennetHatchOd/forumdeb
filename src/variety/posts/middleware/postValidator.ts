@@ -2,6 +2,7 @@ import {body} from 'express-validator'
 import { blogService } from "../../blogs/blogSevice";
 import { BlogViewModel } from '../../../types';
 import { ObjectId } from 'mongodb';
+import { blogQueryRepository } from '../../blogs/repositories/blogQueryRepository';
 
 export const titleValidator = body('title').trim()
                 .isLength({min: 1, max: 30})
@@ -19,7 +20,7 @@ export const idValidator = body('blogId').custom(async(value) => {
                                                         if(!ObjectId.isValid(value)){
                                                             throw("BlogId isn't correct")
                                                     }
-                                                        const blog: BlogViewModel | null = await blogService.find(value)
+                                                        const blog: BlogViewModel | null = await blogQueryRepository.findById(value)
                                                         if(!blog)
                                                             throw("BlogId isn't correct")
                                                     })
