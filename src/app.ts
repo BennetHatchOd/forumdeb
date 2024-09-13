@@ -4,6 +4,7 @@ import { blogsRouter } from './variety/blogs/blogRouter';
 import { postsRouter } from './variety/posts/postRouter';
 import { deleteAllController } from './testingEP/deleteAllController';
 import { URL_PATH } from './setting';
+import { testGet } from './testingEP/testGet';
 
 
 

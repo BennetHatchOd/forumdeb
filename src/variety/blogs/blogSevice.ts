@@ -6,14 +6,14 @@ import { ObjectId } from "mongodb";
 export const blogService = {
 
  
-    async find(id: string): Promise < BlogViewModel | null > {      // searches for a blog by id and returns this blog or null
+    // async find(id: string): Promise < BlogViewModel | null > {      // searches for a blog by id and returns this blog or null
         
-        if(!ObjectId.isValid(id))
-            return null;
+    //     if(!ObjectId.isValid(id))
+    //         return null;
 
-        return await blogRepository.findById(new ObjectId(id))
+    //     return await blogRepository.findById(new ObjectId(id))
             
-    },
+    // },
  
    
     async create(createItem: BlogInputModel): Promise < BlogViewModel | null>{     // creates new blog and returns this blog 
@@ -72,16 +72,16 @@ export const blogService = {
     },
 
     
-    async view(): Promise < BlogViewModel[] > {     // returns list of all blogs        
-        try{
-            const index = blogRepository.view();
+    // async view(): Promise < BlogViewModel[] > {     // returns list of all blogs        
+    //     try{
+    //         const index = blogRepository.view();
 
-            return index;
-        } catch (err){
-            console.log(err)
-            return [];
-        }
-    },
+    //         return index;
+    //     } catch (err){
+    //         console.log(err)
+    //         return [];
+    //     }
+    // },
 
     mapViewToDb(item: BlogViewModel): BlogDBType {
         

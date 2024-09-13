@@ -2,16 +2,16 @@ import { PostViewModel, PostInputModel, BlogViewModel } from "../../../types";
 import { blogService } from "../../blogs/blogSevice";
 import { PostDBType } from "../../../db/dbTypes";
 import { postCollection } from "../../../db/db";
-import { ObjectId } from "mongodb";
+import { DeleteResult, ObjectId } from "mongodb";
+import { blogRepository } from "../../blogs/repositories/blogRepository";
 
 export const postRepository = {
  
-    async find(id: string): Promise < PostViewModel | null > { // searches for a post by id and returns the post or null
+    async findById(_id: ObjectId): Promise < PostViewModel | null > { // searches for a post by id and returns the post or null
 
         try{
-            if(!ObjectId.isValid(id))
-                throw("ID is incorrect");
-            const searchItem: PostDBType | null = await postCollection.findOne({_id: new ObjectId(id)})
+            
+            const searchItem: PostDBType | null = await postCollection.findOne({_id: _id})
             
             if(searchItem) 
                 return this.mapDbToOutput(searchItem);
@@ -24,6 +24,7 @@ export const postRepository = {
         }
 
     },
+         
          
     async create(createItem: PostInputModel): Promise <PostViewModel | null>{ // creates new post and returns this post 
 
@@ -61,16 +62,10 @@ export const postRepository = {
     },
 
     
-    async delete(id: string): Promise < boolean > { // deletes a post by Id, returns true if the post existed
-        if(!ObjectId.isValid(id))
-            return false;
+    async delete(_id: ObjectId): Promise < boolean > { // deletes a post by Id, returns true if the post existed
         try{
-            const answerDelete = await postCollection.deleteOne({_id: new ObjectId(id)})
-
-            if(answerDelete.deletedCount == 0)    
-                return false;
-            else
-                return true;
+            const answerDelete: DeleteResult = await postCollection.deleteOne(_id)
+            return answerDelete.deletedCount == 0 ? false : true;
         } 
         catch (err){
             console.log(err)
@@ -79,36 +74,11 @@ export const postRepository = {
     },
    
  
-    async edit(id: string, correctPost: PostInputModel): Promise <boolean> {// edits a post by ID, if the post is not found returns false   
-        
-        let blogName: string;
-        try{
-            if(!ObjectId.isValid(correctPost.blogId))
-                throw `blog with ID: ${correctPost.blogId} doesn't exist`;
-            const parentBlog:  BlogViewModel | null  = await blogService.find(correctPost.blogId); 
-            if(!parentBlog)
-                throw `blog with ID: ${correctPost.blogId} doesn't exist`;
-            blogName = parentBlog.name; 
+    async edit(correctPost: PostDBType): Promise <boolean> {// edits a post by ID, if the post is not found returns false   
+        try{                   
+            const result = await postCollection.replaceOne({_id: correctPost._id}, correctPost);
+            return (result.modifiedCount == 1? true: false);
         }
-        catch(err){
-            console.log(err);
-            return false;
-            //blogName = "blog  doesn't exist";
-        }
-        if(!ObjectId.isValid(id))
-            return false;
- 
-        try{
-            const updatePost: PostDBType | null = await postCollection.findOne({_id: new ObjectId(id)})
-            
-            if(updatePost){
-                const outPost: PostDBType = {...updatePost, ...correctPost, blogName: blogName}
-                const result = await postCollection.replaceOne({_id: outPost._id}, outPost);
-                return (result.modifiedCount == 1? true: false);
-            } else
-                return false;
-                
-        } 
         catch (err){
             console.log(err)
             return false;
@@ -117,8 +87,8 @@ export const postRepository = {
 
     async clear(): Promise < boolean > {// deletes all posts from base
         try{
-            await postCollection.deleteMany()
-            return true;
+            const answerDelete: DeleteResult = await postCollection.deleteMany()
+            return answerDelete.acknowledged;
         } 
         catch(err){
             console.log(err)
@@ -127,18 +97,18 @@ export const postRepository = {
     },
 
  
-    async view(): Promise <PostViewModel[]> { // returns list of all posts 
-        try{
-            const index = postCollection.find();
+    // async view(): Promise <PostViewModel[]> { // returns list of all posts 
+    //     try{
+    //         const index = postCollection.find();
 
-            const posts: Array<PostViewModel> = (await index.toArray()).map(s => this.mapDbToOutput(s));
-            return posts;
-        } 
-        catch (err){
-            console.log(err)
-            return [];
-        }
-    },
+    //         const posts: Array<PostViewModel> = (await index.toArray()).map(s => this.mapDbToOutput(s));
+    //         return posts;
+    //     } 
+    //     catch (err){
+    //         console.log(err)
+    //         return [];
+    //     }
+    // },
     mapDbToOutput(item: PostDBType): PostViewModel {
         
         const {_id, ...rest} = item

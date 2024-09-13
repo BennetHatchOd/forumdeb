@@ -6,11 +6,11 @@ import { ObjectId } from "mongodb";
 export const blogRepository = {
 
  
-    async findById(id: ObjectId): Promise < BlogViewModel | null > {      // searches for a blog by id and returns this blog or null
+    async findById(_id: ObjectId): Promise < BlogViewModel | null > {      // searches for a blog by id and returns this blog or null
         
         try{
                     
-            const searchItem: BlogDBType | null = await blogCollection.findOne({_id: id})
+            const searchItem: BlogDBType | null = await blogCollection.findOne({_id: _id})
             
             if(searchItem) 
                 return this.mapDbToOutput(searchItem);
@@ -77,17 +77,17 @@ export const blogRepository = {
     },
 
     
-    async view(): Promise < BlogViewModel[] > {     // returns list of all blogs        
-        try{
-            const index = blogCollection.find();
+    // async view(): Promise < BlogViewModel[] > {     // returns list of all blogs        
+    //     try{
+    //         const index = blogCollection.find();
 
-            const blogs: Array<BlogViewModel> = (await index.toArray()).map(s => this.mapDbToOutput(s));
-            return blogs;
-        } catch (err){
-            console.log(err)
-            return [];
-        }
-    },
+    //         const blogs: Array<BlogViewModel> = (await index.toArray()).map(s => this.mapDbToOutput(s));
+    //         return blogs;
+    //     } catch (err){
+    //         console.log(err)
+    //         return [];
+    //     }
+    // },
 
     mapDbToOutput(item: BlogDBType): BlogViewModel {
         

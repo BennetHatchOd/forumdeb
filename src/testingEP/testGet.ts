@@ -6,8 +6,7 @@ import { postService } from "../variety/posts/postService";
 
 export const testGet = async (req: Request, res: Response) =>{
     
-    await blogService.clear()
-    await postService.clear();
+    
     
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
 
