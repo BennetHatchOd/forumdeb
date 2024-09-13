@@ -7,10 +7,11 @@ import { postPostController } from './controllers/postPostController';
 import { authorizator } from '../../midlleware/authorizator';
 import { checkInputValidation } from '../../midlleware/checkInputValidators';
 import { postValidator } from './middleware/postValidator';
+import { paginatorValidator } from '../../midlleware/paginatorValidator';
 
 export const postsRouter = Router({});
 
-postsRouter.get('/', getPostController);
+postsRouter.get('/', paginatorValidator, getPostController);
 postsRouter.get('/:id', getPostByIdController);
 postsRouter.delete('/:id', authorizator,  deletePostByIdController);
 postsRouter.put('/:id', authorizator,  postValidator, checkInputValidation, putPostController);
