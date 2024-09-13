@@ -16,8 +16,6 @@ export const getBlogController = async (req: Request<{},{},{},QueryModel>, res: 
       
     const blogPaginator: PaginatorModel<BlogViewModel> = await blogQueryRepository.find(queryPaginator)
 
-    const status = blogPaginator.totalCount == 0 ? HTTP_STATUSES.NOT_FOUND_404 : HTTP_STATUSES.OK_200
-    
-    res.status(status).json(blogPaginator)
+    res.status(HTTP_STATUSES.OK_200).json(blogPaginator)
 
 }

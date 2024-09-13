@@ -1,8 +1,8 @@
 import { PostViewModel, PostInputModel, BlogViewModel } from "../../../types";
-import { blogService } from "../../blogs/blogSevice";
 import { PostDBType } from "../../../db/dbTypes";
 import { postCollection } from "../../../db/db";
 import { DeleteResult, ObjectId } from "mongodb";
+import { blogQueryRepository } from "../../blogs/repositories/blogQueryRepository";
 import { blogRepository } from "../../blogs/repositories/blogRepository";
 
 export const postRepository = {
@@ -24,35 +24,27 @@ export const postRepository = {
         }
 
     },
-         
-         
+                 
     async create(createItem: PostInputModel): Promise <PostViewModel | null>{ // creates new post and returns this post 
 
         let blogName: string;
         try{
             if(!ObjectId.isValid(createItem.blogId))
                 throw `blog with ID: ${createItem.blogId} doesn't exist`;
-            const parentBlog:  BlogViewModel | null  = await blogService.find(createItem.blogId); 
+            const parentBlog:  BlogViewModel | null  = await blogRepository.findById(new ObjectId(createItem.blogId)); 
             if(!parentBlog)
                 throw `blog with ID: ${createItem.blogId} doesn't exist`;
             blogName = parentBlog.name; 
-        }
-        catch(err){
-            console.log(err);
-            return null;
-            //blogName = "blog  doesn't exist";
-        }
-
-        const newPost: PostDBType = {
+        
+      
+            const newPost: PostDBType = {
                             ...createItem, 
                             _id: new ObjectId(),
                             blogName: blogName,
                             createdAt: new Date().toISOString(),
-                        }
-        try{                    
+                        }                 
             await postCollection.insertOne(newPost);
             return this.mapDbToOutput(newPost);
-
         } 
         catch (err){
             console.log(err)
@@ -96,19 +88,6 @@ export const postRepository = {
         }
     },
 
- 
-    // async view(): Promise <PostViewModel[]> { // returns list of all posts 
-    //     try{
-    //         const index = postCollection.find();
-
-    //         const posts: Array<PostViewModel> = (await index.toArray()).map(s => this.mapDbToOutput(s));
-    //         return posts;
-    //     } 
-    //     catch (err){
-    //         console.log(err)
-    //         return [];
-    //     }
-    // },
     mapDbToOutput(item: PostDBType): PostViewModel {
         
         const {_id, ...rest} = item

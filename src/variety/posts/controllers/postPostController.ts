@@ -8,7 +8,9 @@ export const postPostController = async (req: Request<{},{},PostInputModel>, res
     const post: PostViewModel | null = await postRepository.create(req.body);  
     if(post){
         res.status(HTTP_STATUSES.CREATED_201).json(post);
-    }else
-        res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
+        return;
+    }
+    
+    res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
 
 }

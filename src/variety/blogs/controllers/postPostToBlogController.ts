@@ -21,11 +21,7 @@ export const postPostToBlogController = async (req: Request<{id: string},{},Post
  
     const postOut: PostViewModel | null =  await postService.create({...req.body, blogId: parentBlog.id})
 
-    if(!postOut){
-        res.sendStatus(HTTP_STATUSES.ERROR_500)
-        return;
-    }
-    res.status(HTTP_STATUSES.OK_200).json(postOut)
+    postOut ? res.status(HTTP_STATUSES.OK_200).json(postOut) : res.sendStatus(HTTP_STATUSES.ERROR_500)
 }
 
 

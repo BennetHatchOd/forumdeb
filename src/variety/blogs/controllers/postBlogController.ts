@@ -8,8 +8,6 @@ import { blogService } from "../blogSevice";
 export const postBlogController = async (req: Request<{},{},BlogInputModel>, res: Response<BlogViewModel|APIErrorResult>) =>{
     
     const blog: BlogViewModel | null = await blogService.create(req.body);  
-    if (blog)
-        res.status(HTTP_STATUSES.CREATED_201).json(blog);
-    else
-        res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    
+    blog ? res.status(HTTP_STATUSES.CREATED_201).json(blog) : res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
 }

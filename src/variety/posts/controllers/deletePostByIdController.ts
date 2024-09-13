@@ -4,8 +4,5 @@ import { postService } from "../postService";
 
 export const deletePostByIdController = async (req: Request<{id: string}>, res: Response) =>{
     
-    if(await postService.delete(req.params.id))
-        res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
-    else
-        res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
-    }
+    await postService.delete(req.params.id) ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+}
