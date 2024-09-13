@@ -44,7 +44,8 @@ export type PostViewModel = {
 }
 
 export type QueryModel = {
-    searchNameTerm: string,
+    searchNameTerm: string | null,
+    blogId: string | null,
     sortBy: string,
     sortDirection: SortDirection,
     pageNumber: number,
