@@ -76,19 +76,6 @@ export const blogRepository = {
         }
     },
 
-    
-    // async view(): Promise < BlogViewModel[] > {     // returns list of all blogs        
-    //     try{
-    //         const index = blogCollection.find();
-
-    //         const blogs: Array<BlogViewModel> = (await index.toArray()).map(s => this.mapDbToOutput(s));
-    //         return blogs;
-    //     } catch (err){
-    //         console.log(err)
-    //         return [];
-    //     }
-    // },
-
     mapDbToOutput(item: BlogDBType): BlogViewModel {
         
         const {_id, ...rest} = item

@@ -71,18 +71,6 @@ export const blogService = {
         return await blogRepository.clear()
     },
 
-    
-    // async view(): Promise < BlogViewModel[] > {     // returns list of all blogs        
-    //     try{
-    //         const index = blogRepository.view();
-
-    //         return index;
-    //     } catch (err){
-    //         console.log(err)
-    //         return [];
-    //     }
-    // },
-
     mapViewToDb(item: BlogViewModel): BlogDBType {
         
         const {id, ...rest} = item

@@ -14,12 +14,9 @@ export const postQueryRepository = {
             const searchItem: PostDBType | null = 
                 await postCollection.findOne({_id: new ObjectId(id)})
             
-            if(searchItem) 
-                return this.mapDbToOutput(searchItem);
-            else
-                return null;
-
-        } catch (err){      
+            return searchItem ? this.mapDbToOutput(searchItem) : null;
+        } 
+        catch (err){      
             console.log(err)
             return null;
         }

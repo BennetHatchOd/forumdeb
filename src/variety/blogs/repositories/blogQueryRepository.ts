@@ -12,14 +12,10 @@ export const blogQueryRepository = {
             return null;
         try{
                     
-            const searchItem: BlogDBType | null = await blogCollection.findOne({_id: new ObjectId(id)})
-            
-            if(searchItem) 
-                return this.mapDbToOutput(searchItem);
-            else
-                return null;
-
-        } catch (err){      
+            const searchItem: BlogDBType | null = await blogCollection.findOne({_id: new ObjectId(id)})           
+            return searchItem ? this.mapDbToOutput(searchItem) : null;
+        } 
+        catch (err){      
             console.log(err)
             return null;
         }
