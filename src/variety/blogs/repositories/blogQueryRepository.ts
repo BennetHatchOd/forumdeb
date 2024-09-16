@@ -39,8 +39,7 @@ export const blogQueryRepository = {
     async find(queryReq:  QueryModel): Promise < PaginatorModel<BlogViewModel> > {      // searches for blogs by filter, returns  paginator or null
         
         const nameSearch = queryReq.searchNameTerm ? {name: {$regex: queryReq.searchNameTerm, $options: 'i'}} : {}    
-        const queryFilter = {nameSearch}
-        
+        const queryFilter = {...nameSearch}
         try{    
             const totalCount: number= await blogCollection.countDocuments(queryFilter) 
             if (totalCount == 0)

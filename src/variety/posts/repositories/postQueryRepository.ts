@@ -26,7 +26,7 @@ export const postQueryRepository = {
     async find(queryReq:  QueryModel): Promise < PaginatorModel<PostViewModel> > {      // searches for blogs by filter, returns paginator or null
         
         const bloqIdSearch = queryReq.blogId ? {blogId: new ObjectId(queryReq.blogId)} : {}        
-        const queryFilter = {bloqIdSearch}
+        const queryFilter = {...bloqIdSearch}
 
         try{           
             const totalCount: number= await postCollection.countDocuments(queryFilter)   
