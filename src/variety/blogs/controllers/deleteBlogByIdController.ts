@@ -4,12 +4,8 @@ import { blogService } from "../blogSevice";
 
 export const deleteBlogByIdController = async (req: Request<{id: string}>, res: Response) =>{
     
-    if(await blogService.delete(req.params.id)){
-        res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
-        return;
-    }
+    await blogService.delete(req.params.id) ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
     
-    res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
-    }
+}
   
     

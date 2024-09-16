@@ -19,7 +19,7 @@ app.use(jsonBodyMiddleware);
 
 
 app.get(URL_PATH.base, (req,res) => {   
-    res.status(200).json({version: '1.0 '});
+    res.status(200).json({version: '2.0 '});
     
 })
 
