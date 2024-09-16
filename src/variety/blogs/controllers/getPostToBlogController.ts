@@ -13,7 +13,7 @@ export const getPostToBlogController = async (req: Request<{id: string}>, res: R
         searchNameTerm: null,
         blogId: req.params.id,
         sortBy: req.query.sortBy ? req.query.sortBy as string : 'createdAt',
-        sortDirection: req.query.SortDirection ? req.query.SortDirection as SortDirection: 'desc',
+        sortDirection: req.query.SortDirection ? req.query.SortDirection as SortDirection : 'desc',
         pageNumber: req.query.pageNumber ? +req.query.pageNumber : 1,
         pageSize: req.query.pageSize ? +req.query.pageSize : 10
        }

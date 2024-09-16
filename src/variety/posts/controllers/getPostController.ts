@@ -3,7 +3,7 @@ import {HTTP_STATUSES} from '../../../setting';
 import {PostViewModel, PaginatorModel, QueryModel} from '../../../types';
 import { postQueryRepository } from "../repositories/postQueryRepository";
 
-export const getPostController = async (req: Request<{},{},{},QueryModel>, res: Response<PaginatorModel<PostViewModel>>) =>{
+export const getPostController = async (req: Request<{},{},{},QueryModel>, res: Response<PaginatorModel<PostViewModel>>) => {
 
     const queryPaginator:  QueryModel ={
         blogId: null,
