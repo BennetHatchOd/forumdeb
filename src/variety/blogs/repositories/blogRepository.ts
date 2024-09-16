@@ -67,19 +67,6 @@ export const blogRepository = {
         }
     },
 
-    // mapDbToOutput(item: BlogDBType): BlogViewModel {
-        
-    //     return {
-    //         id: item._id.toString(),
-
-    //         name: item.name,
-    //         description: item.description,
-    //         createdAt: item.createdAt,
-    //         isMembership: item.isMembership,
-    //         websiteUrl: item.websiteUrl
-    //     }       
-    // },
-    
     mapViewToDb(item: BlogViewModel): BlogDBType {
         
         const _id: ObjectId = ObjectId.isValid(item.id) ? new ObjectId(item.id) : new ObjectId;    
