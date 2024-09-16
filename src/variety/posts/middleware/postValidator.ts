@@ -18,10 +18,10 @@ export const contentValidator =  body('content').trim()
                                                 .withMessage("Not correct content's length")
 
 export const idValidator = body('blogId').custom(async(value) => {
-                                                        if(!blogRepository.isExist(value))
+                                                        if(!await blogRepository.isExist(value))
                                                             throw("BlogId isn't correct")
                                                     })
-                                             .withMessage("BlogId isn't correct")
+                                             .withMessage("BlogId isn't corect")
 
 export const postValidator = [
     titleValidator,
