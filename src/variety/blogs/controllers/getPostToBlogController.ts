@@ -17,7 +17,7 @@ export const getPostToBlogController = async (req: Request<{id: string}>, res: R
         pageNumber: req.query.pageNumber ? +req.query.pageNumber : 1,
         pageSize: req.query.pageSize ? +req.query.pageSize : 10
        }
-       
+       console.log(queryPaginator)
        const postPaginator: PaginatorModel<PostViewModel> = await postQueryRepository.find(queryPaginator)
 
        const status = postPaginator.totalCount == 0 ? HTTP_STATUSES.NOT_FOUND_404 : HTTP_STATUSES.OK_200
