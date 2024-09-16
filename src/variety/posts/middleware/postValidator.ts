@@ -3,6 +3,7 @@ import { blogService } from "../../blogs/blogSevice";
 import { BlogViewModel } from '../../../types';
 import { ObjectId } from 'mongodb';
 import { blogQueryRepository } from '../../blogs/repositories/blogQueryRepository';
+import { blogRepository } from '../../blogs/repositories/blogRepository';
 
 export const titleValidator = body('title').trim()
                 .isLength({min: 1, max: 30})
@@ -17,11 +18,7 @@ export const contentValidator =  body('content').trim()
                                                 .withMessage("Not correct content's length")
 
 export const idValidator = body('blogId').custom(async(value) => {
-                                                        if(!ObjectId.isValid(value)){
-                                                            throw("BlogId isn't correct")
-                                                    }
-                                                        const blog: BlogViewModel | null = await blogQueryRepository.findById(value)
-                                                        if(!blog)
+                                                        if(!blogRepository.isExist(value))
                                                             throw("BlogId isn't correct")
                                                     })
                                              .withMessage("BlogId isn't correct")
