@@ -7,13 +7,13 @@ import { postQueryRepository } from '../../posts/repositories/postQueryRepositor
 import { HTTP_STATUSES } from '../../../setting'
 
 
-export const getPostToBlogController = async (req: Request<{id: string}>, res: Response < PaginatorModel < PostViewModel >> ) =>{
+export const getPostToBlogController = async (req: Request<{id: string},{},{},QueryModel>, res: Response < PaginatorModel < PostViewModel >> ) =>{
    
        const queryPaginator: QueryModel = {
         searchNameTerm: null,
         blogId: req.params.id,
-        sortBy: req.query.sortBy ? req.query.sortBy as string : 'createdAt',
-        sortDirection: req.query.SortDirection ? req.query.SortDirection as SortDirection : 'desc',
+        sortBy: req.query.sortBy ? req.query.sortBy : 'createdAt',
+        sortDirection: req.query.sortDirection ? req.query.sortDirection : 'desc',
         pageNumber: req.query.pageNumber ? +req.query.pageNumber : 1,
         pageSize: req.query.pageSize ? +req.query.pageSize : 10
        }

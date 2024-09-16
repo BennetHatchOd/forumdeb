@@ -17,11 +17,11 @@ export const postPostToBlogController = async (req: Request<{id: string},{},Post
     const idOut: string | null =  await postService.create({...req.body, blogId: req.params.id})
 
     if(!idOut){
-        res.status(HTTP_STATUSES.ERROR_500).json({})
+        res.status(HTTP_STATUSES.NOT_FOUND_404).json({})
         return;
     }
     const postOut: PostViewModel | null = await postQueryRepository.findById(idOut)
-    res.status(HTTP_STATUSES.OK_200).json(postOut) 
+    res.status(HTTP_STATUSES.CREATED_201).json(postOut) 
 }
 
 
