@@ -3,6 +3,7 @@ import { BlogViewModel, PostInputModel, PostViewModel } from "../../../types"
 import { blogQueryRepository } from "../repositories/blogQueryRepository"
 import { HTTP_STATUSES } from "../../../setting"
 import { postService } from "../../posts/postService"
+import { postQueryRepository } from "../../posts/repositories/postQueryRepository"
 
 type PostInputShortModel = {
     title:	string,
@@ -10,18 +11,17 @@ type PostInputShortModel = {
     content: string,
 }
 
-export const postPostToBlogController = async (req: Request<{id: string},{},PostInputShortModel>, res: Response): Promise<void> => {
+export const postPostToBlogController = async (req: Request<{id: string},{},PostInputShortModel>, res: Response) => {
 
-    const parentBlog: BlogViewModel | null = await blogQueryRepository.findById(req.params.id)
+ 
+    const idOut: string | null =  await postService.create({...req.body, blogId: req.params.id})
 
-    if (parentBlog == null){
-        res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    if(!idOut){
+        res.status(HTTP_STATUSES.ERROR_500).json({})
         return;
     }
- 
-    const postOut: PostViewModel | null =  await postService.create({...req.body, blogId: parentBlog.id})
-
-    postOut ? res.status(HTTP_STATUSES.OK_200).json(postOut) : res.sendStatus(HTTP_STATUSES.ERROR_500)
+    const postOut: PostViewModel | null = await postQueryRepository.findById(idOut)
+    res.status(HTTP_STATUSES.OK_200).json(postOut) 
 }
 
 

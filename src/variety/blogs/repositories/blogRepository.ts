@@ -1,85 +1,96 @@
 import { BlogViewModel, BlogInputModel } from "../../../types";
 import { blogCollection } from "../../../db/db";
 import { BlogDBType } from "../../../db/dbTypes";
-import { ObjectId } from "mongodb";
+import { DeleteResult, InsertOneResult, ObjectId } from "mongodb";
 
 export const blogRepository = {
 
  
-    async findById(_id: ObjectId): Promise < BlogViewModel | null > {      // searches for a blog by id and returns this blog or null
+    async isExist(id: string): Promise < boolean > {      // searches for a blog by id and returns this blog or null
         
         try{
-                    
-            const searchItem: BlogDBType | null = await blogCollection.findOne({_id: _id})
-            
-            if(searchItem) 
-                return this.mapDbToOutput(searchItem);
-            else
-                return null;
-
-        } catch (err){      
+            if(!ObjectId.isValid(id))
+                return false;        
+            const exist: number = await blogCollection.countDocuments({_id: new ObjectId(id)})           
+             return exist > 0 ? true : false;
+        } 
+        catch (err){      
             console.log(err)
-            return null;
+            return false;
         }
-
     },
  
    
-    async create(createItem: BlogDBType): Promise < boolean>{     // creates new blog and returns this blog 
-
-        try{                    
-            await blogCollection.insertOne(createItem);
-            return true;
-
-        } catch (err){
-            console.log(err)
-            return false;
-        }
-    },
-
-
-
-    async delete(id: ObjectId): Promise < boolean > {     // deletes a blog by Id, returns true if the blog existed    
-
+    async create(createItem: BlogViewModel): Promise < string | null>{     // creates new blog and returns this blog 
         try{
-            
-            const answerDelete = await blogCollection.deleteOne({_id: id})
-
-            if(answerDelete.deletedCount == 0)    
-                return false;
-            else
-                return true;
-        } catch (err){
+            const answerInsert: InsertOneResult = await blogCollection.insertOne(this.mapViewToDb(createItem));
+            return answerInsert.insertedId ? answerInsert.insertedId.toString() : null;
+        } 
+        catch (err){
             console.log(err)
-            return false;
+            return null;
         }
     },
 
-    async edit(correctItem: BlogDBType): Promise < boolean >{// edits a blog by ID, if the blog is not found returns false    
-
+    
+    async edit(id: string, editDate: BlogInputModel): Promise < boolean >{// edits a blog by ID, if the blog is not found returns false    
         try{
-            await blogCollection.replaceOne({_id: correctItem._id}, correctItem);
-                return true; 
-        } catch (err){
+            const answerUpdate = await blogCollection.updateOne({_id: new ObjectId(id)}, {$set: editDate});
+            return answerUpdate.matchedCount != 0 ? true : false; 
+        } 
+        catch (err){
             console.log(err)
             return false;
         }
     },
+
+    async delete(id: string): Promise < boolean > {     // deletes a blog by Id, returns true if the blog existed    
+        try{
+            const answerDelete: DeleteResult = await blogCollection.deleteOne({_id: new ObjectId(id)})
+
+            return answerDelete.deletedCount != 0 ? true : false;
+        } 
+        catch (err){
+            console.log(err)
+            return false;
+        }
+    },
+
 
     async clear(): Promise < boolean > {// deletes all blogs from base
         try{
             await blogCollection.deleteMany()
-            return true;
+            return await blogCollection.countDocuments({}) == 0 ? true : false;
         } catch(err){
             console.log(err)
             return false;
         }
     },
 
-    mapDbToOutput(item: BlogDBType): BlogViewModel {
+    // mapDbToOutput(item: BlogDBType): BlogViewModel {
         
-        const {_id, ...rest} = item
-        return {...rest,   id: _id.toString()}       
-    }
- 
+    //     return {
+    //         id: item._id.toString(),
+
+    //         name: item.name,
+    //         description: item.description,
+    //         createdAt: item.createdAt,
+    //         isMembership: item.isMembership,
+    //         websiteUrl: item.websiteUrl
+    //     }       
+    // },
+    
+    mapViewToDb(item: BlogViewModel): BlogDBType {
+        
+        const _id: ObjectId = ObjectId.isValid(item.id) ? new ObjectId(item.id) : new ObjectId;    
+        return { 
+            _id: _id,
+            name: item.name,
+            description: item.description,
+            createdAt: item.createdAt,
+            isMembership: item.isMembership,
+            websiteUrl: item.websiteUrl
+            }
+                   
+        }
 }

@@ -10,10 +10,24 @@ export const blogQueryRepository = {
         
         if(!ObjectId.isValid(id))
             return null;
-        try{
-                    
+        try{                   
             const searchItem: BlogDBType | null = await blogCollection.findOne({_id: new ObjectId(id)})           
             return searchItem ? this.mapDbToOutput(searchItem) : null;
+        } 
+        catch (err){      
+            console.log(err)
+            return null;
+        }
+
+    },
+    
+    async findNameById(id: string): Promise < string | null > {      // searches for a blog by id and returns this blog or null
+        
+        if(!ObjectId.isValid(id))
+            return null;
+        try{                   
+            const searchItem: BlogDBType | null = await blogCollection.findOne({_id: new ObjectId(id)})           
+            return searchItem ? searchItem.name : null;
         } 
         catch (err){      
             console.log(err)
@@ -70,9 +84,15 @@ export const blogQueryRepository = {
 
     mapDbToOutput(item: BlogDBType): BlogViewModel {
         
-        const {_id, ...rest} = item
-        return {...rest,   id: _id.toString()}       
+        return {
+            id: item._id.toString(),
+            
+            name: item.name,
+            description: item.description,
+            createdAt: item.createdAt,
+            isMembership: item.isMembership,
+            websiteUrl: item.websiteUrl
+        }       
     }
- 
 }
  

@@ -13,7 +13,7 @@ export const getBlogController = async (req: Request<{},{},{},QueryModel>, res: 
         pageNumber: req.query.pageNumber ? +req.query.pageNumber : 1,
         pageSize: req.query.pageSize ? +req.query.pageSize : 10,
     }
-      
+      console.log(queryPaginator)
     const blogPaginator: PaginatorModel<BlogViewModel> = await blogQueryRepository.find(queryPaginator)
 
     res.status(HTTP_STATUSES.OK_200).json(blogPaginator)
