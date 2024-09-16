@@ -20,6 +20,6 @@ blogsRouter.delete('/:id', authorizator, deleteBlogByIdController);
 blogsRouter.put('/:id', authorizator, blogValidator, checkInputValidation, putBlogController);
 blogsRouter.post('/', authorizator, blogValidator, checkInputValidation, postBlogController);
 
-blogsRouter.get('/:id/post', paginatorValidator, getPostToBlogController);
-blogsRouter.post('/:id/post', authorizator, postValidator, checkInputValidation,  postPostToBlogController);
+blogsRouter.get('/:id/posts', paginatorValidator, getPostToBlogController);
+blogsRouter.post('/:id/posts', authorizator, postValidator, checkInputValidation,  postPostToBlogController);
   
