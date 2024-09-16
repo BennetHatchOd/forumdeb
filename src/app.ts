@@ -1,7 +1,8 @@
 import express from 'express';
 import cors from 'cors'
-import { blogsRouter } from './variety/blogs/blogRouter';
-import { postsRouter } from './variety/posts/postRouter';
+import { blogsRouter } from './variety/blogs/blogsRouter';
+import { usersRouter } from './variety/users/usersRouter';
+import { postsRouter } from './variety/posts/postsRouter';
 import { deleteAllController } from './testingEP/deleteAllController';
 import { URL_PATH } from './setting';
 import { testGet } from './testingEP/testGet';
@@ -25,6 +26,7 @@ app.get(URL_PATH.base, (req,res) => {
 
 app.use(URL_PATH.blogs, blogsRouter);
 app.use(URL_PATH.posts, postsRouter);
+app.use(URL_PATH.users, usersRouter);
 
 
 app.delete('/testing/all-data', deleteAllController);

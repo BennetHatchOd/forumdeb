@@ -25,4 +25,5 @@ export const URL_PATH = {
     base:       '/',
     blogs:      '/blogs',
     posts:      '/posts',
+    users:      '/users',
 }
