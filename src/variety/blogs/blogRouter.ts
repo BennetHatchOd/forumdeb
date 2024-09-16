@@ -10,7 +10,7 @@ import {checkInputValidation} from '../../midlleware/checkInputValidators'
 import {postPostToBlogController} from './controllers/postPostToBlogController';
 import { getPostToBlogController } from './controllers/getPostToBlogController';
 import { paginatorValidator } from '../../midlleware/paginatorValidator';
-import { postValidator } from '../posts/middleware/postValidator';
+import { postForBlogValidator } from '../posts/middleware/postValidator';
 
 export const blogsRouter = Router({});
 
@@ -21,5 +21,5 @@ blogsRouter.put('/:id', authorizator, blogValidator, checkInputValidation, putBl
 blogsRouter.post('/', authorizator, blogValidator, checkInputValidation, postBlogController);
 
 blogsRouter.get('/:id/posts', paginatorValidator, getPostToBlogController);
-blogsRouter.post('/:id/posts', authorizator, postValidator, checkInputValidation,  postPostToBlogController);
+blogsRouter.post('/:id/posts', authorizator, postForBlogValidator, checkInputValidation,  postPostToBlogController);
   

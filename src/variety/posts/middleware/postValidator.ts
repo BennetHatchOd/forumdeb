@@ -29,3 +29,10 @@ export const postValidator = [
     contentValidator,
     idValidator,
 ]
+
+export const postForBlogValidator = [
+    titleValidator,
+    shortDescValidator,
+    contentValidator,
+]
+
