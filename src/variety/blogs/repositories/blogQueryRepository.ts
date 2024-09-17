@@ -1,12 +1,13 @@
-import { BlogViewModel, QueryModel, PaginatorModel} from "../../../types";
+import { BlogViewModel, PaginatorModel, QueryBlogModel} from "../../../types";
 import { blogCollection } from "../../../db/db";
 import { BlogDBType } from "../../../db/dbTypes";
 import { ObjectId } from "mongodb";
+import { emptyPaginator } from "../../../modules/paginator";
 
 export const blogQueryRepository = {
 
  
-    async findById(id: string): Promise < BlogViewModel | null > {      // searches for a blog by id and returns this blog or null
+    async findById(id: string): Promise < BlogViewModel | null > {      
         
         if(!ObjectId.isValid(id))
             return null;
@@ -20,38 +21,15 @@ export const blogQueryRepository = {
         }
 
     },
-    
-    async findNameById(id: string): Promise < string | null > {      // searches for a blog by id and returns this blog or null
-        
-        if(!ObjectId.isValid(id))
-            return null;
-        try{                   
-            const searchItem: BlogDBType | null = await blogCollection.findOne({_id: new ObjectId(id)})           
-            return searchItem ? searchItem.name : null;
-        } 
-        catch (err){      
-            console.log(err)
-            return null;
-        }
-
-    },
-
-    async find(queryReq:  QueryModel): Promise < PaginatorModel<BlogViewModel> > {      // searches for blogs by filter, returns  paginator or null
+  
+    async find(queryReq:  QueryBlogModel): Promise < PaginatorModel<BlogViewModel> > {      
         
         const nameSearch = queryReq.searchNameTerm ? {name: {$regex: queryReq.searchNameTerm, $options: 'i'}} : {}    
         const queryFilter = {...nameSearch}
         try{    
             const totalCount: number= await blogCollection.countDocuments(queryFilter) 
             if (totalCount == 0)
-                return {
-                        pagesCount: 1,
-                        page: 1,
-                        pageSize: queryReq.pageSize,
-                        totalCount: 0,
-                        items: []
-                        };
-            
-
+                return emptyPaginator;  
             
             const searchItem: Array<BlogDBType>  = 
                 await blogCollection.find(queryFilter)
@@ -60,24 +38,18 @@ export const blogQueryRepository = {
                                     .sort(queryReq.sortBy, queryReq.sortDirection)
                                     .toArray();
 
-            const returnArray: Array<BlogViewModel> = searchItem ? searchItem.map(s => this.mapDbToOutput(s)) : []
+            const pagesCount =  Math.ceil(totalCount / queryReq.pageSize)
             return {
-                    pagesCount: Math.ceil(totalCount / queryReq.pageSize),
-                    page: queryReq.pageNumber,
+                    pagesCount: pagesCount,
+                    page: queryReq.pageNumber > pagesCount ? pagesCount : queryReq.pageNumber,
                     pageSize: queryReq.pageSize,
                     totalCount: totalCount,
-                    items: returnArray
+                    items: searchItem.map(s => this.mapDbToOutput(s))
                 } 
         } 
         catch (err){      
             console.log(err)
-            return {
-                pagesCount: 1,
-                page: 1,
-                pageSize: queryReq.pageSize,
-                totalCount: 0,
-                items: []
-                }   
+            return emptyPaginator;   
         }
     },
 

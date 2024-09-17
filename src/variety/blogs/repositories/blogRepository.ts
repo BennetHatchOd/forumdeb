@@ -6,7 +6,7 @@ import { DeleteResult, InsertOneResult, ObjectId } from "mongodb";
 export const blogRepository = {
 
  
-    async isExist(id: string): Promise < boolean > {      // searches for a blog by id and returns this blog or null
+    async isExist(id: string): Promise < boolean > {     
         
         try{
             if(!ObjectId.isValid(id))
@@ -20,8 +20,22 @@ export const blogRepository = {
         }
     },
  
-   
-    async create(createItem: BlogViewModel): Promise < string | null>{     // creates new blog and returns this blog 
+    async findNameById(id: string): Promise < string | null > {     
+        
+        if(!ObjectId.isValid(id))
+            return null;
+        try{                   
+            const searchItem: BlogDBType | null = await blogCollection.findOne({_id: new ObjectId(id)})           
+            return searchItem ? searchItem.name : null;
+        } 
+        catch (err){      
+            console.log(err)
+            return null;
+        }
+
+    },
+
+    async create(createItem: BlogViewModel): Promise < string | null>{      
         try{
             const answerInsert: InsertOneResult = await blogCollection.insertOne(this.mapViewToDb(createItem));
             return answerInsert.insertedId ? answerInsert.insertedId.toString() : null;
@@ -33,7 +47,7 @@ export const blogRepository = {
     },
 
     
-    async edit(id: string, editDate: BlogInputModel): Promise < boolean >{// edits a blog by ID, if the blog is not found returns false    
+    async edit(id: string, editDate: BlogInputModel): Promise < boolean >{    
         try{
             const answerUpdate = await blogCollection.updateOne({_id: new ObjectId(id)}, {$set: editDate});
             return answerUpdate.matchedCount != 0 ? true : false; 
@@ -44,7 +58,7 @@ export const blogRepository = {
         }
     },
 
-    async delete(id: string): Promise < boolean > {     // deletes a blog by Id, returns true if the blog existed    
+    async delete(id: string): Promise < boolean > {         
         try{
             const answerDelete: DeleteResult = await blogCollection.deleteOne({_id: new ObjectId(id)})
 
@@ -57,7 +71,7 @@ export const blogRepository = {
     },
 
 
-    async clear(): Promise < boolean > {// deletes all blogs from base
+    async clear(): Promise < boolean > {
         try{
             await blogCollection.deleteMany()
             return await blogCollection.countDocuments({}) == 0 ? true : false;

@@ -2,20 +2,17 @@ import { Request, Response } from 'express'
 import { postCollection } from '../../../db/db'
 import { ObjectId, SortDirection } from 'mongodb'
 import { postRepository } from '../../posts/repositories/postRepository'
-import { PostViewModel, PaginatorModel, QueryModel } from '../../../types'
+import { PostViewModel, PaginatorModel, QueryPostModel } from '../../../types'
 import { postQueryRepository } from '../../posts/repositories/postQueryRepository'
 import { HTTP_STATUSES } from '../../../setting'
+import { paginator } from '../../../modules/paginator'
 
 
-export const getPostToBlogController = async (req: Request<{id: string},{},{},QueryModel>, res: Response < PaginatorModel < PostViewModel >> ) =>{
+export const getPostToBlogController = async (req: Request<{id: string},{},{},QueryPostModel>, res: Response < PaginatorModel < PostViewModel >> ) =>{
    
-       const queryPaginator: QueryModel = {
-        searchNameTerm: null,
-        blogId: req.params.id,
-        sortBy: req.query.sortBy ? req.query.sortBy : 'createdAt',
-        sortDirection: req.query.sortDirection ? req.query.sortDirection : 'desc',
-        pageNumber: req.query.pageNumber ? +req.query.pageNumber : 1,
-        pageSize: req.query.pageSize ? +req.query.pageSize : 10
+       const queryPaginator: QueryPostModel = {
+              ...paginator(req.query),
+              blogId: req.params.id,
        }
        console.log(queryPaginator)
        const postPaginator: PaginatorModel<PostViewModel> = await postQueryRepository.find(queryPaginator)
