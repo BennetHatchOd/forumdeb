@@ -1,7 +1,8 @@
-import { PostViewModel, QueryModel, PaginatorModel} from "../../../types";
+import { PostViewModel, QueryPostModel, PaginatorModel} from "../../../types";
 import { blogCollection, postCollection } from "../../../db/db";
 import { PostDBType } from "../../../db/dbTypes";
 import { ObjectId } from "mongodb";
+import { emptyPaginator } from "../../../modules/paginator";
 
 export const postQueryRepository = {
 
@@ -23,7 +24,7 @@ export const postQueryRepository = {
 
     },
 
-    async find(queryReq:  QueryModel): Promise < PaginatorModel<PostViewModel> > {      // searches for blogs by filter, returns paginator or null
+    async find(queryReq:  QueryPostModel): Promise < PaginatorModel<PostViewModel> > {      // searches for blogs by filter, returns paginator or null
         
         const bloqIdSearch = queryReq.blogId ? {blogId: queryReq.blogId} : {}        
         const queryFilter = {...bloqIdSearch}
@@ -31,23 +32,19 @@ export const postQueryRepository = {
         try{           
             const totalCount: number= await postCollection.countDocuments(queryFilter)   
             if (totalCount == 0)
-                return {
-                        pagesCount: 1,
-                        page: 1,
-                        pageSize: queryReq.pageSize,
-                        totalCount: 0,
-                        items: []
-                    };                    
-            
+                return emptyPaginator;
+                   
             const searchItem: Array<PostDBType> = 
                 await postCollection.find(queryFilter)
                                     .limit(queryReq.pageSize)
                                     .skip((queryReq.pageNumber - 1) * queryReq.pageSize)
                                     .sort(queryReq.sortBy, queryReq.sortDirection)
-                                    .toArray() 
+                                    .toArray()
+
+            const pagesCount =  Math.ceil(totalCount / queryReq.pageSize) 
             return {
-                    pagesCount: Math.ceil(totalCount / queryReq.pageSize),
-                    page: queryReq.pageNumber,
+                    pagesCount: pagesCount,
+                    page: queryReq.pageNumber > pagesCount ? pagesCount : queryReq.pageNumber,
                     pageSize: queryReq.pageSize,
                     totalCount: totalCount,
                     items: searchItem.map(s => this.mapDbToOutput(s))
@@ -55,13 +52,8 @@ export const postQueryRepository = {
         } 
         catch (err){      
             console.log(err)
-            return {
-                    pagesCount: 1,
-                    page: 1,
-                    pageSize: queryReq.pageSize,
-                    totalCount: 0,
-                    items: []
-                };
+            return emptyPaginator;
+
         }
     },
 

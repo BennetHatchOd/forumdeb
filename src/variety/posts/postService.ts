@@ -1,7 +1,6 @@
 import { PostViewModel, PostInputModel } from "../../types";
 import { postRepository } from "./repositories/postRepository";
 import { blogRepository } from "../blogs/repositories/blogRepository";
-import { blogQueryRepository } from "../blogs/repositories/blogQueryRepository";
 
 export const postService = {
  
@@ -10,7 +9,7 @@ export const postService = {
         try{
             if(!blogRepository.isExist(createItem.blogId))
                 throw `blog with ID: ${createItem.blogId} doesn't exist`;
-            const parentName:  string | null  = await blogQueryRepository.findNameById(createItem.blogId); 
+            const parentName:  string | null  = await blogRepository.findNameById(createItem.blogId); 
             if(!parentName)
                 return null;
             const newPost: PostViewModel = {
@@ -37,7 +36,7 @@ export const postService = {
                    throw ` blogIdD: ${editData.blogId} isn\'t correct`;
                
                const parentName: string | null = 
-                       await blogQueryRepository.findNameById(editData.blogId); 
+                       await blogRepository.findNameById(editData.blogId); 
                if( !parentName)
                     return false;               
 
