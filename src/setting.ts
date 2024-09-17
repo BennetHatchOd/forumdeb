@@ -6,6 +6,7 @@ export const mongoURI = process.env.MONGO_URL || 'mongodb://0.0.0.0:27017'
 export const DB_NAME = 'forumDebol'
 export const BLOG_COLLECTION_NAME = 'blogs'
 export const POST_COLLECTION_NAME = 'posts' 
+export const USER_COLLECTION_NAME = 'users' 
 
 export const SETTING = {
     PORT: process.env.PORT || 3014
@@ -26,4 +27,5 @@ export const URL_PATH = {
     blogs:      '/blogs',
     posts:      '/posts',
     users:      '/users',
+    auth:       '/auth/login'
 }

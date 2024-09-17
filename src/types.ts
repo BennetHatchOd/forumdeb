@@ -1,7 +1,7 @@
 import { SortDirection } from "mongodb"
 
  
-type FieldError = {
+export type FieldError = {
     message: string,
     field: string
 }
@@ -49,15 +49,6 @@ export type PostViewModel = {
     blogName:	string
 }
 
-export type QueryModel = {
-    searchNameTerm: string | null,
-    blogId: string | null,
-    sortBy: string,
-    sortDirection: SortDirection,
-    pageNumber: number,
-    pageSize: number,
-}
-
 export type PaginatorModel<T> = {
     pagesCount: number,
     page: number,
@@ -82,4 +73,26 @@ export type UserViewModel = {
     login:	string,
     email:	string,
     createdAt:	string
+}
+
+export type UserInnerModel = UserViewModel & {
+    password: string,
+}
+
+export type QueryBaseModel = {
+    sortBy: string,
+    sortDirection: SortDirection,
+    pageNumber: number,
+    pageSize: number,
+}
+
+export type QueryPostModel = QueryBaseModel & {
+    blogId?: string | null,
+}
+export type QueryBlogModel = QueryBaseModel & {
+    searchNameTerm: string | null,
+}
+export type QueryUserModel = QueryBaseModel & {
+    searchEmailTerm: string | null,
+    searchLoginTerm: string | null,
 }
