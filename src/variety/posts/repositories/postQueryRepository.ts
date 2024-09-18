@@ -19,7 +19,7 @@ export const postQueryRepository = {
         } 
         catch (err){      
             console.log(err)
-            return null;
+            throw(err);
         }
 
     },
@@ -52,7 +52,7 @@ export const postQueryRepository = {
         } 
         catch (err){      
             console.log(err)
-            return emptyPaginator;
+            throw(err);
 
         }
     },

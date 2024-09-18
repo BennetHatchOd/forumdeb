@@ -16,7 +16,7 @@ export const userQueryRepository = {
         } 
         catch (err){      
             console.log(err)
-            return null;
+            throw(err);
         }
 
     },
@@ -49,7 +49,7 @@ export const userQueryRepository = {
         } 
         catch (err){      
             console.log(err)
-            return emptyPaginator;   
+            throw(err);
         }
     },
 

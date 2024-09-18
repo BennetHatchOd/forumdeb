@@ -15,7 +15,7 @@ export const postRepository = {
         } 
         catch (err){      
             console.log(err)
-            return false;
+            throw(err);
         }
 
     },
@@ -27,7 +27,7 @@ export const postRepository = {
         } 
         catch (err){
             console.log(err)
-            return null;
+            throw(err);
         }
     },
      
@@ -40,7 +40,7 @@ export const postRepository = {
         } 
         catch (err){
             console.log(err)
-            return false;
+            throw(err);
         }
     },
     
@@ -54,7 +54,7 @@ export const postRepository = {
         } 
         catch (err){
             console.log(err)
-            return false;
+            throw(err);
         }
     },
    
@@ -64,7 +64,7 @@ export const postRepository = {
             return await postCollection.countDocuments({}) == 0 ? true : false;
         } catch(err){
             console.log(err)
-            return false;
+            throw(err);
         }
     },
 

@@ -22,7 +22,7 @@ export const postService = {
         } 
         catch (err){
             console.log(err)
-            return null;
+            throw(err);
         }    
         
     },
@@ -44,8 +44,8 @@ export const postService = {
            } 
            catch (err){
                console.log(err)
-               return false;
-           }
+               throw(err);
+            }
        },
     
     async delete(id: string): Promise < boolean > { // deletes a post by Id, returns true if the post existed
@@ -57,13 +57,18 @@ export const postService = {
         } 
         catch (err){
             console.log(err)
-            return false;
+            throw(err);
         }
     },
    
 
     async clear(): Promise < boolean > {// deletes all posts from base
-         
-        return await postRepository.clear()
+        try{    
+            return await postRepository.clear()
+        } 
+        catch (err){
+            console.log(err)
+            throw(err);
+        }
     },
 }

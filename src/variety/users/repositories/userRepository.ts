@@ -13,7 +13,7 @@ export const userRepository = {
         } 
         catch (err){      
             console.log(err)
-            return null;
+            throw(err);
         }
     },
 
@@ -26,7 +26,7 @@ export const userRepository = {
         } 
         catch (err){      
             console.log(err)
-            return false;
+            throw(err);
         }
     },
  
@@ -44,7 +44,7 @@ export const userRepository = {
             }
         catch (err){      
             console.log(err)
-            return [];
+            throw(err);
         }
     },
    
@@ -55,7 +55,7 @@ export const userRepository = {
         } 
         catch (err){
             console.log(err)
-            return null;
+            throw(err);
         }
     },
 
@@ -68,7 +68,7 @@ export const userRepository = {
         } 
         catch (err){
             console.log(err)
-            return false;
+            throw(err);
         }
     },
 
@@ -78,7 +78,7 @@ export const userRepository = {
             return await userCollection.countDocuments({}) == 0 ? true : false;
         } catch(err){
             console.log(err)
-            return false;
+            throw(err);
         }
     },
 

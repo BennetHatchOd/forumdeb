@@ -90,9 +90,3 @@ export type QueryModel = {
     searchLoginTerm?: string | null,
 }
 
-// export type QueryPostModel = QueryBaseModel & {
-// }
-// export type QueryBlogModel = QueryBaseModel & {
-// }
-// export type QueryUserModel = QueryBaseModel & {
-// }

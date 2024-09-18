@@ -17,7 +17,7 @@ export const blogQueryRepository = {
         } 
         catch (err){      
             console.log(err)
-            return null;
+            throw(err);
         }
 
     },
@@ -49,7 +49,7 @@ export const blogQueryRepository = {
         } 
         catch (err){      
             console.log(err)
-            return emptyPaginator;   
+            throw(err);
         }
     },
 

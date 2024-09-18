@@ -2,6 +2,7 @@ import { BlogViewModel, BlogInputModel } from "../../../types";
 import { blogCollection } from "../../../db/db";
 import { BlogDBType } from "../../../db/dbTypes";
 import { DeleteResult, InsertOneResult, ObjectId } from "mongodb";
+import { StatusResponse} from "../../../interfaces";
 
 export const blogRepository = {
 
@@ -14,51 +15,55 @@ export const blogRepository = {
             const exist: number = await blogCollection.countDocuments({_id: new ObjectId(id)})           
              return exist > 0 ? true : false;
         } 
-        catch (err){      
+        catch (err){
             console.log(err)
-            return false;
+            throw(err);
         }
     },
  
-    async findNameById(id: string): Promise < string | null > {     
+    async findNameById(id: string): Promise < StatusResponse<string|null> > {     
         
+         
         if(!ObjectId.isValid(id))
-            return null;
+            return {success: false};
         try{                   
             const searchItem: BlogDBType | null = await blogCollection.findOne({_id: new ObjectId(id)})           
-            return searchItem ? searchItem.name : null;
-        } 
-        catch (err){      
-            console.log(err)
-            return null;
-        }
-
-    },
-
-    async create(createItem: BlogViewModel): Promise < string | null>{      
-        try{
-            const answerInsert: InsertOneResult = await blogCollection.insertOne(this.mapViewToDb(createItem));
-            return answerInsert.insertedId ? answerInsert.insertedId.toString() : null;
+            return searchItem ? 
+                {success: true, data: searchItem.name} : 
+                {success: false};
         } 
         catch (err){
             console.log(err)
-            return null;
+            throw(err);
+        }
+    },
+
+    async create(createItem: BlogViewModel): Promise <StatusResponse< string|null>>{      
+        try{
+            const answerInsert: InsertOneResult = await blogCollection.insertOne(this.mapViewToDb(createItem));
+            return answerInsert.insertedId ? 
+                {success: true, data: answerInsert.insertedId.toString()} : 
+                {success: false};
+        } 
+        catch (err){
+            console.log(err)
+            throw(err);
         }
     },
 
     
-    async edit(id: string, editDate: BlogInputModel): Promise < boolean >{    
+    async edit(id: string, editDate: BlogInputModel): Promise <boolean>{    
         try{
             const answerUpdate = await blogCollection.updateOne({_id: new ObjectId(id)}, {$set: editDate});
             return answerUpdate.matchedCount != 0 ? true : false; 
         } 
         catch (err){
             console.log(err)
-            return false;
+            throw(err);
         }
     },
 
-    async delete(id: string): Promise < boolean > {         
+    async delete(id: string): Promise <boolean> {         
         try{
             const answerDelete: DeleteResult = await blogCollection.deleteOne({_id: new ObjectId(id)})
 
@@ -66,18 +71,18 @@ export const blogRepository = {
         } 
         catch (err){
             console.log(err)
-            return false;
+            throw(err);
         }
     },
 
 
-    async clear(): Promise < boolean > {
+    async clear(): Promise <boolean> {
         try{
             await blogCollection.deleteMany()
             return await blogCollection.countDocuments({}) == 0 ? true : false;
         } catch(err){
             console.log(err)
-            return false;
+            throw(err);
         }
     },
 

@@ -35,7 +35,7 @@ export const userService = {
         } 
         catch (err){
             console.log(err)
-            return false;
+            throw(err);
         }
     },
 
@@ -77,7 +77,7 @@ export const userService = {
         } 
         catch (err){
             console.log(err)
-            return null;
+            throw(err);
         }
     },
  
@@ -90,13 +90,18 @@ export const userService = {
         } 
         catch (err){
             console.log(err)
-            return false;
+            throw(err);
         }
     },
     
     async clear(): Promise < boolean > {// deletes all users from base
-        
-        return await userRepository.clear()
+        try{    
+            return await userRepository.clear()
+        } 
+        catch (err){
+            console.log(err)
+            throw(err);
+        }
     },
 
     
