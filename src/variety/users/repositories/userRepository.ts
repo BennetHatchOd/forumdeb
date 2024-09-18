@@ -1,11 +1,22 @@
-import { UserViewModel, UserInputModel, UserInnerModel } from "../../../types";
+import { UserInnerModel } from "../../../types";
 import { userCollection } from "../../../db/db";
 import { UserDBType } from "../../../db/dbTypes";
 import { DeleteResult, InsertOneResult, ObjectId } from "mongodb";
 
 export const userRepository = {
+  
+    async checkExist(loginOrEmail: string): Promise < null | string > {          
+        try{
+            const checkedUser: UserDBType | null = await userCollection.findOne({$or: [{login: loginOrEmail},{email: loginOrEmail}]})           
+            
+            return checkedUser === null ? null : checkedUser.password;
+        } 
+        catch (err){      
+            console.log(err)
+            return null;
+        }
+    },
 
- 
     async isExist(id: string): Promise < boolean > {          
         try{
             if(!ObjectId.isValid(id))

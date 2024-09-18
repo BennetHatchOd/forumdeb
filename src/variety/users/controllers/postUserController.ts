@@ -7,7 +7,7 @@ import { userQueryRepository } from "../repositories/userQueryRepository";
 export const postUserController = async (req: Request<{},{},UserInputModel>, res: Response) =>{
     
     const uniq: APIErrorResult| null = await userService.checkUniq(req.body.login, req.body.email)
-    if(!uniq){
+    if(uniq){
         res.status(HTTP_STATUSES.BAD_REQUEST_400).json(uniq)
         return;
     }

@@ -1,4 +1,4 @@
-import { UserViewModel, QueryModel, PaginatorModel} from "../../../types";
+import { UserViewModel, PaginatorModel, QueryModel, APIErrorResult, FieldError} from "../../../types";
 import { userCollection } from "../../../db/db";
 import { UserDBType } from "../../../db/dbTypes";
 import { ObjectId } from "mongodb";
@@ -23,8 +23,9 @@ export const userQueryRepository = {
 
     async find(queryReq:  QueryModel): Promise < PaginatorModel<UserViewModel> > {      // searches for users by filter, returns  paginator or null
         
-        const nameSearch = queryReq.searchNameTerm ? {name: {$regex: queryReq.searchNameTerm, $options: 'i'}} : {}    
-        const queryFilter = {...nameSearch}
+        const emailSearch = queryReq.searchEmailTerm ? {name: {$regex: queryReq.searchEmailTerm, $options: 'i'}} : {}    
+        const loginSearch = queryReq.searchLoginTerm ? {name: {$regex: queryReq.searchLoginTerm, $options: 'i'}} : {}    
+        const queryFilter = {$or: [emailSearch, loginSearch]}
         try{    
             const totalCount: number= await userCollection.countDocuments(queryFilter) 
             if (totalCount == 0)

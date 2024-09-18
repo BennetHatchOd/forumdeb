@@ -1,4 +1,4 @@
-import { UserInputModel, APIErrorResult, FieldError, UserInnerModel } from "../../types";
+import { UserInputModel, APIErrorResult, FieldError, UserInnerModel, LoginInputModel } from "../../types";
 import { userRepository } from "./repositories/userRepository"; 
 import bcrypt from "bcrypt"
 
@@ -25,7 +25,41 @@ export const userService = {
         }
     },
 
-    async checkUniq(login: string, email: string): Promise <APIErrorResult| null >{     // creates new user and returns this user 
+    async authUser(loginOrEmail: string, password: string): Promise < boolean > {      
+        try{
+            const hash: string | null = await userRepository.checkExist(loginOrEmail)
+            if(hash === null) return false;
+            
+            return await bcrypt.compare(password, hash)
+
+        } 
+        catch (err){
+            console.log(err)
+            return false;
+        }
+    },
+
+    isValid(loginOrEmail: string, password: string): boolean | APIErrorResult {          
+        const answerError: APIErrorResult = {
+            errorsMessages: []}
+        const loginTemplate = /^[a-zA-Z0-9_-]*$/
+        const emailTemplate = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+
+        if(!emailTemplate.test(loginOrEmail) && 
+            !(loginTemplate.test(loginOrEmail) && loginOrEmail.length > 2 && loginOrEmail.length < 11))
+                    answerError.errorsMessages.push({message: 'Login or email has incorrect values', field: 'loginOrEmail'})
+
+        if(password.length < 6 || password.length > 20)
+            answerError.errorsMessages.push({message: 'password has incorrect values', field: 'password'})
+        
+        if(answerError.errorsMessages.length == 0)
+            return true;
+        
+        return answerError;
+    },
+
+
+    async checkUniq(login: string, email: string): Promise<APIErrorResult| null> { 
 
         try{            
             const checkResult: Array<string > = await userRepository.checkUniq(login, email)
@@ -59,7 +93,7 @@ export const userService = {
             return false;
         }
     },
-
+    
     async clear(): Promise < boolean > {// deletes all users from base
         
         return await userRepository.clear()
