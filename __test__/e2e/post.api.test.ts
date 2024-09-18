@@ -27,7 +27,7 @@ describe('/posts', () => {
         uri = server.getUri()
         client = new MongoClient(uri)
         await client.connect();
-        await request(app).delete(URL_PATH.deleteAll);
+        // await request(app).delete('/testing/all-data');
 
 
 
@@ -38,10 +38,9 @@ describe('/posts', () => {
     })
     
     let createdItem1: PostViewModel;  
-    let createdBlogId: string
-    let createdBlogId2: string; 
-    const createdBlogName: string ="The first";
-    const createdBlogName2: string = "The second"     
+    let createdBlogId: Array<string> = []
+    const createdBlogName: Array<string> =["The first", "The second"]
+      
     
     it('should return 201 and created object', async () => { // create the new blog [blog.post]
            const data: BlogInputModel = {
@@ -57,7 +56,7 @@ describe('/posts', () => {
                 .send(data)
                 .expect(HTTP_STATUSES.CREATED_201);
 
-        createdBlogId = createdResponse.body.id
+        createdBlogId[0] = createdResponse.body.id
     })
 
     it('should return 201 and created object', async () => { // create the second new blog [blog.post]
@@ -74,7 +73,7 @@ describe('/posts', () => {
              .send(data)
              .expect(HTTP_STATUSES.CREATED_201);
 
-     createdBlogId2 = createdResponse.body.id
+     createdBlogId[1] = createdResponse.body.id
  })           
 
     it('should return 200 and empty array', async () => { // watch all posts [get.post]
@@ -89,7 +88,7 @@ describe('/posts', () => {
                     title: "The first",
                     shortDescription: "Copolla",
                     content: "https://google.dcfghgfhgc.com",
-                    blogId: createdBlogId
+                    blogId: createdBlogId[0]
         }
         
         let createdResponse = await 
@@ -107,8 +106,8 @@ describe('/posts', () => {
             shortDescription: data.shortDescription,
             content: data.content,
             createdAt: expect.any(String),
-            blogId: createdBlogId,
-            blogName: createdBlogName
+            blogId: createdBlogId[0],
+            blogName: createdBlogName[0]
         })
     })
 
@@ -121,7 +120,7 @@ describe('/posts', () => {
             title: "The second",
                     shortDescription: "this post by Tarantino",
                     content: "https://google.dcfghgfhgc.com",
-                    blogId: createdBlogId2
+                    blogId: createdBlogId[1]
                 }
 
         let createdResponse2 = await 
@@ -139,8 +138,8 @@ describe('/posts', () => {
             shortDescription: data.shortDescription,
             content: data.content,
             createdAt: expect.any(String),
-            blogId: createdBlogId2,
-            blogName: createdBlogName2
+            blogId: createdBlogId[1],
+            blogName: createdBlogName[1]
         })
     })
 
@@ -153,7 +152,7 @@ describe('/posts', () => {
                 title: "The thirt",
                 shortDescription: "this post not by Tarantino",
                 content: "https://google.com",
-                blogId: createdBlogId
+                blogId: createdBlogId[0]
             }
 
         await request(app)
@@ -169,7 +168,7 @@ describe('/posts', () => {
                 title: "The thirt",
                 shortDescription: "this post not by Tarantino",
                 content: "https://google.com",
-                blogId: createdBlogId               
+                blogId: createdBlogId[0]               
             }
 
         await request(app)
@@ -187,7 +186,7 @@ describe('/posts', () => {
             title: "The thirt",
                 shortDescription: "this post not by Tarantino",
                 content: "https://google.com",
-                blogId: createdBlogId
+                blogId: createdBlogId[0]
             }
 
         let createdResponse2 = await 
@@ -205,8 +204,8 @@ describe('/posts', () => {
             shortDescription: data.shortDescription,
             content: data.content,
             createdAt: expect.any(String),
-            blogId: createdBlogId,
-            blogName: createdBlogName
+            blogId: createdBlogId[0],
+            blogName: createdBlogName[0]
         })
     })
 
@@ -274,7 +273,7 @@ describe('/posts', () => {
                     title: "",
                     shortDescription: "0123",
                     content: "length_10112345678901123456789011234567890112345678901123456789011234567890112345678901123456789011234567891",
-                    blogId: createdBlogId
+                    blogId: createdBlogId[0]
         }
         
         let res = await request(app)
@@ -304,7 +303,7 @@ describe('/posts', () => {
                     title: "length_311245845269854125745612",
                     shortDescription: "",
                     content: "ttps://google123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890.com432",
-                    blogId: createdBlogId
+                    blogId: createdBlogId[0]
                 }
         
         let res = await request(app)
@@ -337,7 +336,7 @@ describe('/posts', () => {
             title: "Correct",
             shortDescription: "Gaidai",
             content: "https://fig.dedf.cfghgfhgc.net/34",
-            blogId:  createdBlogId2
+            blogId:  createdBlogId[1]
         }
 
         await  request(app)
@@ -349,8 +348,8 @@ describe('/posts', () => {
         createdItem1.title = data.title
         createdItem1.shortDescription = data.shortDescription
         createdItem1.content = data.content
-        createdItem1.blogId = createdBlogId2
-        createdItem1.blogName = createdBlogName2
+        createdItem1.blogId = createdBlogId[1]
+        createdItem1.blogName = createdBlogName[1]
 
     })
 
@@ -370,7 +369,7 @@ describe('/posts', () => {
                     title: "The mistake",
                     shortDescription: "Gaidai",
                     content: "https://fig.dedf.cfghgfhgc.net/34",
-                    blogId: createdBlogId
+                    blogId: createdBlogId[0]
         }
 
         await request(app)

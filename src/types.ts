@@ -15,7 +15,7 @@ export type BlogInputModel = {
     description: string,            // length 1-500
     websiteUrl:	string              // length 1-100, ^https://([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$
 }
-}
+
 
 export type BlogViewModel = {
     id:	string,
@@ -79,20 +79,20 @@ export type UserInnerModel = UserViewModel & {
     password: string,
 }
 
-export type QueryBaseModel = {
+export type QueryModel = {
     sortBy: string,
     sortDirection: SortDirection,
     pageNumber: number,
     pageSize: number,
+    blogId?: string | null,
+    searchNameTerm?: string | null,
+    searchEmailTerm?: string | null,
+    searchLoginTerm?: string | null,
 }
 
-export type QueryPostModel = QueryBaseModel & {
-    blogId?: string | null,
-}
-export type QueryBlogModel = QueryBaseModel & {
-    searchNameTerm: string | null,
-}
-export type QueryUserModel = QueryBaseModel & {
-    searchEmailTerm: string | null,
-    searchLoginTerm: string | null,
-}
+// export type QueryPostModel = QueryBaseModel & {
+// }
+// export type QueryBlogModel = QueryBaseModel & {
+// }
+// export type QueryUserModel = QueryBaseModel & {
+// }

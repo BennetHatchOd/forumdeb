@@ -4,7 +4,7 @@ import { HTTP_STATUSES } from "../setting";
 
 
 
-export const authorizator = (req: Request, res: Response, next: NextFunction) =>{
+export const authorizator = (req: Request<any, any, any, any>, res: Response, next: NextFunction) =>{
 
     const authheader = req.headers.authorization;
 

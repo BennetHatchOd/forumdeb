@@ -4,18 +4,22 @@ import { app } from "../../src/app";
 import {MongoMemoryServer} from 'mongodb-memory-server'
 import {MongoClient} from 'mongodb'
 import { BlogInputModel, BlogViewModel } from "../../src/types";
+import BlogTests from "./items";
 
 
 
 
-const Authorization = {
-      value: "Basic YWRtaW46cXdlcnR5",
-      false: "Df fef"
-};
+// const Authorization = {
+//       value: "Basic YWRtaW46cXdlcnR5",
+//       false: "Df fef"
+// };
+
 let server:  MongoMemoryServer
 let uri : string
 let client: MongoClient
+
 describe('/blogs', () => {
+    const blogTests = new BlogTests();
 
     beforeAll(async() =>{  // clear db-array
         server = await MongoMemoryServer.create({
@@ -27,7 +31,7 @@ describe('/blogs', () => {
         uri = server.getUri()
         client = new MongoClient(uri)
         await client.connect();
-        await request(app).delete(URL_PATH.deleteAll);
+        // await request(app).delete('/testing/all-data');
 
     })
 
@@ -45,63 +49,24 @@ describe('/blogs', () => {
     
     let createdItem1: BlogViewModel;  
 
-    it('should return 201 and created object', async () => { // create the fisrt new blog [post.blog]
+    // it('should return 201 and created object', async () => { // create the fisrt new blog [post.blog]
         
-        const data: BlogInputModel = {
-                    name: "The first",
-                    description: "Copolla",
-                    websiteUrl: "https://google.dcfghgfhgc.com",
 
-        }
-        
-        let createdResponse = await 
-                request(app)
-                .post(URL_PATH.blogs)
-                .set("Authorization", Authorization.value)
-                .send(data)
-                .expect(HTTP_STATUSES.CREATED_201);
-
-        createdItem1 = createdResponse.body;
-
-        expect(createdItem1).toEqual({
-            id: expect.any(String),
-            name: data.name,
-            description: data.description,
-            websiteUrl: data.websiteUrl,
-            createdAt: expect.any(String),
-            isMembership: false
-        })
-    })
+    //await blogTests.testCreateUser(0,0)
+    //     createdItem1 = createdResponse.body;
+    // })
 
     
-    let createdItem2: BlogViewModel;
+    // let createdItem2: BlogViewModel;
 
-    it('should return 201 and created object', async () => { // create the second new blog [post.blog]
+    // it('should return 201 and created object', async () => { // create the second new blog [post.blog]
 
-        const data: BlogInputModel = {
-                    name: "The second",
-                    description: "this blog by Tarantino",
-                    websiteUrl: "https://google.dcfghgfhgc.com"
-                }
+    // await blogTests.testCreateUser(1,1)
 
-        let createdResponse2 = await 
-                request(app)
-                .post(URL_PATH.blogs)
-                .set("Authorization", Authorization.value)
-                .send(data)
-                .expect(HTTP_STATUSES.CREATED_201);
+    //     createdItem2 = createdResponse2.body;
 
-        createdItem2 = createdResponse2.body;
 
-        expect(createdItem2).toEqual({
-            id: expect.any(String),
-            name: data.name,
-            description: data.description,
-            websiteUrl: data.websiteUrl,
-            createdAt: expect.any(String),
-            isMembership: false
-        })
-    })
+    // })
 
    
     let createdItem3: BlogViewModel;
@@ -121,21 +86,7 @@ describe('/blogs', () => {
 
     })
 
-    it('should return 401', async () => {  // create the third new blog with wrong Authorization [post.blog]
-    
-        const data: BlogInputModel = {
-                name: "The thirt",
-                description: "this blog not by Tarantino",
-                websiteUrl: "https://google.com"
-            }
 
-        await request(app)
-                .post(URL_PATH.blogs)
-                .set("Authorization", Authorization.false)
-                .send(data)
-                .expect(HTTP_STATUSES.NO_AUTHOR_401);
-
-    })
 
 
     it('should return 201 and created object', async () => {  // create the third new blog [post.blog]

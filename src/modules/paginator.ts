@@ -1,13 +1,17 @@
-import { QueryBaseModel} from "../types";
+import { QueryModel} from "../types";
 import { Collection } from "mongodb";
 
 
-export function paginator(input: QueryBaseModel): QueryBaseModel {
+export function paginator(input: QueryModel): QueryModel {
     return {
         sortBy: input.sortBy ? input.sortBy : 'createdAt',
         sortDirection: input.sortDirection ? input.sortDirection : 'desc',
         pageNumber: input.pageNumber ? +input.pageNumber : 1,
         pageSize: input.pageSize ? +input.pageSize : 10,
+        searchNameTerm: input.searchNameTerm ? input.searchNameTerm : null,
+        searchEmailTerm: input.searchEmailTerm ? input.searchEmailTerm : null,
+        searchLoginTerm: input.searchLoginTerm ? input.searchLoginTerm : null,
+        blogId: input.blogId,
     }
 }
 

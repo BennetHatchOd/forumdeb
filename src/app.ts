@@ -27,9 +27,8 @@ app.get(URL_PATH.base, (req,res) => {
 app.use(URL_PATH.blogs, blogsRouter);
 app.use(URL_PATH.posts, postsRouter);
 app.use(URL_PATH.users, usersRouter);
-app.get(URL_PATH.auth, authLoginController)
 
-
+app.post(URL_PATH.auth, authLoginController)
 app.delete('/testing/all-data', deleteAllController);
 
 
