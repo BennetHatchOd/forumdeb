@@ -1,4 +1,4 @@
-import { PostViewModel, QueryPostModel, PaginatorModel} from "../../../types";
+import { PostViewModel, QueryModel, PaginatorModel} from "../../../types";
 import { blogCollection, postCollection } from "../../../db/db";
 import { PostDBType } from "../../../db/dbTypes";
 import { ObjectId } from "mongodb";
@@ -24,7 +24,7 @@ export const postQueryRepository = {
 
     },
 
-    async find(queryReq:  QueryPostModel): Promise < PaginatorModel<PostViewModel> > {      // searches for blogs by filter, returns paginator or null
+    async find(queryReq:  QueryModel): Promise < PaginatorModel<PostViewModel> > {      // searches for blogs by filter, returns paginator or null
         
         const bloqIdSearch = queryReq.blogId ? {blogId: queryReq.blogId} : {}        
         const queryFilter = {...bloqIdSearch}

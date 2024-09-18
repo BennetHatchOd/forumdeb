@@ -9,6 +9,14 @@ import { checkInputValidation } from '../../midlleware/checkInputValidators';
 import { postValidator } from './middleware/postValidator';
 import { paginatorValidator } from '../../midlleware/paginatorValidator';
 
+
+
+
+
+
+
+
+
 export const postsRouter = Router({});
 
 postsRouter.get('/', paginatorValidator, getPostController);

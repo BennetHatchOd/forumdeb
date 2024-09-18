@@ -1,12 +1,12 @@
 import { Response, Request } from "express";
 import {HTTP_STATUSES} from '../../../setting';
-import {PostViewModel, PaginatorModel, QueryBaseModel} from '../../../types';
+import {PostViewModel, PaginatorModel, QueryModel} from '../../../types';
 import { postQueryRepository } from "../repositories/postQueryRepository";
 import { paginator } from "../../../modules/paginator";
 
-export const getPostController = async (req: Request<{},{},{},QueryBaseModel>, res: Response<PaginatorModel<PostViewModel>>) => {
+export const getPostController = async (req: Request<{},{},{},QueryModel>, res: Response<PaginatorModel<PostViewModel>>) => {
 
-    const queryPaginator:  QueryBaseModel ={
+    const queryPaginator:  QueryModel ={
         ...paginator(req.query)
     }
       
