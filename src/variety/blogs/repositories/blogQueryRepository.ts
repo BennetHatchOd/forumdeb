@@ -1,4 +1,4 @@
-import { BlogViewModel, PaginatorModel, QueryBlogModel} from "../../../types";
+import { BlogViewModel, PaginatorModel, QueryModel} from "../../../types";
 import { blogCollection } from "../../../db/db";
 import { BlogDBType } from "../../../db/dbTypes";
 import { ObjectId } from "mongodb";
@@ -22,7 +22,7 @@ export const blogQueryRepository = {
 
     },
   
-    async find(queryReq:  QueryBlogModel): Promise < PaginatorModel<BlogViewModel> > {      
+    async find(queryReq:  QueryModel): Promise < PaginatorModel<BlogViewModel> > {      
         
         const nameSearch = queryReq.searchNameTerm ? {name: {$regex: queryReq.searchNameTerm, $options: 'i'}} : {}    
         const queryFilter = {...nameSearch}
