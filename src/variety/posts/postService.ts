@@ -1,74 +1,76 @@
 import { PostViewModel, PostInputModel } from "../../types";
 import { postRepository } from "./repositories/postRepository";
 import { blogRepository } from "../blogs/repositories/blogRepository";
+import { catchErr } from "../../modules/catchErr";
+import { CodStatus, StatusResult } from "../../interfaces";
 
 export const postService = {
  
-    async create(createItem: PostInputModel): Promise <string | null>{ // creates new post and returns this post 
+    async create(createItem: PostInputModel): Promise <StatusResult<string|null>>{
 
         try{
-            if(!blogRepository.isExist(createItem.blogId))
-                throw `blog with ID: ${createItem.blogId} doesn't exist`;
-            const parentName:  string | null  = await blogRepository.findNameById(createItem.blogId); 
-            if(!parentName)
-                return null;
+            const checkParentBlog = await blogRepository.isExist(createItem.blogId)
+            
+            if(checkParentBlog.codResult != CodStatus.Ok)
+                return checkParentBlog;
+            const parentName = await blogRepository.findNameById(createItem.blogId); 
+            if(!parentName.data)
+                return parentName;
             const newPost: PostViewModel = {
                             ...createItem, 
                             id: '',
-                            blogName: parentName,
+                            blogName: parentName.data,
                             createdAt: new Date().toISOString(),
                         }
             return await postRepository.create(newPost)
         } 
         catch (err){
-            console.log(err)
-            throw(err);
+            return catchErr(err);
         }    
         
     },
     
-       async edit(id: string, editData: PostInputModel): Promise <boolean> {// edits a post by ID, if the post is not found returns false   
-           
-           try{
-                if (! await postRepository.isExist(id))
-                    throw 'post with ID: ${id} don\' exist';
-               if(! await blogRepository.isExist(editData.blogId))
-                   throw ` blogIdD: ${editData.blogId} isn\'t correct`;
-               
-               const parentName: string | null = 
-                       await blogRepository.findNameById(editData.blogId); 
-               if( !parentName)
-                    return false;               
-
+    async edit(id: string, editData: PostInputModel): Promise <StatusResult> {   
+        try{
+            const existResult: StatusResult = await postRepository.isExist(id)
+            if (existResult.codResult != CodStatus.Ok )
+                return existResult;
+                     
+            const checkParentBlog = await blogRepository.isExist(editData.blogId)
+            if(checkParentBlog.codResult != CodStatus.Ok)
+                return checkParentBlog;
+            const parentName = await blogRepository.findNameById(editData.blogId); 
+            if(!parentName.data)
+                return parentName as StatusResult;
+            
                return await postRepository.edit(id, editData, {blogName: parentName});
            } 
            catch (err){
-               console.log(err)
-               throw(err);
+            return catchErr(err);
             }
        },
     
-    async delete(id: string): Promise < boolean > { // deletes a post by Id, returns true if the post existed
+       async delete(id: string): Promise<StatusResult > {     
         try{
-            if (! await postRepository.isExist(id))
-                return false;    
+            const existResult: StatusResult = await postRepository.isExist(id)
+
+            if (existResult.codResult != CodStatus.Ok )
+                return existResult;
 
             return await postRepository.delete(id);
         } 
         catch (err){
-            console.log(err)
-            throw(err);
+            return catchErr(err);
         }
     },
    
 
-    async clear(): Promise < boolean > {// deletes all posts from base
+    async clear(): Promise<StatusResult> {
         try{    
             return await postRepository.clear()
         } 
         catch (err){
-            console.log(err)
-            throw(err);
+            return catchErr(err);
         }
     },
 }

@@ -8,10 +8,10 @@ export function paginator(input: QueryModel): QueryModel {
         sortDirection: input.sortDirection ? input.sortDirection : 'desc',
         pageNumber: input.pageNumber ? +input.pageNumber : 1,
         pageSize: input.pageSize ? +input.pageSize : 10,
-        searchNameTerm: input.searchNameTerm ? input.searchNameTerm : null,
-        searchEmailTerm: input.searchEmailTerm ? input.searchEmailTerm : null,
-        searchLoginTerm: input.searchLoginTerm ? input.searchLoginTerm : null,
-        blogId: input.blogId,
+        // searchNameTerm: input.searchNameTerm ? input.searchNameTerm : null,
+        // searchEmailTerm: input.searchEmailTerm ? input.searchEmailTerm : null,
+        // searchLoginTerm: input.searchLoginTerm ? input.searchLoginTerm : null,
+        // blogId: input.blogId,
     }
 }
 

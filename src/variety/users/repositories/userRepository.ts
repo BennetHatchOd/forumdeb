@@ -2,83 +2,96 @@ import { UserInnerModel } from "../../../types";
 import { userCollection } from "../../../db/db";
 import { UserDBType } from "../../../db/dbTypes";
 import { DeleteResult, InsertOneResult, ObjectId } from "mongodb";
+import { CodStatus, StatusResult } from "../../../interfaces";
+import { catchErr } from "../../../modules/catchErr";
 
 export const userRepository = {
   
-    async checkExist(loginOrEmail: string): Promise < null | string > {          
+    async getPasswordByLoginEmail(loginOrEmail: string): Promise<StatusResult<string|null>> {          
         try{
-            const checkedUser: UserDBType | null = await userCollection.findOne({$or: [{login: loginOrEmail},{email: loginOrEmail}]})           
+            const checkedUser: UserDBType|null = await userCollection.findOne({$or: [{login: loginOrEmail},{email: loginOrEmail}]})           
             
-            return checkedUser === null ? null : checkedUser.password;
+            return checkedUser === null 
+                ? {codResult: CodStatus.NotFound} 
+                : {codResult: CodStatus.Ok, data: checkedUser.password};
         } 
         catch (err){      
-            console.log(err)
-            throw(err);
+            return catchErr(err);
         }
     },
 
-    async isExist(id: string): Promise < boolean > {          
+    async isExist(id: string): Promise<StatusResult>{     
+        
         try{
-            if(!ObjectId.isValid(id))
-                return false;        
+            if(!ObjectId.isValid(id))    
+                return {codResult : CodStatus.NotFound};
+
             const exist: number = await userCollection.countDocuments({_id: new ObjectId(id)})           
-             return exist > 0 ? true : false;
+            
+            return exist > 0  
+                  ? {codResult: CodStatus.Ok} 
+                  : {codResult: CodStatus.NotFound};
         } 
-        catch (err){      
-            console.log(err)
-            throw(err);
+        catch (err){
+            return catchErr(err);
         }
     },
  
-    async checkUniq(loginCheck: string, emailCheck: string): Promise < Array<string >> {
+    async checkUniq(loginCheck: string, emailCheck: string): Promise<StatusResult<string[]|null>> {
         try{
-            const existEmail: number = await userCollection.countDocuments({ email: emailCheck })
-            const existLogin: number = await userCollection.countDocuments({ login: loginCheck })
+            const existEmail = await userCollection.countDocuments({ email: emailCheck })
+            const existLogin = await userCollection.countDocuments({ login: loginCheck })
 
-            let answer: Array<string> = [] 
+            let arrayErrors: Array<string> = [] 
             if(existEmail > 0) 
-                answer.push('email') 
+                arrayErrors.push('email') 
             if(existLogin > 0) 
-                answer.push('login') 
-            return answer;
+                arrayErrors.push('login')
+
+            return arrayErrors.length == 0
+                ?  {codResult: CodStatus.Ok}
+                :  {codResult: CodStatus.BadRequest, data: arrayErrors};
             }
-        catch (err){      
-            console.log(err)
-            throw(err);
+        catch (err){  
+            throw err;
         }
     },
    
-    async create(createItem: UserInnerModel): Promise < string | null>{  
+    async create(createItem: UserInnerModel): Promise <StatusResult<string|null>>{  
         try{
             const answerInsert: InsertOneResult = await userCollection.insertOne(this.mapViewToDb(createItem));
-            return answerInsert.insertedId ? answerInsert.insertedId.toString() : null;
+            return answerInsert.acknowledged  
+              ? {codResult: CodStatus.Created, data: answerInsert.insertedId.toString()}  
+              : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
         } 
         catch (err){
-            console.log(err)
-            throw(err);
+            return catchErr(err);
         }
     },
 
     
-    async delete(id: string): Promise < boolean > {      
+    async delete(id: string):  Promise <StatusResult>{      
         try{
             const answerDelete: DeleteResult = await userCollection.deleteOne({_id: new ObjectId(id)})
 
-            return answerDelete.deletedCount != 0 ? true : false;
+            return answerDelete.deletedCount == 1 ?
+                    {codResult: CodStatus.NoContent} : 
+                    {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
         } 
         catch (err){
-            console.log(err)
-            throw(err);
+            return catchErr(err);
         }
     },
 
-    async clear(): Promise < boolean > {
+    async clear(): Promise <StatusResult> {
         try{
             await userCollection.deleteMany()
-            return await userCollection.countDocuments({}) == 0 ? true : false;
-        } catch(err){
-            console.log(err)
-            throw(err);
+            return await userCollection.countDocuments({}) == 0 ?
+                {codResult: CodStatus.NoContent } : 
+                {codResult: CodStatus.Error};
+        } 
+        catch(err){
+            return catchErr(err);
         }
     },
 
@@ -94,4 +107,6 @@ export const userRepository = {
         }
                    
         }
+
+
 }

@@ -105,6 +105,6 @@
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
-  "include": ["src/**/*", "testingEP/deleteAllController.ts"],
+  "include": ["src/**/*", "testingEP/deleteAllController.ts", "oldControllers/getBlogByIdController.ts", "oldControllers/getBlogController.ts", "oldControllers/deleteBlogByIdController.ts", "oldControllers/getPostToBlogController.ts", "oldControllers/postBlogController.ts", "oldControllers/postPostToBlogController.ts", "oldControllers/putBlogController.ts", "oldControllers/deletePostByIdController.ts", "oldControllers/getPostByIdController.ts", "oldControllers/getPostController.ts", "oldControllers/postPostController.ts", "oldControllers/putPostController.ts", "oldControllers/deleteUserByIdController.ts", "oldControllers/getUserController.ts", "oldControllers/postUserController.ts"],
   "exclude": ["node_modules", "**/*.test.ts"]
 }

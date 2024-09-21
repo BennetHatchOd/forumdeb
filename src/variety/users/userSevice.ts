@@ -1,15 +1,16 @@
-import { UserInputModel, APIErrorResult, FieldError, UserInnerModel, LoginInputModel } from "../../types";
+import { CodStatus, StatusResult } from "../../interfaces";
+import { catchErr } from "../../modules/catchErr";
+import { cryptoHash } from "../../modules/cryptoHash";
+import { UserInputModel, APIErrorResult, FieldError, UserInnerModel} from "../../types";
 import { userRepository } from "./repositories/userRepository"; 
 import bcrypt from "bcrypt"
 
 export const userService = {
 
  
-    async create(createItem: UserInputModel): Promise < string | null>{      
-
+    async create(createItem: UserInputModel): Promise<StatusResult<string|null>>{      
         try{            
-            const salt: string = bcrypt.genSaltSync(10);
-            const hash: string = bcrypt.hashSync(createItem.password, salt)
+            const hash: string = await cryptoHash.createHash(createItem.password)
             const newUser: UserInnerModel = {
                                     login: createItem.login,
                                     email: createItem.email,
@@ -20,30 +21,30 @@ export const userService = {
             return await userRepository.create(newUser)
         } 
         catch (err){
-            console.log(err)
-            return null;
+            return catchErr(err);
         }
     },
 
-    async authUser(loginOrEmail: string, password: string): Promise < boolean > {      
+    async authUser(loginOrEmail: string, password: string): Promise<StatusResult> {      
         try{
-            const hash: string | null = await userRepository.checkExist(loginOrEmail)
-            if(hash === null) return false;
+            const foundUser: StatusResult<string|null> = await userRepository.getPasswordByLoginEmail(loginOrEmail)
+            if(foundUser.codResult != CodStatus.Ok) return foundUser as StatusResult;
             
-            return await bcrypt.compare(password, hash)
-
+            return await cryptoHash.checkHash(password, foundUser.data as string)
+            ? {codResult: CodStatus.Ok}
+            : {codResult: CodStatus.NotAuth}
         } 
         catch (err){
-            console.log(err)
-            throw(err);
+            return catchErr(err);
         }
     },
 
-    isValid(loginOrEmail: string, password: string): boolean | APIErrorResult {          
+    isValid(loginOrEmail: string, password: string): boolean|APIErrorResult {          
         const answerError: APIErrorResult = {
-            errorsMessages: []}
+            errorsMessages: []
+        }
         const loginTemplate = /^[a-zA-Z0-9_-]*$/
-        const emailTemplate = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+        const emailTemplate = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/ 
 
         if(!emailTemplate.test(loginOrEmail) && 
             !(loginTemplate.test(loginOrEmail) && loginOrEmail.length > 2 && loginOrEmail.length < 11))
@@ -58,49 +59,50 @@ export const userService = {
         return answerError;
     },
 
-
-    async checkUniq(login: string, email: string): Promise<APIErrorResult| null> { 
+    async checkUniq(login: string, email: string): Promise<StatusResult<APIErrorResult| null>> { 
 
         try{            
-            const checkResult: Array<string > = await userRepository.checkUniq(login, email)
-            if(checkResult.length == 0)
-                return null;
+            const checkResult = await userRepository.checkUniq(login, email)
             
-            let errorsMessages: Array<FieldError> = checkResult.map(s => {
-                                                                        return {message: `${s} should be unique`,
+            if (checkResult.data){
+                let errorsMessages: Array<FieldError> = checkResult.data.map(s => {
+                                                                            return {
+                                                                                message: `${s} should be unique`,
                                                                                 field: s}
-                                                                        })
-
-            return {
-                errorsMessages: errorsMessages
-                }
+                                                                            })
+                return{  
+                    codResult: CodStatus.BadRequest,
+                    data: {
+                        errorsMessages: errorsMessages
+                    } 
+                }    
+            }
+            return checkResult as StatusResult
         } 
         catch (err){
-            console.log(err)
-            throw(err);
+            return catchErr(err);
         }
     },
  
-   async delete(id: string): Promise < boolean > {     // deletes a user by Id, returns true if the user existed    
+   async delete(id: string): Promise<StatusResult> {     
         try{
-            if (! await userRepository.isExist(id))
-                return false;    
+            const isExistUser = await userRepository.isExist(id);
+            if (isExistUser.codResult != CodStatus.Ok)
+                return isExistUser;    
 
             return await userRepository.delete(id);
         } 
         catch (err){
-            console.log(err)
-            throw(err);
+            return catchErr(err);
         }
     },
     
-    async clear(): Promise < boolean > {// deletes all users from base
+    async clear(): Promise < StatusResult > {
         try{    
             return await userRepository.clear()
         } 
         catch (err){
-            console.log(err)
-            throw(err);
+            return catchErr(err);
         }
     },
 

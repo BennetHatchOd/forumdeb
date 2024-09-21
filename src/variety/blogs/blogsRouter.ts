@@ -1,25 +1,19 @@
 import {Router} from 'express';
-import { getBlogController } from './controllers/getBlogController';
-import { getBlogByIdController } from './controllers/getBlogByIdController';
-import { deleteBlogByIdController } from './controllers/deleteBlogByIdController';
-import { putBlogController } from './controllers/putBlogController';
-import { postBlogController } from './controllers/postBlogController';
+import { blogControllers } from './controllers/blogControllers';
 import { blogValidator } from './middleware/blogValidator';
 import { authorizator } from '../../midlleware/authorizator';
 import {checkInputValidation} from '../../midlleware/checkInputValidators'
-import {postPostToBlogController} from './controllers/postPostToBlogController';
-import { getPostToBlogController } from './controllers/getPostToBlogController';
 import { paginatorValidator } from '../../midlleware/paginatorValidator';
 import { postForBlogValidator } from '../posts/middleware/postValidator';
 
 export const blogsRouter = Router({});
 
-blogsRouter.get('/', paginatorValidator, getBlogController);
-blogsRouter.get('/:id', getBlogByIdController);
-blogsRouter.delete('/:id', authorizator, deleteBlogByIdController);
-blogsRouter.put('/:id', authorizator, blogValidator, checkInputValidation, putBlogController);
-blogsRouter.post('/', authorizator, blogValidator, checkInputValidation, postBlogController);
+blogsRouter.get('/',                      paginatorValidator, checkInputValidation,     blogControllers.getBlog);
+blogsRouter.get('/:id',                                                                 blogControllers.getBlogById);
+blogsRouter.delete('/:id',  authorizator,                                               blogControllers.deleteBlogById);
+blogsRouter.put('/:id',     authorizator, blogValidator, checkInputValidation,          blogControllers.putBlog);
+blogsRouter.post('/',       authorizator, blogValidator, checkInputValidation,          blogControllers.postBlog);
 
-blogsRouter.get('/:id/posts', paginatorValidator, getPostToBlogController);
-blogsRouter.post('/:id/posts', authorizator, postForBlogValidator, checkInputValidation,  postPostToBlogController);
+blogsRouter.get('/:id/posts',              paginatorValidator,checkInputValidation,     blogControllers.getPostByBlog);
+blogsRouter.post('/:id/posts', authorizator, postForBlogValidator, checkInputValidation, blogControllers.postPostByBlog);
   

@@ -13,7 +13,9 @@ export const blogQueryRepository = {
             return null;
         try{                   
             const searchItem: BlogDBType | null = await blogCollection.findOne({_id: new ObjectId(id)})           
-            return searchItem ? this.mapDbToOutput(searchItem) : null;
+            return searchItem 
+                 ? this.mapDbToOutput(searchItem) 
+                 : null;
         } 
         catch (err){      
             console.log(err)
