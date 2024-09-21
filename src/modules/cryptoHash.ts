@@ -18,10 +18,11 @@ export const cryptoHash = {
 
 
     async checkHash(password: string, hash: string){
-    try{    
-        return await bcrypt.compare(password, hash)
-    }
-    catch(err){
-        throw err;           
+        try{    
+            return await bcrypt.compare(password, hash)
+        }
+        catch(err){
+            throw err;           
+        }
     }
 }

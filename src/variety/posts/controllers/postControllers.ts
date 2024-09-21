@@ -52,7 +52,7 @@ export const postControllers = {
     },
 
 
-    async putPost = async (req: Request<{id: string},{},PostInputModel>, res: Response<APIErrorResult>){
+    async putPost(req: Request<{id: string},{},PostInputModel>, res: Response<APIErrorResult>){
         
         const answer: StatusResult  = await postService.edit(req.params.id, req.body)  
         res.sendStatus(answer.codResult);
