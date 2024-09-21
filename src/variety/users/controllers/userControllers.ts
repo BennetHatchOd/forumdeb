@@ -6,9 +6,9 @@ import { userQueryRepository } from "../repositories/userQueryRepository"
 import { userService } from "../userSevice"
 import { CodStatus, StatusResult } from "../../../interfaces";
 
-export const postControllers = {   
+export const userControllers = {   
 
-    async getUserController(req: Request<{},{},{},QueryModel>, res: Response<PaginatorModel<UserViewModel>>){
+    async getUser(req: Request<{},{},{},QueryModel>, res: Response<PaginatorModel<UserViewModel>>){
         try{
             const queryPaginator:  QueryModel = paginator(req.query)
         

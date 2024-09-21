@@ -1,16 +1,14 @@
 import {Router} from 'express';
-import { getUserController } from '../../../oldControllers/getUserController';
-import { deleteUserByIdController } from '../../../oldControllers/deleteUserByIdController';
-import { postUserController } from '../../../oldControllers/postUserController';
 import { authorizator } from '../../midlleware/authorizator';
 import {checkInputValidation} from '../../midlleware/checkInputValidators'
 import { paginatorValidator } from '../../midlleware/paginatorValidator';
 import { userValidator } from './middleware/userValidator';
+import { userControllers } from './controllers/userControllers';
 
 export const usersRouter = Router({});
 
-usersRouter.get('/', authorizator, paginatorValidator, checkInputValidation, getUserController);
-usersRouter.delete('/:id', authorizator, deleteUserByIdController);
-usersRouter.post('/', authorizator, userValidator, checkInputValidation, postUserController);
+usersRouter.get('/', authorizator, paginatorValidator, checkInputValidation, userControllers.getUser);
+usersRouter.delete('/:id', authorizator, userControllers.deleteUserById);
+usersRouter.post('/', authorizator, userValidator, checkInputValidation, userControllers.postUser);
 
   
