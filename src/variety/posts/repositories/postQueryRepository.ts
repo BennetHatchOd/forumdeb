@@ -28,7 +28,7 @@ export const postQueryRepository = {
 
     async find(queryReq:  QueryModel): Promise < PaginatorModel<PostViewModel> > {      // searches for blogs by filter, returns paginator or null
         
-        const bloqIdSearch = queryReq.blogId ? {blogId: queryReq.blogId} : {}        
+        const bloqIdSearch = queryReq.blogId ? {blogId: queryReq.blogId} : {}   
         const queryFilter = {...bloqIdSearch}
 
         try{           

@@ -67,7 +67,7 @@ export const blogControllers ={
 
     async getPostByBlog(req: Request<{id: string},{},{},QueryModel>, res: Response <PaginatorModel<PostViewModel>|{}> ){
    
-      const queryPaginator: QueryModel = paginator(req.query)
+      const queryPaginator: QueryModel = paginator({...req.query, blogId: req.params.id})
       try{
              const postPaginator: PaginatorModel<PostViewModel> = await postQueryRepository.find(queryPaginator)
 
