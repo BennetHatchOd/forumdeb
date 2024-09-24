@@ -3,11 +3,12 @@ import { Collection } from "mongodb";
 
 
 export function paginator(input: QueryModel): QueryModel {
+        
     return {
         sortBy: input.sortBy ? input.sortBy : 'createdAt',
         sortDirection: input.sortDirection ? input.sortDirection : 'desc',
-        pageNumber: input.pageNumber ? +input.pageNumber : 1,
-        pageSize: input.pageSize ? +input.pageSize : 10,
+        pageNumber: pageValidator(input.pageNumber),
+        pageSize: pageSizeValidator(input.pageSize),
         // searchNameTerm: input.searchNameTerm ? input.searchNameTerm : null,
         // searchEmailTerm: input.searchEmailTerm ? input.searchEmailTerm : null,
         // searchLoginTerm: input.searchLoginTerm ? input.searchLoginTerm : null,
@@ -23,33 +24,19 @@ export const emptyPaginator = {
     items: []
 }
 
-// export const paginatorQueryRepositories = (collection:Collection, ) => {
+const pageValidator = (page: number): number =>{
+   
+    if(page < 1 || (Math.floor(page) - page != 0))
+        return 1;
 
-// try{           
-//     const totalCount: number= await postCollection.countDocuments(queryFilter)   
-//     if (totalCount == 0)
-//         return emptyPaginator;
-           
-    
-//     const searchItem: Array<PostDBType> = 
-//         await postCollection.find(queryFilter)
-//                             .limit(queryReq.pageSize)
-//                             .skip((queryReq.pageNumber - 1) * queryReq.pageSize)
-//                             .sort(queryReq.sortBy, queryReq.sortDirection)
-//                             .toArray()
+    return page;
 
-//     const pagesCount =  Math.ceil(totalCount / queryReq.pageSize) 
-//     return {
-//             pagesCount: Math.ceil(totalCount / queryReq.pageSize),
-//             page: queryReq.pageNumber > pagesCount ? pagesCount : queryReq.pageNumber,
-//             pageSize: queryReq.pageSize,
-//             totalCount: totalCount,
-//             items: searchItem.map(s => this.mapDbToOutput(s))
-//         } 
-// } 
-// catch (err){      
-//     console.log(err)
-//     return emptyPaginator;
+}
+const pageSizeValidator = (size: number): number =>{
+   
+    if(size < 1 || (Math.floor(size) - size != 0) || size > 100)
+        return 10;
 
-// }
-// }
+    return size;
+
+}
