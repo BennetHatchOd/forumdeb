@@ -20,9 +20,9 @@ app.use(jsonBodyMiddleware);
 
 
 app.get(URL_PATH.base, (req,res) => {   
-    res.status(200).json({version: '2.4 '});
+    res.status(200).json({version: '1.1 '});
     
-})
+}) 
 
 app.use(URL_PATH.blogs, blogsRouter);
 app.use(URL_PATH.posts, postsRouter);
