@@ -30,33 +30,28 @@ export const postQueryRepository = {
         
         const bloqIdSearch = queryReq.blogId ? {blogId: queryReq.blogId} : {}   
         const queryFilter = {...bloqIdSearch}
+        
+        const totalCount: number= await postCollection.countDocuments(queryFilter)   
+        if (totalCount == 0)
+            return emptyPaginator;
+                
+        const searchItem: Array<PostDBType> = 
+            await postCollection.find(queryFilter)
+                                .limit(queryReq.pageSize)
+                                .skip((queryReq.pageNumber - 1) * queryReq.pageSize)
+                                .sort(queryReq.sortBy, queryReq.sortDirection)
+                                .toArray()
 
-        try{           
-            const totalCount: number= await postCollection.countDocuments(queryFilter)   
-            if (totalCount == 0)
-                return emptyPaginator;
-                   
-            const searchItem: Array<PostDBType> = 
-                await postCollection.find(queryFilter)
-                                    .limit(queryReq.pageSize)
-                                    .skip((queryReq.pageNumber - 1) * queryReq.pageSize)
-                                    .sort(queryReq.sortBy, queryReq.sortDirection)
-                                    .toArray()
+        const pagesCount =  Math.ceil(totalCount / queryReq.pageSize) 
+        return {
+                pagesCount: pagesCount,
+                page: queryReq.pageNumber > pagesCount ? pagesCount : queryReq.pageNumber,
+                pageSize: queryReq.pageSize,
+                totalCount: totalCount,
+                items: searchItem.map(s => this.mapDbToOutput(s))
+            } 
+ 
 
-            const pagesCount =  Math.ceil(totalCount / queryReq.pageSize) 
-            return {
-                    pagesCount: pagesCount,
-                    page: queryReq.pageNumber > pagesCount ? pagesCount : queryReq.pageNumber,
-                    pageSize: queryReq.pageSize,
-                    totalCount: totalCount,
-                    items: searchItem.map(s => this.mapDbToOutput(s))
-                } 
-        } 
-        catch (err){      
-            console.log(err)
-            throw(err);
-
-        }
     },
 
     mapDbToOutput(item: PostDBType): PostViewModel {

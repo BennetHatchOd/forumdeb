@@ -13,7 +13,7 @@ export const postService = {
             
             if(checkParentBlog.codResult != CodStatus.Ok)
                 return checkParentBlog;
-            const parentName = await blogRepository.findNameById(createItem.blogId); 
+            const parentName = await blogRepository.findNameById(createItem.blogId)
             if(!parentName.data)
                 return parentName;
             const newPost: PostViewModel = {
