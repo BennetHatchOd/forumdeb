@@ -7,7 +7,7 @@ export const db: Db = client.db(SETTING.DB_NAME);
  
 export const blogCollection: Collection<BlogDBType> = db.collection<BlogDBType>(SETTING.BLOG_COLLECTION_NAME)
 export const postCollection: Collection<PostDBType> = db.collection<PostDBType>(SETTING.POST_COLLECTION_NAME)
-export const userCollection: Collection<UserDBType> = db.collection<UserDBType>(SETTING.POST_COLLECTION_NAME)
+export const userCollection: Collection<UserDBType> = db.collection<UserDBType>(SETTING.USER_COLLECTION_NAME)
  
 
 export const connectToDb = async (): Promise<boolean> => {
