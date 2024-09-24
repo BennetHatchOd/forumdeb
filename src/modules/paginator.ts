@@ -9,10 +9,10 @@ export function paginator(input: QueryModel): QueryModel {
         sortDirection: input.sortDirection ? input.sortDirection : 'desc',
         pageNumber: pageValidator(input.pageNumber),
         pageSize: pageSizeValidator(input.pageSize),
-        // searchNameTerm: input.searchNameTerm ? input.searchNameTerm : null,
-        // searchEmailTerm: input.searchEmailTerm ? input.searchEmailTerm : null,
-        // searchLoginTerm: input.searchLoginTerm ? input.searchLoginTerm : null,
-        // blogId: input.blogId,
+        searchNameTerm: input.searchNameTerm,// ? input.searchNameTerm : null,
+        searchEmailTerm: input.searchEmailTerm,// ? input.searchEmailTerm : null,
+        searchLoginTerm: input.searchLoginTerm,// ? input.searchLoginTerm : null,
+        blogId: input.blogId // ? ,
     }
 }
 
