@@ -3,7 +3,7 @@ import { Collection } from "mongodb";
 
 
 export function paginator(input: QueryModel): QueryModel {
-      
+    
     return {
         sortBy: input.sortBy ? input.sortBy : 'createdAt',
         sortDirection: input.sortDirection ? input.sortDirection : 'desc',

@@ -32,6 +32,7 @@ export const postQueryRepository = {
         const queryFilter = {...bloqIdSearch}
         
         const totalCount: number= await postCollection.countDocuments(queryFilter)   
+        
         if (totalCount == 0)
             return emptyPaginator;
                 
