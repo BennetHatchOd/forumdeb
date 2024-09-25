@@ -16,7 +16,7 @@ export const postRepository = {
             const exist: number = await postCollection.countDocuments({_id: new ObjectId(id)})           
             
             return exist > 0  
-                  ? {codResult: CodStatus.Created} 
+                  ? {codResult: CodStatus.Ok} 
                   : {codResult: CodStatus.NotFound};
         } 
         catch (err){
