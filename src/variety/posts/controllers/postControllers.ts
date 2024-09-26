@@ -16,6 +16,7 @@ export const postControllers = {
             res.status(HTTP_STATUSES.OK_200).json(blogPaginator)
         }
         catch(err){
+            console.log(err)
             res.sendStatus(HTTP_STATUSES.ERROR_500);
         }
     },
@@ -32,13 +33,14 @@ export const postControllers = {
             res.status(HTTP_STATUSES.OK_200).json(foundPost);
         }
         catch(err){
+            console.log(err)
             res.sendStatus(HTTP_STATUSES.ERROR_500);
         }
     },
     
     async postPost(req: Request<{},{},PostInputModel>, res: Response){
         try{
-            const answer: StatusResult<string | null>  = await postService.create(req.body); 
+            const answer: StatusResult<string | undefined>  = await postService.create(req.body); 
             if(answer.codResult == CodStatus.Created){ 
                 const blog: PostViewModel | null = await postQueryRepository.findById(answer.data as string)
                 res.status(HTTP_STATUSES.CREATED_201).json(blog)
@@ -47,22 +49,32 @@ export const postControllers = {
             res.status(HTTP_STATUSES.ERROR_500).json({})
         }
         catch(err){
+            console.log(err)
             res.status(HTTP_STATUSES.ERROR_500).json({})
         }
     },
 
 
-    async putPost(req: Request<{id: string},{},PostInputModel>, res: Response<APIErrorResult>){
-         
-        const answer: StatusResult  = await postService.edit(req.params.id, req.body)  
-        res.sendStatus(answer.codResult);
-     
+    async putPost(req: Request<{id: string},{},PostInputModel>, res: Response<APIErrorResult|{}>){
+        try{     
+            const answer: StatusResult  = await postService.edit(req.params.id, req.body)  
+            res.sendStatus(answer.codResult);
+        }
+        catch(err){
+            console.log(err)
+            res.status(HTTP_STATUSES.ERROR_500).json({})
+        }
     },
 
     async deletePostById(req: Request<{id: string}>, res: Response) {
-    
-        const answer: StatusResult = (await postService.delete(req.params.id))
-        res.sendStatus(answer.codResult);
+        try{
+            const answer: StatusResult = (await postService.delete(req.params.id))
+            res.sendStatus(answer.codResult);
+        }
+        catch(err){
+            console.log(err)
+            res.sendStatus(HTTP_STATUSES.ERROR_500).json({})
+        }    
     },
 
 

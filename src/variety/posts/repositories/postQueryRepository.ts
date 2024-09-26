@@ -1,32 +1,25 @@
 import { PostViewModel, QueryModel, PaginatorModel} from "../../../types";
 import { blogCollection, postCollection } from "../../../db/db";
 import { PostDBType } from "../../../db/dbTypes";
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 import { emptyPaginator } from "../../../modules/paginator";
 
 export const postQueryRepository = {
 
  
-    async findById(id: string): Promise < PostViewModel | null > {      // searches for a blog by id and returns this blog or null
+    async findById(id: string): Promise < PostViewModel | null > {      
         
         if(!ObjectId.isValid(id))
             return null;
-        try{                   
-            const searchItem: PostDBType | null = 
-                await postCollection.findOne({_id: new ObjectId(id)})
-            
-            return searchItem 
-                 ? this.mapDbToOutput(searchItem) 
-                 : null;
-        } 
-        catch (err){      
-            console.log(err)
-            throw(err);
-        }
-
+        const searchItem: WithId<PostDBType> | null = 
+            await postCollection.findOne({_id: new ObjectId(id)})
+        
+        return searchItem 
+            ? this.mapDbToOutput(searchItem) 
+            : null;
     },
 
-    async find(queryReq:  QueryModel): Promise < PaginatorModel<PostViewModel> > {      // searches for blogs by filter, returns paginator or null
+    async find(queryReq:  QueryModel): Promise < PaginatorModel<PostViewModel> > { 
         
         const bloqIdSearch = queryReq.blogId ? {blogId: queryReq.blogId} : {}   
         const queryFilter = {...bloqIdSearch}
@@ -36,7 +29,7 @@ export const postQueryRepository = {
         if (totalCount == 0)
             return emptyPaginator;
                 
-        const searchItem: Array<PostDBType> = 
+        const searchItem: Array<WithId<PostDBType>> = 
             await postCollection.find(queryFilter)
                                 .limit(queryReq.pageSize)
                                 .skip((queryReq.pageNumber - 1) * queryReq.pageSize)
@@ -55,10 +48,17 @@ export const postQueryRepository = {
 
     },
 
-    mapDbToOutput(item: PostDBType): PostViewModel {
+    mapDbToOutput(item: WithId<PostDBType>): PostViewModel {
         
-        const {_id, ...rest} = item
-        return {...rest,   id: _id.toString()}       
+        return { 
+            id: item._id.toString(),
+            title:	item.title,
+            shortDescription: item.shortDescription,
+            content: item.content,
+            createdAt: item.createdAt,
+            blogId:	item.blogId,
+            blogName:	item.blogName
+        }       
     }
  
 }
