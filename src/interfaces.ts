@@ -8,9 +8,9 @@ export enum CodStatus {
     Error = 500,
 }
 
-export interface StatusResult <T = null> {
+export interface StatusResult <T = undefined> {
     codResult: CodStatus;
     message?: string,  
     data?: T;  
-    error?: Error;
-  }
+}
+//error?: Error;
