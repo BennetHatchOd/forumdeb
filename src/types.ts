@@ -18,7 +18,7 @@ export type BlogInputModel = {
 
 
 export type BlogViewModel = {
-    id:	string,
+    id: string,
     name: string,
     description: string,
     createdAt: string,
@@ -75,7 +75,7 @@ export type UserViewModel = {
     createdAt:	string
 }
 
-export type UserInnerModel = UserViewModel & {
+export type UserPasswordModel = UserViewModel & {
     password: string,
 }
 
@@ -84,9 +84,9 @@ export type QueryModel = {
     sortDirection: SortDirection,
     pageNumber: number,
     pageSize: number,
-    blogId?: string | null,
-    searchNameTerm?: string | null,
-    searchEmailTerm?: string | null,
-    searchLoginTerm?: string | null,
+    blogId?: string,
+    searchNameTerm?: string,
+    searchEmailTerm?: string,
+    searchLoginTerm?: string,
 }
 
