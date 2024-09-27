@@ -1,174 +1,169 @@
-import { BlogInputModel, BlogViewModel, PostInputModel } from "../../src/types"
-import request from "supertest";
-
+import {APIErrorResult, BlogInputModel, BlogViewModel, FieldError, QueryModel} from '../../src/types'
+import {HTTP_STATUSES, URL_PATH} from '../../src/setting'
 import { app } from "../../src/app";
-import { URL_PATH, HTTP_STATUSES } from "../../src/setting";
+import request from "supertest";
+import { SortDirection } from 'mongodb';
 
-class BlogTests {
-    private baseUrl: string;
+export class BlogEndPoint{
 
-    constructor() {
-        //this.baseUrl = '/users'; // Базовый URL для всех запросов к эндпоинту пользователей
+    private blogCorrect: Array<BlogInputModel> = []
+    private blogView: Array<BlogViewModel> = []
+    private blogIncorrect: Array<BlogInputModel>
+    private blogErrors: Array<APIErrorResult>
+    private errorName: FieldError
+    private errorDescription: FieldError
+    private errorWeb: FieldError
+    private Auth: string
+    AuthFlag: boolean
+
+
+    constructor(){
+
+        for(let i = 0; i < 10; i++){
+            this.blogCorrect[i]= {
+                name: 'name' + i,                   
+                description: 'string',            
+                websiteUrl:	'https://one.two.com'         
+            }
+        }
+
+        this.blogIncorrect = [{
+            name: "length16123456789",
+            description: "0123",
+            websiteUrl: "ttps://google123456789012345678901234567890.com"
+            },
+        {name: 'badBlog',                   
+            description: '',            
+            websiteUrl:	'http://one.two.com'         
+            },
+        {name: "",
+            description: "0123",
+            websiteUrl: "https://length101googlecom.vfkgjfndjfnvg.gmnfkdlkm.fmnvkkmkm.lekmnjnnnnnnlek.lekmkmkmemkmekmekmek.ekm"
+        }]
+
+        this.errorName = {
+            "message": expect.any(String),
+            "field": "name"
+        }
+        this.errorDescription = {
+            "message": expect.any(String),
+            "field": "name"
+        }    
+        this.errorWeb = {
+            "message": expect.any(String),
+            "field": "name"
+        }
+        this.blogErrors = [{
+            "errorsMessages": [this.errorName, this.errorWeb ]
+        },
+        { "errorsMessages": [this.errorDescription, this.errorWeb ]
+        },
+        { "errorsMessages": [this.errorName, this.errorWeb ]
+        }]
+
+        this.onAuthorization()
     }
 
-    // async testGetAllUsers() {
-    //     const response = await request(app).get(this.baseUrl);
-    //     expect(response.status).toBe(200);
-    //     expect(Array.isArray(response.body)).toBe(true); // Проверяем, что возвращается массив
-    //     expect(response.body.length).toBeGreaterThan(0); // Проверяем, что есть хотя бы один пользователь
-    // }
-
-    async testCreateVarienry(reqNumber: number, resNumber: number, auth: boolean = true) {
-        
-        const AuthorizationValue = auth ? this.Authorization.value : this.Authorization.bad
-
+    async createItem(i: number = 0){
         let createdResponse = await 
                 request(app)
                 .post(URL_PATH.blogs)
-                .set('"Authorization"', AuthorizationValue)
-                .send(this.blogInput[reqNumber])
+                .set("Authorization", this.Auth)
+                .send(this.blogCorrect[i])
                 .expect(HTTP_STATUSES.CREATED_201);
 
-        this.createdItem[resNumber] = createdResponse.body;
+        let createdItem = createdResponse.body;
+        this.blogView.push({...createdItem})
 
-        expect(this.createdItem[resNumber]).toEqual({
+        expect(createdItem).toEqual({
             id: expect.any(String),
-            name: this.blogInput[reqNumber].name,
-            description: this.blogInput[reqNumber].description,
-            websiteUrl: this.blogInput[reqNumber].websiteUrl,
+            name: this.blogCorrect[i].name,
+            description: this.blogCorrect[i].description,
+            websiteUrl: this.blogCorrect[i].websiteUrl,
             createdAt: expect.any(String),
             isMembership: false
         })
+
+    }
+    async createItemNoAuth(i: number = 0){
+        this.offAuthorization
+        await request(app)
+            .post(URL_PATH.blogs)
+            .set("Authorization", this.Auth)
+            .send(this.blogCorrect[i])
+            .expect(HTTP_STATUSES.NO_AUTHOR_401);
+        this.onAuthorization
+
+    }
+    async createBADblog(i:number = 0){
+        let createdResponse = await 
+        request(app)
+        .post(URL_PATH.blogs)
+        .set("Authorization", this.Auth)
+        .send(this.blogCorrect[i])
+        .expect(HTTP_STATUSES.BAD_REQUEST_400);
+
+        let notCreatedError = createdResponse.body;
+
+        expect(notCreatedError).toEqual(this.blogErrors[i]        )
     }
 
+    async getIDblog(numberInArray: number = 0){
+        let foundResponse = await 
+                request(app)
+                .get(`${URL_PATH.blogs}/${this.blogView[numberInArray].id}`)
+                .set("Authorization", this.Auth)
+                .expect(HTTP_STATUSES.OK_200);
 
-    async notCreateVarienty(reqNumber: number, resNumber: number, auth: boolean = true) {
-        
-        const AuthorizationValue = auth ? this.Authorization.value : this.Authorization.bad
+        let foundItem = foundResponse.body;
+        this.blogView.push({...foundItem})
 
-        let res = await request(app)
-                        .post(URL_PATH.blogs)
-                        .set('"Authorization"', AuthorizationValue)
-                        .send(this.blogInput[reqNumber])
-                        .expect(HTTP_STATUSES.CREATED_201);
-
-        
-
-        expect(res.body).toEqual({
-            "errorsMessages": [
-                {
-                "message": expect.any(String),
-                "field": "name"
-                },
-                {
-                "message": expect.any(String),
-                "field": "websiteUrl"
-                },
-            ]
-            })
+        expect(foundItem).toEqual(this.blogView[numberInArray])
     }
-
-
-    // async testGetUserById(userId: string) {
-    //     const response = await request(app).get(${this.baseUrl}/${userId});
-    //     expect(response.status).toBe(200);
-    //     expect(response.body).toHaveProperty("name");
-    //     expect(response.body).toHaveProperty("email");
-    // }
-
-
-
-
-    private Authorization = {
-        value: "Basic YWRtaW46cXdlcnR5",
-        bad: "Df fef"
-    }
-
-    private createdItem: Array<BlogViewModel>
-    
-    
-    
-    
-    private blogInput: Array<BlogInputModel> = [{
-        name: "The mistake",
-        description: "blog shouldn't create",
-        websiteUrl: "https://fig.dedf.cfghgfhgc.net/34"},
-        {
-            name: "The first",
-            description: "Copolla",
-            websiteUrl: "https://google.dcfghgfhgc.com"}, 
-            {
-                name: "The second",
-                description: "this blog by Tarantino",
-                websiteUrl: "https://google.dcfghgfhgc.com" },
-                {
-    name: "The thirt",
-    description: "this blog not by Tarantino",
-    websiteUrl: "https://google.com" }, 
+ 
+    async getBlogs(inputQuery: {
+                sortBy?: string,
+                sortDirection?: SortDirection,
+                pageNumber?: number,
+                pageSize?: number,
+                searchNameTerm?: string } = {})
     {
-        name: "Correct",
-        description: "Gaidai",
-        websiteUrl: "https://fig.dedf.cfghgfhgc.net/34"}
-    ]
+        let foundResponse = await request(app)
+                .get(URL_PATH.blogs)
+                .set("Authorization", this.Auth)
+                .query(inputQuery)
+                .expect(HTTP_STATUSES.OK_200);
 
-    private blogBadNameUrl: BlogInputModel ={
-    name: "",
-    description: "0123",
-    websiteUrl: "https://googlecom"}
-    
-    private blogBadNameUrl2: BlogInputModel ={
-        name: "1234567890123456",
-        description: "0123",
-        websiteUrl: "https://google1234.hjghghjgjhy.jkgughjgjhhghjghjgjhjh56789012345678901234567890123456789012345678901234567890123456789012345678901234567890.com"}
-        
+        let foundItems = foundResponse.body
+
+        let outArray = this.blogView
+        if(inputQuery?.searchNameTerm){
+            const regExp = new RegExp(inputQuery.searchNameTerm, 'i')
+            outArray = this.blogView.filter(s => s.name.search(regExp))
+        }
+
+        expect(foundItems).toEqual(this.setPaginator(inputQuery, outArray))
+
     }
-    
-    export default BlogTests;
 
-// export const postInput: Array<PostInputModel> = [{
-//     title: "The mistake",
-//     shortDescription: "Gaidai",
-//     content: "https://fig.dedf.cfghgfhgc.net/34",
-//     blogId: ''},
-// {
-//     title: "The first",
-//     shortDescription: "Copolla",
-//     content: "https://google.dcfghgfhgc.com",
-//     blogId: ''},
-// {
-//     title: "The second",
-//     shortDescription: "this post by Tarantino",
-//     content: "https://google.dcfghgfhgc.com",
-//     blogId: ''},
-// {
-//     title: "The thirt",
-//     shortDescription: "this post not by Tarantino",
-//     content: "https://google.com",
-//     blogId: ''},
-// {
-//     title: "Correct",
-//     shortDescription: "Gaidai",
-//     content: "https://fig.dedf.cfghgfhgc.net/34",
-//     blogId:  ''}
-// ]  
+    setPaginator(inputQuery, outArray){
+        let {pageSize, pageNumber} = inputQuery
+        return {
+            pagesCount: Math.ceil(outArray.length / pageSize),
+            page: pageNumber ? pageNumber : 1,
+            pageSize: pageSize ? pageSize : 10,
+            totalCount: outArray.length,
+            items: outArray
+        }
+    }
 
-// const postBadTitleContent: PostInputModel = {
-//     title: "",
-//     shortDescription: "0123",
-//     content: "length_10112345678901123456789011234567890112345678901123456789011234567890112345678901123456789011234567891",
-//     blogId: ''
-// }
+    onAuthorization(){
+        this.Auth = "Basic YWRtaW46cXdlcnR5"
+        this.AuthFlag = true
+    }
 
-// const postBadShort: PostInputModel = {
-//     title: "length_311245845269854125745612",
-//     shortDescription: "",
-//     content: "ttps://google123456789012345678901234567890123456789012",
-//     blogId: ''
-// }
-
-// const postBadBlogId: PostInputModel = {
-//     title: "Wrong",
-//     shortDescription: "Copolla",
-//     content: "httkfhujhgf jyfjyf",
-//     blogId: "123456789012345678901234"
-// }
+    offAuthorization(){
+        this.Auth = 'hygf gj'
+        this.AuthFlag = false
+    }
+}
