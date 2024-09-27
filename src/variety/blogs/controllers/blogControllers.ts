@@ -26,7 +26,7 @@ export const blogControllers ={
 
     async getBlogById(req: Request<{id: string}>, res: Response<BlogViewModel>){
         try{
-            const foundBlog: BlogViewModel|undefined = await blogQueryRepository.findById(req.params.id);
+            const foundBlog: BlogViewModel|null = await blogQueryRepository.findById(req.params.id);
             if(foundBlog){
                 res.status(HTTP_STATUSES.OK_200).json(foundBlog);
                 return;
@@ -43,7 +43,7 @@ export const blogControllers ={
         try{
             const answer: StatusResult<string | undefined>  = await blogService.create(req.body); 
             if(answer.codResult == CodStatus.Created){ 
-                const blog: BlogViewModel | undefined = await blogQueryRepository.findById(answer.data as string)
+                const blog: BlogViewModel | null = await blogQueryRepository.findById(answer.data as string)
                 res.status(HTTP_STATUSES.CREATED_201).json(blog)
                 return;
             }

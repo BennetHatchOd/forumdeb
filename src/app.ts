@@ -5,7 +5,7 @@ import { usersRouter } from './variety/users/usersRouter';
 import { postsRouter } from './variety/posts/postsRouter';
 import { deleteAllController } from './Controllers/deleteAllController';
 import { URL_PATH } from './setting';
-import { authLoginController } from './Controllers/authLoginController';
+import { authRouter } from './variety/auth/authRouter';
 
 
 
@@ -27,8 +27,8 @@ app.get(URL_PATH.base, (req,res) => {
 app.use(URL_PATH.blogs, blogsRouter);
 app.use(URL_PATH.posts, postsRouter);
 app.use(URL_PATH.users, usersRouter);
+app.use(URL_PATH.auth,  authRouter)
 
-app.post(URL_PATH.auth, authLoginController)
 app.delete('/testing/all-data', deleteAllController);
 
 
