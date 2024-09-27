@@ -17,8 +17,8 @@ export function paginator(input: QueryModel): QueryModel {
 }
 
 export const emptyPaginator = {
-    pagesCount: 1,
-    page: 1,
+    pagesCount: 0,
+    page: 0,
     pageSize: 10,
     totalCount: 0,
     items: []
