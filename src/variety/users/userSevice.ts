@@ -1,75 +1,39 @@
 import { CodStatus, StatusResult } from "../../interfaces";
-import { catchErr } from "../../modules/catchErr";
 import { cryptoHash } from "../../modules/cryptoHash";
-import { UserInputModel, APIErrorResult, FieldError, UserInnerModel} from "../../types";
+import { UserInputModel, APIErrorResult, FieldError, UserPasswordModel} from "../../types";
 import { userRepository } from "./repositories/userRepository"; 
 import bcrypt from "bcrypt"
 
 export const userService = {
 
  
-    async create(createItem: UserInputModel): Promise<StatusResult<string|null>>{      
-        try{            
-            const hash: string = await cryptoHash.createHash(createItem.password)
-            const newUser: UserInnerModel = {
-                                    login: createItem.login,
-                                    email: createItem.email,
-                                    password: hash, 
-                                    id: '',
-                                    createdAt: new Date().toISOString(),
-                                }
-            return await userRepository.create(newUser)
-        } 
-        catch (err){
-            return catchErr(err);
-        }
-    },
-
-    async authUser(loginOrEmail: string, password: string): Promise<StatusResult> {      
-        try{
-            const foundUser: StatusResult<string|null> = await userRepository.getPasswordByLoginEmail(loginOrEmail)
-            if(foundUser.codResult != CodStatus.Ok) return foundUser as StatusResult;
+    async create(createItem: UserInputModel): Promise<StatusResult<string|APIErrorResult|undefined>>{      
             
-            return await cryptoHash.checkHash(password, foundUser.data as string)
-            ? {codResult: CodStatus.Ok}
-            : {codResult: CodStatus.NotAuth}
-        } 
-        catch (err){
-            return catchErr(err);
-        }
-    },
-
-    isValid(loginOrEmail: string, password: string): boolean|APIErrorResult {          
-        const answerError: APIErrorResult = {
-            errorsMessages: []
-        }
-        const loginTemplate = /^[a-zA-Z0-9_-]*$/
-        const emailTemplate = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/ 
-
-        if(!emailTemplate.test(loginOrEmail) && 
-            !(loginTemplate.test(loginOrEmail) && loginOrEmail.length > 2 && loginOrEmail.length < 11))
-                    answerError.errorsMessages.push({message: 'Login or email has incorrect values', field: 'loginOrEmail'})
-
-        if(password.length < 6 || password.length > 20)
-            answerError.errorsMessages.push({message: 'password has incorrect values', field: 'password'})
+        const isUniq: StatusResult<APIErrorResult|undefined> = await this.checkUniq(createItem.login, createItem.email)
+        if(isUniq.codResult == CodStatus.BadRequest)
+            return isUniq;
         
-        if(answerError.errorsMessages.length == 0)
-            return true;
-        
-        return answerError;
+        const hash: string = await cryptoHash.createHash(createItem.password)
+        const newUser: Omit<UserPasswordModel, 'id'> = {
+                                login: createItem.login,
+                                email: createItem.email,
+                                password: hash, 
+                                createdAt: new Date().toISOString(),
+                            }
+        return await userRepository.create(newUser)
+
     },
-
-    async checkUniq(login: string, email: string): Promise<StatusResult<APIErrorResult| null>> { 
-
-        try{            
-            const checkResult = await userRepository.checkUniq(login, email)
-            
-            if (checkResult.data){
-                let errorsMessages: Array<FieldError> = checkResult.data.map(s => {
-                                                                            return {
-                                                                                message: `${s} should be unique`,
-                                                                                field: s}
-                                                                            })
+    
+    async checkUniq(login: string, email: string): Promise<StatusResult<APIErrorResult| undefined>> { 
+        
+        const checkResult = await userRepository.checkUniq(login, email)
+        
+        if (checkResult.data){
+            let errorsMessages: Array<FieldError> = checkResult.data.map(s => {
+                return {
+                    message: `${s} should be unique`,
+                    field: s}
+                })
                 return{  
                     codResult: CodStatus.BadRequest,
                     data: {
@@ -78,34 +42,19 @@ export const userService = {
                 }    
             }
             return checkResult as StatusResult
-        } 
-        catch (err){
-            return catchErr(err);
-        }
-    },
- 
-   async delete(id: string): Promise<StatusResult> {     
-        try{
-            const isExistUser = await userRepository.isExist(id);
-            if (isExistUser.codResult != CodStatus.Ok)
-                return isExistUser;    
-
-            return await userRepository.delete(id);
-        } 
-        catch (err){
-            return catchErr(err);
-        }
+        },
+        
+    async delete(id: string): Promise<StatusResult> {     
+        const isExistUser = await userRepository.isExist(id);
+        if (isExistUser.codResult != CodStatus.Ok)
+            return isExistUser;    
+        
+        return await userRepository.delete(id);
+        
     },
     
     async clear(): Promise < StatusResult > {
-        try{    
-            return await userRepository.clear()
-        } 
-        catch (err){
-            return catchErr(err);
-        }
-    },
-
+        return await userRepository.clear()
+    },  
     
- 
-}
+    }

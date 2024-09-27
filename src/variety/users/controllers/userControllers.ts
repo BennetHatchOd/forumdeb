@@ -17,35 +17,39 @@ export const userControllers = {
             res.status(HTTP_STATUSES.OK_200).json(userPaginator)
         }
         catch(err){
+            console.log(err)
             res.sendStatus(HTTP_STATUSES.ERROR_500);
         }
     },
 
     async postUser(req: Request<{},{},UserInputModel>, res: Response){
-        try{
-            const uniq: StatusResult<APIErrorResult|null> = await userService.checkUniq(req.body.login, req.body.email)
-            if(uniq.codResult == CodStatus.BadRequest){
-                res.status(HTTP_STATUSES.BAD_REQUEST_400).json(uniq.data)
-                return;
+        try{      
+            const newUserId: StatusResult<string | APIErrorResult | undefined> = await userService.create(req.body); 
+            
+            if(newUserId.codResult == CodStatus.Created){ 
+                const newUser: UserViewModel | null = await userQueryRepository.findById(newUserId.data as string)
+                if(newUser){ 
+                    res.status(HTTP_STATUSES.CREATED_201).json(newUser)
+                    return;
+                }
+                throw 'cannot read created user'
             }
-        
-            const newUser = await userService.create(req.body); 
-            if(newUser.data){ 
-                const user: UserViewModel | null = await userQueryRepository.findById(newUser.data)
-                res.status(HTTP_STATUSES.CREATED_201).json(user)
-                return;
-            }
-            res.sendStatus(HTTP_STATUSES.ERROR_500)
+            res.status(newUserId.codResult).json(newUserId.data)
         }
         catch(err){
+            console.log(err)
             res.status(HTTP_STATUSES.ERROR_500).json({})
         }        
     },
 
     async deleteUserById(req: Request<{id: string}>, res: Response){
-    
-        const answer: StatusResult = (await userService.delete(req.params.id))
-        res.sendStatus(answer.codResult);
-
+        try{
+            const answer: StatusResult = await userService.delete(req.params.id)
+            res.sendStatus(answer.codResult);
+        }
+        catch(err){
+            console.log(err)
+            res.status(HTTP_STATUSES.ERROR_500).json({})
+        }   
     }
 }
