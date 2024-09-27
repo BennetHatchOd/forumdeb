@@ -1,7 +1,6 @@
 import { ObjectId } from "mongodb"
 
 export type BlogDBType = {
-    _id:    ObjectId,
     name:   string,
     description: string,
      createdAt: string,
@@ -10,7 +9,6 @@ export type BlogDBType = {
 }
 
 export type PostDBType = {
-    _id:	ObjectId,
     title:	string,
     shortDescription: string,
     content: string,
@@ -20,7 +18,6 @@ export type PostDBType = {
 }
 
 export type UserDBType = {
-    _id:	ObjectId,
     login:	string,
     email:	string,
     password: string,
