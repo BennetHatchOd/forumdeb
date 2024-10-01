@@ -23,12 +23,10 @@ export class BlogEndPoint{
     private errorDescription: FieldError
     private errorWeb: FieldError
     private Auth!: string
-    private posts: PostEndPoint
+    private posts!: PostEndPoint
 
 
     constructor(){
-
-        this.posts = new PostEndPoint()
 
         for(let i = 0; i < 10; i++){
             this.blogCorrect[i]= {
@@ -74,17 +72,21 @@ export class BlogEndPoint{
 
         this.onAuthorization()
     }
+    async initialize(linkedBlog: PostEndPoint) {
+
+        this.posts = linkedBlog
+    }
 
     async createItem(i: number = 0, name?: string, description?: string, websiteUrl?: string ){
         let inName = name ? {name: name} : {}
         let inDescription = description ? {description: description} : {}
         let  inWebsiteUrl = websiteUrl ? {websiteUrl: websiteUrl} : {}
-        const postItem = {...this.blogCorrect[i], ...inName, ...inDescription, ...inWebsiteUrl}
+        const createItem = {...this.blogCorrect[i], ...inName, ...inDescription, ...inWebsiteUrl}
         let createdResponse = await 
                 request(app)
                 .post(URL_PATH.blogs)
                 .set("Authorization", this.Auth)
-                .send(postItem)
+                .send(createItem)
                 .expect(HTTP_STATUSES.CREATED_201);
 
         let createdItem = createdResponse.body;
@@ -92,9 +94,9 @@ export class BlogEndPoint{
 
         expect(createdItem).toEqual({
             id: expect.any(String),
-            name: postItem.name,
-            description: postItem.description,
-            websiteUrl: postItem.websiteUrl,
+            name: createItem.name,
+            description: createItem.description,
+            websiteUrl: createItem.websiteUrl,
             createdAt: expect.any(String),
             isMembership: false
         })
@@ -226,9 +228,9 @@ export class BlogEndPoint{
     }
 
 
-    async createPost(numberBlogInView: number, numberPostInCorrect: number, title?: string, shortDescription?: string, content?: string ){
-        await this.posts.createItem(numberPostInCorrect, this.blogView[numberBlogInView].id, URL_PATH.blogs + URL_PATH.blogsPost, title, shortDescription, content )
-    }
+    // async createPost(numberBlogInView: number, numberPostInCorrect: number, title?: string, shortDescription?: string, content?: string ){
+    //     await this.posts.createItem(numberPostInCorrect, this.blogView[numberBlogInView].id, title, shortDescription, content )
+    // }
 
     async createBadPost(numberBlogInView: number, numberPostInCorrect: number){
     }

@@ -22,15 +22,10 @@ export class PostEndPoint{
     private errorContent: FieldError
     private errorBlogId: FieldError
     private Auth!: string
-    private blogs = new BlogEndPoint()
-
-    static async getInstance():Promise<PostEndPoint>{
-        const instance = new PostEndPoint()
-        await instance.initialize()
-        return instance
-    }
+    private blogs!: BlogEndPoint
 
     constructor(){
+
         this.errorTitle = {
             "message": expect.any(String),
             "field": "title"
@@ -61,11 +56,12 @@ export class PostEndPoint{
         this.onAuthorization()
     }
 
-    private async initialize() {
+    async initialize(linkedBlog: BlogEndPoint) {
 
+        this.blogs = linkedBlog
         await this.blogs.createItem(0)
         await this.blogs.createItem(1)
-        await this.blogs.createItem(3)
+        await this.blogs.createItem(2)
 
         for(let i = 0; i < 10; i++){
             this.itemCorrect.push({
@@ -99,17 +95,17 @@ export class PostEndPoint{
             }]
     }
 
-    async createItem(numberInCorrect: number = 0, blogId?: string, urlPostBlog?: string, title?: string, shortDescription?: string, content?: string ){
+    async createItem(numberInCorrect: number = 0, blogId?: string, title?: string, shortDescription?: string, content?: string ){
         const inTitle = title ? {title: title} : {}
         const inShortDescription = shortDescription ? {shortDescription: shortDescription} : {}
         const  inContent = content ? {content: content} : {}
         const  inBlogId = blogId ? {blogId: blogId} : {}
-        const url = urlPostBlog ? urlPostBlog : URL_PATH.posts
 
         const newItem = {...this.itemCorrect[numberInCorrect], ...inTitle, ...inShortDescription, ...inContent, ...inBlogId}
+        
         let createdResponse = await 
                 request(app)
-                .post(url)
+                .post(URL_PATH.posts)
                 .set("Authorization", this.Auth)
                 .send(newItem)
                 .expect(HTTP_STATUSES.CREATED_201);
@@ -209,7 +205,7 @@ export class PostEndPoint{
 
     }
 
-    async editItem(inView: number = 0, inCorrect = 3, title?: string, shortDescription?: string, content?: string ){
+    async editItem({ inView = 0, inCorrect = 3, title, shortDescription, content }: { inView?: number; inCorrect?: number; title?: string; shortDescription?: string; content?: string; } = {}){
         let inTitle = title ? {title: title} : {}
         let inShortDescription = shortDescription ? {shortDescription: shortDescription} : {}
         let  inContent = content ? {content: content} : {}
@@ -263,7 +259,6 @@ export class PostEndPoint{
         const directSort = inputQuery.sortDirection == 'asc' ? 1 : -1   
         
         inArray.sort((a,b) => {
-            console.log(fieldSort, a[fieldSort])
             return a[fieldSort].localeCompare(b[fieldSort]) * directSort} ) 
        
         let outArray: Array<PostViewModel> = inArray.slice(pageSize * (page - 1), pageSize * page)
@@ -298,7 +293,7 @@ export class PostEndPoint{
         return this.blogs.getIdItem( i % 3)
     }
 
-    getBlogName(i: number){
+    private getBlogName(i: number){
         return this.blogs.getNameItem( i % 3)
     }
 }
