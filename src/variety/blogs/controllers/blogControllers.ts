@@ -18,9 +18,9 @@ export const blogControllers ={
     
             res.status(HTTP_STATUSES.OK_200).json(blogPaginator)
         }
-        catch(err){
+        catch(err){    
             console.log(err)
-            res.status(HTTP_STATUSES.ERROR_500).json({});
+            res.status(HTTP_STATUSES.ERROR_500 + 4).json({});
         }
     },
 
