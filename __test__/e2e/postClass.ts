@@ -202,7 +202,6 @@ export class PostEndPoint{
         let outArray = this.itemView
 
         expect(foundItems).toEqual(this.setPaginator(inputQuery, outArray))
-
     }
 
     async editItem({ inView = 0, inCorrect = 3, title, shortDescription, content }: { inView?: number; inCorrect?: number; title?: string; shortDescription?: string; content?: string; } = {}){
@@ -295,5 +294,13 @@ export class PostEndPoint{
 
     private getBlogName(i: number){
         return this.blogs.getNameItem( i % 3)
+    }
+
+    setItemView(newItem: PostViewModel){
+        this.itemView.push(newItem)
+    }
+    
+    getBadItem(numberInItemIncorrect: number){
+        return this.itemIncorrect[numberInItemIncorrect]
     }
 }

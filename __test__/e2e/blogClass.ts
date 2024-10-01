@@ -1,4 +1,4 @@
-import {APIErrorResult, BlogInputModel, BlogViewModel, FieldError, QueryModel} from '../../src/types'
+import {APIErrorResult, BlogInputModel, BlogViewModel, FieldError, PostInputModel, PostViewModel, QueryModel} from '../../src/types'
 import {HTTP_STATUSES, URL_PATH} from '../../src/setting'
 import { app } from "../../src/app";
 import request from "supertest";
@@ -228,18 +228,77 @@ export class BlogEndPoint{
     }
 
 
-    // async createPost(numberBlogInView: number, numberPostInCorrect: number, title?: string, shortDescription?: string, content?: string ){
-    //     await this.posts.createItem(numberPostInCorrect, this.blogView[numberBlogInView].id, title, shortDescription, content )
+    async createPost(numberBlogInView: number, titleIn?: string, shortDescriptionIn?: string, contentIn?: string ){
+    
+        const newItem: PostInputModel = {
+                title: titleIn ? titleIn : 'title',                   
+                shortDescription: shortDescriptionIn ? shortDescriptionIn : 'this is post for ' + this.blogView[numberBlogInView].id,            
+                content: contentIn ? contentIn : 'this is text for content',
+                blogId: this.blogView[numberBlogInView].id
+            }
+        
+        let createdResponse = await 
+                request(app)
+                .post(`${URL_PATH.blogs}/${this.blogView[numberBlogInView].id}/posts`)
+                .set("Authorization", this.Auth)
+                .send(newItem)
+                .expect(HTTP_STATUSES.CREATED_201);
+
+        let createdItem: PostViewModel = createdResponse.body;
+        this.posts.setItemView(createdItem)
+
+        expect(createdItem).toEqual({
+            id: expect.any(String),
+            title: newItem.title,
+            shortDescription: newItem.shortDescription,
+            content: newItem.content,
+            createdAt: expect.any(String),
+            blogId: this.blogView[numberBlogInView].id,
+            blogName: this.blogView[numberBlogInView].name
+        })
+    }
+    async createBadPost(authOrBadOrId: string, data = 'y7u77uhttfrf6'){
+        let status = 0
+        let url = `${URL_PATH.blogs}/${this.blogView[0].id}/posts`
+        let newItem: PostInputModel = {
+                    title: 'title',                   
+                    shortDescription: 'this is post for ' + this.blogView[0].id,            
+                    content: 'this is text for content',
+                    blogId: this.blogView[0].id}
+
+        switch(authOrBadOrId){
+            case 'auth':
+                this.offAuthorization()
+                status = HTTP_STATUSES.NO_AUTHOR_401
+                break
+            case 'bad':
+                newItem.title = ''
+                status = HTTP_STATUSES.BAD_REQUEST_400
+                break
+            case 'id':
+                url = `${URL_PATH.blogs}/${data}/posts`
+                status = HTTP_STATUSES.NOT_FOUND_404
+                }
+
+        
+        await request(app)
+                .post(url)
+                .set("Authorization", this.Auth)
+                .send(newItem)
+                .expect(status);
+
+        this.onAuthorization()     
+        
+    }    
+
+    // async createBadPost(numberBlogInView: number, numberPostInCorrect: number){
     // }
 
-    async createBadPost(numberBlogInView: number, numberPostInCorrect: number){
-    }
+    // async createPostBadId(numberBlogInView: number, numberPostInCorrect: number ){
+    // }
 
-    async createPostBadId(numberBlogInView: number, numberPostInCorrect: number ){
-    }
-
-    async createBadPostWithoutAuth(numberBlogInView: number, numberPostInCorrect: number){
-    }
+    // async createBadPostWithoutAuth(numberBlogInView: number, numberPostInCorrect: number){
+    // }
 
 
     setPaginator(inputQuery: InputQuery, inArray: Array<BlogViewModel>){

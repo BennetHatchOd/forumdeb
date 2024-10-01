@@ -4,6 +4,7 @@ import {MongoMemoryServer} from 'mongodb-memory-server'
 import {MongoClient} from 'mongodb'
 import { BlogEndPoint } from "./blogClass";
 import { initialize } from "./initialize";
+import { PostEndPoint } from "./postClass";
 
 
 
@@ -15,6 +16,8 @@ describe('/blogs', () => {
     let uri : string
     let client: MongoClient
     let blogTest: BlogEndPoint
+    let postTest: PostEndPoint
+
     beforeAll(async() =>{  // clear db-array
         
         server = await MongoMemoryServer.create({
@@ -27,7 +30,9 @@ describe('/blogs', () => {
         client = new MongoClient(uri)
         await client.connect()
         await request(app).delete('/testing/all-data')
-        blogTest = (await initialize()).blog
+        const tests = await initialize()
+        blogTest = tests.blog 
+        postTest = tests.post
 
     })
 
@@ -106,10 +111,25 @@ describe('/blogs', () => {
         await blogTest.editItemNoAuth(1)
     })
 
-    // it('b15.should create Post for Blogs, return 201 and created object', async () => {  // create the third new blog [post.blog]
+    it('b15.should create Post for Blogs, return 201 and created object', async () => {  // create the third new blog [post.blog]
     
-    //     await blogTest.createPost(1, 5, 'postBlog');
-    // })
+        await blogTest.createPost(1, 'the first post');
+        await blogTest.createPost(1, 'the second post');
+        await blogTest.createPost(1, 'the third post');
+        await blogTest.createPost(2, 'the first post');
+        // blogTest.showArrayItems()
+        // postTest.showArrayItems()
+        // postTest.getItems()
+
+    })
+    it('b15a.shouldn\'t create Post for Blogs, return 201', async () => {  // create the third new blog [post.blog]
+    
+        await blogTest.createBadPost('auth');
+        await blogTest.createBadPost('bad');
+        await blogTest.createBadPost('id', '7hu7yh6ghu8');
+        
+
+    })
     it('b16.should return 200 and array of all object', async () => { // watch all blogs
     
         await blogTest.getBlogs()    
