@@ -25,7 +25,6 @@ export const HTTP_STATUSES = {
 export const URL_PATH = {
     base:       '/',
     blogs:      '/blogs',
-    blogsPost:  '/:id/posts',
     posts:      '/posts',
     users:      '/users',
     auth:       '/auth'
