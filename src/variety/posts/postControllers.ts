@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import {HTTP_STATUSES} from '../../../setting';
-import { postService } from "../postService";
-import { CodStatus, StatusResult } from "../../../interfaces";
-import { APIErrorResult, PaginatorModel, PostInputModel, PostViewModel, QueryModel } from "../../../types";
-import { postQueryRepository } from "../repositories/postQueryRepository";
-import { paginator } from "../../../modules/paginator";
+import {HTTP_STATUSES} from '../../setting';
+import { postService } from "./postService";
+import { CodStatus, StatusResult } from "../../interfaces";
+import { APIErrorResult, PaginatorModel, PostInputModel, PostViewModel, QueryModel } from "../../types/types";
+import { postQueryRepository } from "./repositories/postQueryRepository";
+import { paginator } from "../../modules/paginator";
 
 export const postControllers = {   
     

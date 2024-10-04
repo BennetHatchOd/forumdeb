@@ -1,8 +1,9 @@
-import { PostViewModel, QueryModel, PaginatorModel} from "../../../types";
-import { blogCollection, postCollection } from "../../../db/db";
+import { QueryModel, PaginatorModel} from "../../../types/types";
+import { postCollection } from "../../../db/db";
 import { PostDBType } from "../../../db/dbTypes";
 import { ObjectId, WithId } from "mongodb";
 import { emptyPaginator } from "../../../modules/paginator";
+import { PostViewModel } from "../types";
 
 export const postQueryRepository = {
 

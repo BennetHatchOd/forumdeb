@@ -1,6 +1,6 @@
 import {body} from 'express-validator'
 import { blogService } from "../../blogs/blogSevice";
-import { BlogViewModel } from '../../../types';
+import { BlogViewModel } from '../../../types/types';
 import { ObjectId } from 'mongodb';
 import { blogQueryRepository } from '../../blogs/repositories/blogQueryRepository';
 import { blogRepository } from '../../blogs/repositories/blogRepository';

@@ -1,4 +1,4 @@
-import { PostViewModel, PostInputModel } from "../../types";
+import { PostViewModel, PostInputModel } from "../../types/types";
 import { postRepository } from "./repositories/postRepository";
 import { blogRepository } from "../blogs/repositories/blogRepository";
 import { CodStatus, StatusResult } from "../../interfaces";

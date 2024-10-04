@@ -1,4 +1,4 @@
-import { PostViewModel, PostInputModel, BlogViewModel } from "../../../types";
+import { PostViewModel, PostInputModel} from "../types";
 import { PostDBType } from "../../../db/dbTypes";
 import { postCollection } from "../../../db/db";
 import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "mongodb";
