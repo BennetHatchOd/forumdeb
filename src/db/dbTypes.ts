@@ -1,14 +1,12 @@
-import { ObjectId } from "mongodb"
-
-export type BlogDBType = {
+export type BlogDBModel = {
     name:   string,
     description: string,
-     createdAt: string,
+    createdAt: string,
     isMembership: boolean,
     websiteUrl:	string
 }
 
-export type PostDBType = {
+export type PostDBModel = {
     title:	string,
     shortDescription: string,
     content: string,
@@ -17,10 +15,22 @@ export type PostDBType = {
     blogName:	string
 }
 
-export type UserDBType = {
+export type UserDBModel = {
     login:	string,
     email:	string,
     password: string,
     createdAt:	string
 }
 
+export type CommentatorDBInfo ={
+    userId:	    string,
+    userLogin:  string	
+}
+
+export type CommentDBModel ={
+    parentPostId:       string,
+    content:	        string,
+    commentatorInfo:	CommentatorDBInfo,
+    createdAt:	        string,
+
+}
