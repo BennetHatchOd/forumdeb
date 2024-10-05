@@ -1,17 +1,23 @@
-import { CodStatus, StatusResult } from "../../interfaces";
-import { cryptoHash } from "../../modules/cryptoHash";
-import { APIErrorResult} from "../../types";
+import { CodStatus, StatusResult } from "../../types/interfaces";
+import { jwtService } from "../../modules/jwtService";
+import { passwordHashService } from "../../modules/passwordHashService";
+import { SECRET_KEY } from "../../setting";
+import { APIErrorResult} from "../../types/types";
 import { authRepository } from "./authRepository"; 
+import { AboutUser } from "./types";
 
 export const authService = {
 
-    async authUser(loginOrEmail: string, password: string): Promise<StatusResult> {      
-        const foundUser: StatusResult<string|undefined> = await authRepository.getPasswordByLoginEmail(loginOrEmail)
+    async authUser(loginOrEmail: string, password: string): Promise<StatusResult<string|undefined >> {      
+        const foundUser: StatusResult<{id:string, passHash:string}|undefined> = await authRepository.getUserByLoginEmail(loginOrEmail)
         if(foundUser.codResult != CodStatus.Ok) return foundUser as StatusResult;
         
-        return await cryptoHash.checkHash(password, foundUser.data as string)
-        ? {codResult: CodStatus.Ok}
-        : {codResult: CodStatus.NotAuth}
+        if(!await passwordHashService.checkHash(password, foundUser.data!.passHash)) 
+            return {codResult: CodStatus.NotAuth}
+        
+        let token = jwtService.createToken(foundUser.data!.id, SECRET_KEY)
+        return {codResult: CodStatus.Ok, data: token}
+        
     },
     
     isValid(loginOrEmail: string, password: string): StatusResult<APIErrorResult|undefined> {          
@@ -34,4 +40,10 @@ export const authService = {
         return {codResult: CodStatus.BadRequest, data: answerError};
     },
     
+    async aboutMe(id: string): Promise<StatusResult<AboutUser|undefined>>{
+        const foundUser: StatusResult<AboutUser|undefined> = await authRepository.findById(id)
+        if(foundUser.codResult == CodStatus.Ok)
+            return foundUser;
+        return {codResult: CodStatus.NotAuth}
     }
+}
