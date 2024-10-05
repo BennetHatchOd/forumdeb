@@ -1,8 +1,8 @@
-import { UserPasswordModel } from "../../../types";
 import { userCollection } from "../../../db/db";
-import { UserDBType } from "../../../db/dbTypes";
+import { UserDBModel } from "../../../db/dbTypes";
 import { DeleteResult, InsertOneResult, ObjectId } from "mongodb";
-import { CodStatus, StatusResult } from "../../../interfaces";
+import { CodStatus, StatusResult } from "../../../types/interfaces";
+import { UserPasswordModel } from "../types";
 
 export const userRepository = {
   
@@ -34,7 +34,7 @@ export const userRepository = {
             :  {codResult: CodStatus.BadRequest, data: arrayErrors};
     },
    
-    async create(createItem: Omit<UserPasswordModel, 'id'>): Promise <StatusResult<string|undefined>>{  
+    async create(createItem: UserDBModel): Promise <StatusResult<string|undefined>>{  
         
         const answerInsert: InsertOneResult = await userCollection.insertOne(createItem);
         return answerInsert.acknowledged  

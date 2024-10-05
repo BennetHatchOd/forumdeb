@@ -3,7 +3,6 @@ import { HTTP_STATUSES } from "../../setting";
 import { authService } from "./authSevice";
 import { CodStatus, StatusResult } from "../../types/interfaces";
 import { AboutUser, LoginInputModel } from "./types";
-import { json } from "stream/consumers";
 
 export const authControllers = { 
     async postLogin(req: Request<{},{},LoginInputModel>, res: Response){

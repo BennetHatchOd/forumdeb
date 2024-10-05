@@ -1,19 +1,20 @@
-import { CodStatus, StatusResult } from "../../interfaces";
-import { cryptoHash } from "../../modules/cryptoHash";
-import { UserInputModel, APIErrorResult, FieldError, UserPasswordModel} from "../../types";
+import { CodStatus, StatusResult } from "../../types/interfaces";
+import { passwordHashService } from "../../modules/passwordHashService";
+import { APIErrorResult, FieldError} from "../../types/types";
 import { userRepository } from "./repositories/userRepository"; 
 import bcrypt from "bcrypt"
+import { UserInputModel, UserPasswordModel } from "./types";
 
 export const userService = {
 
  
     async create(createItem: UserInputModel): Promise<StatusResult<string|APIErrorResult|undefined>>{      
-            
+         console.log(createItem)   
         const isUniq: StatusResult<APIErrorResult|undefined> = await this.checkUniq(createItem.login, createItem.email)
         if(isUniq.codResult == CodStatus.BadRequest)
             return isUniq;
         
-        const hash: string = await cryptoHash.createHash(createItem.password)
+        const hash: string = await passwordHashService.createHash(createItem.password)
         const newUser: Omit<UserPasswordModel, 'id'> = {
                                 login: createItem.login,
                                 email: createItem.email,

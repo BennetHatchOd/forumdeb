@@ -1,6 +1,4 @@
-import { QueryModel} from "../types";
-import { Collection } from "mongodb";
-
+import { QueryModel} from "../types/types";
 
 export function paginator(input: QueryModel): QueryModel {
     
@@ -12,7 +10,7 @@ export function paginator(input: QueryModel): QueryModel {
         searchNameTerm: input.searchNameTerm,// ? input.searchNameTerm : null,
         searchEmailTerm: input.searchEmailTerm,// ? input.searchEmailTerm : null,
         searchLoginTerm: input.searchLoginTerm,// ? input.searchLoginTerm : null,
-        blogId: input.blogId // ? ,
+        blogId: input.blogId, // ? ,
     }
 }
 
@@ -26,6 +24,7 @@ export const emptyPaginator = {
 
 const pageValidator = (page: number): number =>{
    
+    page = Number(page)
     if(page < 1 || (Math.floor(page) - page != 0))
         return 1;
 
@@ -34,6 +33,9 @@ const pageValidator = (page: number): number =>{
 }
 const pageSizeValidator = (size: number): number =>{
    
+    size = Number(size)
+    if(!size)
+        return 10
     if(size < 1 || (Math.floor(size) - size != 0) || size > 100)
         return 10;
 

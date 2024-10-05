@@ -1,8 +1,9 @@
-import { UserViewModel, PaginatorModel, QueryModel, APIErrorResult, FieldError} from "../../../types";
+import { PaginatorModel, QueryModel} from "../../../types/types";
 import { userCollection } from "../../../db/db";
-import { UserDBType } from "../../../db/dbTypes";
+import { UserDBModel } from "../../../db/dbTypes";
 import { ObjectId, WithId } from "mongodb";
 import { emptyPaginator } from "../../../modules/paginator";
+import { UserViewModel } from "../types";
 
 export const userQueryRepository = {
 
@@ -10,20 +11,27 @@ export const userQueryRepository = {
         
         if(!ObjectId.isValid(id))
             return null;
-        const searchItem: WithId<UserDBType> | null = await userCollection.findOne({_id: new ObjectId(id)})           
+        const searchItem: WithId<UserDBModel> | null = await userCollection.findOne({_id: new ObjectId(id)})           
         return searchItem ? this.mapDbToOutput(searchItem) : null;
     },
 
     async find(queryReq:  QueryModel): Promise < PaginatorModel<UserViewModel> > {      // searches for users by filter, returns  paginator or null
         
-        const emailSearch = queryReq.searchEmailTerm ? {name: {$regex: queryReq.searchEmailTerm, $options: 'i'}} : {}    
-        const loginSearch = queryReq.searchLoginTerm ? {name: {$regex: queryReq.searchLoginTerm, $options: 'i'}} : {}    
-        const queryFilter = {$or: [emailSearch, loginSearch]}   
+        
+        let queryFilter = {}
+        if(queryReq.searchLoginTerm || queryReq.searchEmailTerm)
+            queryFilter = {
+                $or: [
+                ...(queryReq.searchLoginTerm ? [{ login: { $regex: queryReq.searchLoginTerm, $options: 'i' } }] : []),
+                ...(queryReq.searchEmailTerm ? [{ email: { $regex: queryReq.searchEmailTerm, $options: 'i' } }] : [])
+                ]
+            }
+                
         const totalCount: number= await userCollection.countDocuments(queryFilter) 
         if (totalCount == 0)
             return emptyPaginator;
-        
-        const searchItem: Array<WithId<UserDBType>>  = 
+         
+        const searchItem: Array<WithId<UserDBModel>>  = 
             await userCollection.find(queryFilter)
                                 .limit(queryReq.pageSize)
                                 .skip((queryReq.pageNumber - 1) * queryReq.pageSize)
@@ -40,7 +48,7 @@ export const userQueryRepository = {
             }
     },
 
-    mapDbToOutput(item: WithId<UserDBType>): UserViewModel {
+    mapDbToOutput(item: WithId<UserDBModel>): UserViewModel {
         
         return {
             id: item._id.toString(),

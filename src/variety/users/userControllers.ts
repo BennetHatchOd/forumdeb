@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
-import { paginator } from "../../../modules/paginator"
-import { HTTP_STATUSES } from "../../../setting"
-import { APIErrorResult, PaginatorModel, QueryModel, UserInputModel, UserViewModel } from "../../../types"
-import { userQueryRepository } from "../repositories/userQueryRepository"
-import { userService } from "../userSevice"
-import { CodStatus, StatusResult } from "../../../interfaces";
+import { paginator } from "../../modules/paginator"
+import { HTTP_STATUSES } from "../../setting"
+import { APIErrorResult, PaginatorModel, QueryModel} from "../../types/types"
+import { userQueryRepository } from "./repositories/userQueryRepository"
+import { userService } from "./userSevice"
+import { CodStatus, StatusResult } from "../../types/interfaces";
+import { UserInputModel, UserViewModel } from "./types";
 
 export const userControllers = {   
 
@@ -23,7 +24,7 @@ export const userControllers = {
     },
 
     async postUser(req: Request<{},{},UserInputModel>, res: Response){
-        try{      
+        try{  
             const newUserId: StatusResult<string | APIErrorResult | undefined> = await userService.create(req.body); 
             
             if(newUserId.codResult == CodStatus.Created){ 
