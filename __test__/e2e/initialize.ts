@@ -1,5 +1,5 @@
-import { BlogEndPoint } from "./blogClass"
-import { PostEndPoint } from "./postClass"
+import { BlogEndPoint } from "./classes/blogClass"
+import { PostEndPoint } from "./classes/postClass"
 
 export const initialize = async() =>{
     const blog = new BlogEndPoint()

@@ -1,9 +1,10 @@
-import {APIErrorResult, PostInputModel, PostViewModel, FieldError, QueryModel} from '../../src/types'
-import {HTTP_STATUSES, URL_PATH} from '../../src/setting'
-import { app } from "../../src/app";
+import {HTTP_STATUSES, URL_PATH} from '../../../src/setting'
+import { app } from "../../../src/app";
 import request from "supertest";
 import { SortDirection } from 'mongodb';
 import { BlogEndPoint } from './blogClass';
+import { PostInputModel, PostViewModel } from '../../../src/variety/posts/types';
+import { APIErrorResult, FieldError } from '../../../src/types/types';
 
 type InputQuery = {
     sortBy?: string,
@@ -298,6 +299,10 @@ export class PostEndPoint{
 
     setItemView(newItem: PostViewModel){
         this.itemView.push(newItem)
+    }
+
+    getItemView(): Array<PostViewModel>{
+        return this.itemView
     }
     
     getBadItem(numberInItemIncorrect: number){

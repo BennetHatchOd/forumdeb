@@ -2,9 +2,9 @@ import request from "supertest";
 import { app } from "../../src/app";
 import {MongoMemoryServer} from 'mongodb-memory-server'
 import {MongoClient} from 'mongodb'
-import { BlogEndPoint } from "./blogClass";
+import { BlogEndPoint } from "./classes/blogClass";
 import { initialize } from "./initialize";
-import { PostEndPoint } from "./postClass";
+import { PostEndPoint } from "./classes/postClass";
 
 
 
@@ -122,6 +122,11 @@ describe('/blogs', () => {
         // postTest.getItems()
 
     })
+    it('b15b.should return 200 and array of object', async () => { // watch posts for blog
+        await blogTest.getPostBlog(1)       
+        })
+
+
     it('b15a.shouldn\'t create Post for Blogs, return 201', async () => {  // create the third new blog [post.blog]
     
         await blogTest.createBadPost('auth');

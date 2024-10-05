@@ -2,7 +2,7 @@ import request from "supertest";
 import { app } from "../../src/app";
 import {MongoMemoryServer} from 'mongodb-memory-server'
 import {MongoClient} from 'mongodb'
-import { PostEndPoint } from "./postClass";
+import { PostEndPoint } from "./classes/postClass";
 import { initialize } from "./initialize";
 
 

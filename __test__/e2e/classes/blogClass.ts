@@ -1,9 +1,11 @@
-import {APIErrorResult, BlogInputModel, BlogViewModel, FieldError, PostInputModel, PostViewModel, QueryModel} from '../../src/types'
-import {HTTP_STATUSES, URL_PATH} from '../../src/setting'
-import { app } from "../../src/app";
+import {HTTP_STATUSES, URL_PATH} from '../../../src/setting'
+import { app } from "../../../src/app";
 import request from "supertest";
 import { SortDirection } from 'mongodb';
 import { PostEndPoint } from './postClass';
+import { BlogInputModel, BlogViewModel } from '../../../src/variety/blogs/types';
+import { APIErrorResult, FieldError } from '../../../src/types/types';
+import { PostInputModel, PostViewModel } from '../../../src/variety/posts/types';
 
 type InputQuery = {
     sortBy?: string,
@@ -257,6 +259,26 @@ export class BlogEndPoint{
             blogName: this.blogView[numberBlogInView].name
         })
     }
+
+    async getPostBlog(numberBlogInView: number, inputQuery: InputQuery = {})
+    {
+        
+        let foundResponse = await request(app)
+        .get(`${URL_PATH.blogs}/${this.blogView[numberBlogInView].id}/posts`)
+        .set("Authorization", this.Auth)
+        .query(inputQuery)
+        .expect(HTTP_STATUSES.OK_200);
+        
+        let foundItems = foundResponse.body
+        
+        const inArray: Array<PostViewModel> = this.posts.getItemView()
+        const outArray = inArray.filter(s => s.blogId == this.blogView[numberBlogInView].id)
+               
+        expect(foundItems).toEqual(this.posts.setPaginator(inputQuery, outArray))
+        
+    }
+
+
     async createBadPost(authOrBadOrId: string, data = 'y7u77uhttfrf6'){
         let status = 0
         let url = `${URL_PATH.blogs}/${this.blogView[0].id}/posts`
@@ -290,16 +312,6 @@ export class BlogEndPoint{
         this.onAuthorization()     
         
     }    
-
-    // async createBadPost(numberBlogInView: number, numberPostInCorrect: number){
-    // }
-
-    // async createPostBadId(numberBlogInView: number, numberPostInCorrect: number ){
-    // }
-
-    // async createBadPostWithoutAuth(numberBlogInView: number, numberPostInCorrect: number){
-    // }
-
 
     setPaginator(inputQuery: InputQuery, inArray: Array<BlogViewModel>){
         let {pageSize = 10, pageNumber} = inputQuery
