@@ -1,6 +1,6 @@
 import { QueryModel, PaginatorModel} from "../../../types/types";
 import { postCollection } from "../../../db/db";
-import { PostDBType } from "../../../db/dbTypes";
+import { PostDBModel } from "../../../db/dbTypes";
 import { ObjectId, WithId } from "mongodb";
 import { emptyPaginator } from "../../../modules/paginator";
 import { PostViewModel } from "../types";
@@ -12,7 +12,7 @@ export const postQueryRepository = {
         
         if(!ObjectId.isValid(id))
             return null;
-        const searchItem: WithId<PostDBType> | null = 
+        const searchItem: WithId<PostDBModel> | null = 
             await postCollection.findOne({_id: new ObjectId(id)})
         
         return searchItem 
@@ -30,7 +30,7 @@ export const postQueryRepository = {
         if (totalCount == 0)
             return emptyPaginator;
                 
-        const searchItem: Array<WithId<PostDBType>> = 
+        const searchItem: Array<WithId<PostDBModel>> = 
             await postCollection.find(queryFilter)
                                 .limit(queryReq.pageSize)
                                 .skip((queryReq.pageNumber - 1) * queryReq.pageSize)
@@ -49,7 +49,7 @@ export const postQueryRepository = {
 
     },
 
-    mapDbToOutput(item: WithId<PostDBType>): PostViewModel {
+    mapDbToOutput(item: WithId<PostDBModel>): PostViewModel {
         
         return { 
             id: item._id.toString(),

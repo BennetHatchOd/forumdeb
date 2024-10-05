@@ -1,7 +1,7 @@
-import { PostViewModel, PostInputModel } from "../../types/types";
 import { postRepository } from "./repositories/postRepository";
 import { blogRepository } from "../blogs/repositories/blogRepository";
-import { CodStatus, StatusResult } from "../../interfaces";
+import { CodStatus, StatusResult } from "../../types/interfaces";
+import { PostInputModel, PostViewModel } from "./types";
 
 export const postService = {
  

@@ -1,10 +1,6 @@
 import {body} from 'express-validator'
-import { blogService } from "../../blogs/blogSevice";
-import { BlogViewModel } from '../../../types/types';
-import { ObjectId } from 'mongodb';
-import { blogQueryRepository } from '../../blogs/repositories/blogQueryRepository';
 import { blogRepository } from '../../blogs/repositories/blogRepository';
-import { CodStatus } from '../../../interfaces';
+import { CodStatus } from '../../../types/interfaces';
 
 export const titleValidator = body('title').trim()
                 .isLength({min: 1, max: 30})

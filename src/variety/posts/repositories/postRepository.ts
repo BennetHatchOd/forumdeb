@@ -1,8 +1,8 @@
 import { PostViewModel, PostInputModel} from "../types";
-import { PostDBType } from "../../../db/dbTypes";
+import { PostDBModel } from "../../../db/dbTypes";
 import { postCollection } from "../../../db/db";
 import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "mongodb";
-import { CodStatus, StatusResult } from "../../../interfaces";
+import { CodStatus, StatusResult } from "../../../types/interfaces";
 
 export const postRepository = {
  
@@ -19,7 +19,7 @@ export const postRepository = {
 
     },
      
-    async create(createItem: PostDBType): Promise <StatusResult<string|undefined>>{ 
+    async create(createItem: PostDBModel): Promise <StatusResult<string|undefined>>{ 
         const answerInsert: InsertOneResult = await postCollection.insertOne(createItem);
         return answerInsert.acknowledged  
             ? {codResult: CodStatus.Created, data: answerInsert.insertedId.toString()}  
