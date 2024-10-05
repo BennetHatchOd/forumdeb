@@ -1,8 +1,7 @@
 import { Response, Request, NextFunction } from "express";
-import { HTTP_STATUSES, SECRET_KEY } from "../setting";
+import { HTTP_STATUSES, PASSCODE_ADMIN, SECRET_KEY } from "../setting";
 import { jwtService } from "../modules/jwtService";
-import { userService } from "../variety/users/userSevice";
-import { userQueryRepository } from "../variety/users/repositories/userQueryRepository";
+import { IdType } from "../types/types";
 
 
 
@@ -11,9 +10,15 @@ export const authorizatorAdmin = (req: Request<any, any, any, any>, res: Respons
 
     const authheader = req.headers.authorization;
 
-    if(authheader === 'Basic YWRtaW46cXdlcnR5'){
-        next();
-        return;
+    if(authheader && authheader.split(' ')[0] == 'Basic'){
+
+        const buff = Buffer.from(PASSCODE_ADMIN, 'utf-8');
+        const base64 = buff.toString('base64');
+
+        if(authheader.split(' ')[0] == base64){
+            next();
+            return;
+        }
     }
 
     res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401);
@@ -26,8 +31,7 @@ export const authorizatorUser = (req: Request<any, any, any, any>, res: Response
         const token = authheader.split(' ')[1]
         const userId: string|null = jwtService.findIdbyToken(token, SECRET_KEY)
         if(userId){
-            //const user = userQueryRepository.findById(userId)
-            req.userId = userId
+            req.user = {id: userId} as IdType;
             next();
         }
     }
