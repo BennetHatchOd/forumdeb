@@ -1,6 +1,6 @@
-import { CodStatus, StatusResult } from "../../interfaces";
-import { BlogViewModel, BlogInputModel } from "../../types";
+import { CodStatus, StatusResult } from "../../types/interfaces";
 import { blogRepository } from "./repositories/blogRepository"; 
+import { BlogInputModel, BlogViewModel } from "./types";
 
 export const blogService = {
 

@@ -1,12 +1,14 @@
 import { Request, Response } from "express";
-import {HTTP_STATUSES} from '../../../setting';
-import { blogService } from "../blogSevice";
-import { paginator } from "../../../modules/paginator"; 
-import { CodStatus, StatusResult } from "../../../interfaces";
-import { BlogInputModel, BlogPostInputModel, BlogViewModel, PaginatorModel, PostViewModel, QueryModel } from "../../../types";
-import { postService } from "../../posts/postService";
-import { postQueryRepository } from "../../posts/repositories/postQueryRepository";
-import { blogQueryRepository } from "../repositories/blogQueryRepository";
+import {HTTP_STATUSES} from '../../setting';
+import { blogService } from "./blogSevice";
+import { paginator } from "../../modules/paginator"; 
+import { CodStatus, StatusResult } from "../../types/interfaces";
+import { PaginatorModel, QueryModel } from "../../types/types";
+import { postService } from "../posts/postService";
+import { postQueryRepository } from "../posts/repositories/postQueryRepository";
+import { blogQueryRepository } from "./repositories/blogQueryRepository";
+import { BlogInputModel, BlogPostInputModel, BlogViewModel } from "./types";
+import { PostViewModel } from "../posts/types";
 
 export const blogControllers ={ 
     
@@ -20,7 +22,7 @@ export const blogControllers ={
         }
         catch(err){    
             console.log(err)
-            res.status(HTTP_STATUSES.ERROR_500 + 4).json({});
+            res.status(HTTP_STATUSES.ERROR_500).json({});
         }
     },
 

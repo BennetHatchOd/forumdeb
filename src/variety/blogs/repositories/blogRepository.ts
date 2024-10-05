@@ -1,8 +1,8 @@
-import { BlogViewModel, BlogInputModel } from "../../../types";
 import { blogCollection } from "../../../db/db";
-import { BlogDBType } from "../../../db/dbTypes";
+import { BlogDBModel } from "../../../db/dbTypes";
 import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "mongodb";
-import { CodStatus, StatusResult} from "../../../interfaces";
+import { CodStatus, StatusResult} from "../../../types/interfaces";
+import { BlogInputModel, BlogViewModel } from "../types";
 
 export const blogRepository = {
 
@@ -23,14 +23,15 @@ export const blogRepository = {
          
         if(!ObjectId.isValid(id))
             return {codResult: CodStatus.NotFound};
-        const searchItem: WithId<BlogDBType> | null = await blogCollection.findOne({_id: new ObjectId(id)})           
+        const searchItem: WithId<BlogDBModel> | null = await blogCollection.findOne({_id: new ObjectId(id)})           
         return searchItem  
             ? {codResult: CodStatus.Ok, data: this.mapDbToView(searchItem)} 
             : {codResult: CodStatus.NotFound};
     },
 
-    async create(createItem: Omit<BlogViewModel, 'id'>): Promise <StatusResult<string|undefined>>{      
+    async create(createItem: BlogDBModel): Promise <StatusResult<string|undefined>>{      
         const answerInsert: InsertOneResult = await blogCollection.insertOne(createItem);
+        
         return answerInsert.acknowledged  
             ? {codResult: CodStatus.Created, data: answerInsert.insertedId.toString()}  
             : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
@@ -39,6 +40,7 @@ export const blogRepository = {
     
     async edit(id: string, editDate: BlogInputModel): Promise <StatusResult>{    
         const answerUpdate: UpdateResult = await blogCollection.updateOne({_id: new ObjectId(id)}, {$set: editDate});
+        
         if(!answerUpdate.acknowledged)
             return {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
         
@@ -65,7 +67,7 @@ export const blogRepository = {
     
     },
 
-    mapDbToView(item: WithId<BlogDBType>): BlogViewModel {
+    mapDbToView(item: WithId<BlogDBModel>): BlogViewModel {
         
         return {
             id: item._id.toString(),

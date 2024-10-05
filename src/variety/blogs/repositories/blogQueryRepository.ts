@@ -1,8 +1,9 @@
-import { BlogViewModel, PaginatorModel, QueryModel} from "../../../types";
+import { PaginatorModel, QueryModel} from "../../../types/types";
 import { blogCollection } from "../../../db/db";
-import { BlogDBType } from "../../../db/dbTypes";
+import { BlogDBModel } from "../../../db/dbTypes";
 import { ObjectId, WithId } from "mongodb";
 import { emptyPaginator } from "../../../modules/paginator";
+import { BlogViewModel } from "../types";
 
 export const blogQueryRepository = {
 
@@ -11,7 +12,7 @@ export const blogQueryRepository = {
         
         if(!ObjectId.isValid(id))
             return null;                   
-            const searchItem: WithId<BlogDBType> | null = await blogCollection.findOne({_id: new ObjectId(id)})           
+            const searchItem: WithId<BlogDBModel> | null = await blogCollection.findOne({_id: new ObjectId(id)})           
             return searchItem 
                  ? this.mapDbToView(searchItem) 
                  : null 
@@ -27,7 +28,7 @@ export const blogQueryRepository = {
         if (totalCount == 0)
             return emptyPaginator;  
         
-        const searchItem: Array<WithId<BlogDBType>>  = 
+        const searchItem: Array<WithId<BlogDBModel>>  = 
             await blogCollection.find(queryFilter)
                                 .limit(queryReq.pageSize)
                                 .skip((queryReq.pageNumber - 1) * queryReq.pageSize)
@@ -42,7 +43,7 @@ export const blogQueryRepository = {
         }
     },
 
-    mapDbToView(item: WithId<BlogDBType>): BlogViewModel {
+    mapDbToView(item: WithId<BlogDBModel>): BlogViewModel {
         
         return {
             id: item._id.toString(),
