@@ -30,7 +30,6 @@ export const authControllers = {
         try{
             const answer: StatusResult<AboutUser|undefined> = (await authService.aboutMe(req.user!.id))
 
-            console.log('answer = ', answer)
             if(answer.codResult == CodStatus.Ok){
                 res.status(HTTP_STATUSES.OK_200).json(answer.data)
                 return;

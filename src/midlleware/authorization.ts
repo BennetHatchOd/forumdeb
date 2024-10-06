@@ -33,5 +33,5 @@ export const authorizatorUser = (req: Request<any, any, any, any>, res: Response
             return
         }
     }
-    res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
+    res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401);
 }
