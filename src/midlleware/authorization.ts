@@ -30,8 +30,8 @@ export const authorizatorUser = (req: Request<any, any, any, any>, res: Response
         if(userId){
             req.user = {id: userId} as IdType;
             next();
+            return
         }
     }
-    res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401);
-    return
+    res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
 }

@@ -9,7 +9,6 @@ export const userService = {
 
  
     async create(createItem: UserInputModel): Promise<StatusResult<string|APIErrorResult|undefined>>{      
-         console.log(createItem)   
         const isUniq: StatusResult<APIErrorResult|undefined> = await this.checkUniq(createItem.login, createItem.email)
         if(isUniq.codResult == CodStatus.BadRequest)
             return isUniq;

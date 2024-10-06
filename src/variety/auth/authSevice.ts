@@ -8,9 +8,16 @@ import { AboutUser } from "./types";
 
 export const authService = {
 
-    async authUser(loginOrEmail: string, password: string): Promise<StatusResult<string|undefined >> {      
+    async authUser(loginOrEmail: string, password: string): Promise<StatusResult<string|undefined|APIErrorResult >> {
+        const answerValid = authService.isValid(loginOrEmail, password)
+
+        if(answerValid.codResult == CodStatus.BadRequest){
+            return answerValid
+            }
+        
+
         const foundUser: StatusResult<{id:string, passHash:string}|undefined> = await authRepository.getUserByLoginEmail(loginOrEmail)
-        if(foundUser.codResult != CodStatus.Ok) return foundUser as StatusResult;
+        if(foundUser.codResult != CodStatus.Ok) return {codResult: CodStatus.NotAuth};
         
         if(!await passwordHashService.checkHash(password, foundUser.data!.passHash)) 
             return {codResult: CodStatus.NotAuth}

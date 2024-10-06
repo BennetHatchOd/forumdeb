@@ -18,7 +18,7 @@ export const authRepository = {
 
     async findById(id: string): Promise < StatusResult<AboutUser|undefined> > {     
              
-        const searchItem: WithId<UserDBModel> | null = await userCollection.findOne({_id: new ObjectId(id)})           
+        const searchItem: WithId<UserDBModel> | null = await userCollection.findOne({_id: new ObjectId(id)})  
         if(!searchItem)
             return {codResult: CodStatus.NotFound}
 
