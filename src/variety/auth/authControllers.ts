@@ -18,7 +18,7 @@ export const authControllers = {
                 res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401)
                 return
             }
-            res.status(HTTP_STATUSES.NO_CONTENT_204).json({"accessToken": userToken.data!}) 
+            res.status(HTTP_STATUSES.OK_200).json({"accessToken": userToken.data!}) 
         }
         catch(err){
             console.log(err)
