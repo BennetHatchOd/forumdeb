@@ -56,7 +56,7 @@ export const commentRepository = {
     },
 
 
-    async clear(): Promise <StatusResult> {
+    async clear(): Promise <StatusResult> { 
         await commentCollection.deleteMany()
 
         return await commentCollection.countDocuments({}) == 0 
