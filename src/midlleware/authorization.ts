@@ -24,7 +24,7 @@ export const authorizatorAdmin = (req: Request<any, any, any, any>, res: Respons
 export const authorizatorUser = (req: Request<any, any, any, any>, res: Response, next: NextFunction) =>{
 
     const authheader = req.headers.authorization
-    if(authheader && authheader.split(' ')[0] == 'bearer'){
+    if(authheader && authheader.split(' ')[0] == 'Bearer'){
         const token = authheader.split(' ')[1]
         const userId: string|null = jwtService.findIdbyToken(token, SECRET_KEY)
         if(userId){
