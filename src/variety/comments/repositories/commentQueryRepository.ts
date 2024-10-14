@@ -2,7 +2,7 @@ import { PaginatorModel, QueryModel} from "../../../types/types";
 import { commentCollection } from "../../../db/db";
 import { CommentDBModel } from "../../../db/dbTypes";
 import { ObjectId, WithId } from "mongodb";
-import { emptyPaginator } from "../../../modules/paginator";
+import { emptyPaginator } from "../../../utility/paginator";
 import { CommentViewModel } from "../types";
 
 export const commentQueryRepository = {
