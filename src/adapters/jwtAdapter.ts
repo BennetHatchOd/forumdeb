@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { SECRET_KEY, TIME_LIFE_TOKEN } from '../setting'
 
-export const jwtService ={
+export const jwtAdapter ={
 
     createToken(userId: string, secretKey: string):string{
         const token = jwt.sign({userId: userId}, secretKey, {expiresIn: TIME_LIFE_TOKEN})

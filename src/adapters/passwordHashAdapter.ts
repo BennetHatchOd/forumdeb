@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'
 
 
-export const passwordHashService = {
+export const passwordHashAdapter = {
     
     async createHash(password: string){
         const saltRounds = 10
