@@ -1,5 +1,5 @@
 import { CodStatus, StatusResult } from "../../types/interfaces";
-import { passwordHashService } from "../../modules/passwordHashService";
+import { passwordHashAdapter } from "../../adapters/passwordHashAdapter";
 import { APIErrorResult, FieldError} from "../../types/types";
 import { userRepository } from "./repositories/userRepository"; 
 import bcrypt from "bcrypt"
@@ -13,7 +13,7 @@ export const userService = {
         if(isUniq.codResult == CodStatus.BadRequest)
             return isUniq;
         
-        const hash: string = await passwordHashService.createHash(createItem.password)
+        const hash: string = await passwordHashAdapter.createHash(createItem.password)
         const newUser: Omit<UserPasswordModel, 'id'> = {
                                 login: createItem.login,
                                 email: createItem.email,

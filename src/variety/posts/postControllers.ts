@@ -4,7 +4,7 @@ import { postService } from "./postService";
 import { CodStatus, StatusResult } from "../../types/interfaces";
 import { APIErrorResult, PaginatorModel, QueryModel } from "../../types/types";
 import { postQueryRepository } from "./repositories/postQueryRepository";
-import { paginator } from "../../modules/paginator";
+import { paginator } from "../../utility/paginator";
 import { PostInputModel, PostViewModel } from "./types";
 
 export const postControllers = {   

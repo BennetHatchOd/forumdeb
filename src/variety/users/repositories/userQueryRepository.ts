@@ -2,7 +2,7 @@ import { PaginatorModel, QueryModel} from "../../../types/types";
 import { userCollection } from "../../../db/db";
 import { UserDBModel } from "../../../db/dbTypes";
 import { ObjectId, WithId } from "mongodb";
-import { emptyPaginator } from "../../../modules/paginator";
+import { emptyPaginator } from "../../../utility/paginator";
 import { UserViewModel } from "../types";
 
 export const userQueryRepository = {

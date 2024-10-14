@@ -18,7 +18,7 @@ export const idValidator = body('blogId').custom(async(value) => {
                                                         if((await blogRepository.isExist(value)).codResult == CodStatus.NotFound)
                                                             throw("BlogId isn't correct")
                                                     })
-                                             .withMessage("BlogId isn't corect")
+                                             //.withMessage("BlogId isn't corect")
 
 export const postValidator = [
     titleValidator,

@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from "express";
 import { HTTP_STATUSES, PASSCODE_ADMIN, SECRET_KEY } from "../setting";
-import { jwtService } from "../modules/jwtService";
+import { jwtAdapter } from "../adapters/jwtAdapter";
 import { IdType } from "../types/types";
 
 export const authorizatorAdmin = (req: Request<any, any, any, any>, res: Response, next: NextFunction) =>{
@@ -26,7 +26,7 @@ export const authorizatorUser = (req: Request<any, any, any, any>, res: Response
     const authheader = req.headers.authorization
     if(authheader && authheader.split(' ')[0] == 'Bearer'){
         const token = authheader.split(' ')[1]
-        const userId: string|null = jwtService.findIdbyToken(token, SECRET_KEY)
+        const userId: string|null = jwtAdapter.findIdbyToken(token, SECRET_KEY)
         if(userId){
             req.user = {id: userId} as IdType;
             next();

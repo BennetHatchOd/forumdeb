@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { paginator } from "../../modules/paginator"
+import { paginator } from "../../utility/paginator"
 import { HTTP_STATUSES } from "../../setting"
 import { APIErrorResult, PaginatorModel, QueryModel} from "../../types/types"
 import { userQueryRepository } from "./repositories/userQueryRepository"

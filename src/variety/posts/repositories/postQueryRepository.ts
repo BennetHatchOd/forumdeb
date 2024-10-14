@@ -2,7 +2,7 @@ import { QueryModel, PaginatorModel} from "../../../types/types";
 import { postCollection } from "../../../db/db";
 import { PostDBModel } from "../../../db/dbTypes";
 import { ObjectId, WithId } from "mongodb";
-import { emptyPaginator } from "../../../modules/paginator";
+import { emptyPaginator } from "../../../utility/paginator";
 import { PostViewModel } from "../types";
 
 export const postQueryRepository = {
