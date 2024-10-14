@@ -2,7 +2,7 @@ import { PaginatorModel, QueryModel} from "../../../types/types";
 import { blogCollection } from "../../../db/db";
 import { BlogDBModel } from "../../../db/dbTypes";
 import { ObjectId, WithId } from "mongodb";
-import { emptyPaginator } from "../../../modules/paginator";
+import { emptyPaginator } from "../../../utility/paginator";
 import { BlogViewModel } from "../types";
 
 export const blogQueryRepository = {

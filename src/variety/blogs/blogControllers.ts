@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import {HTTP_STATUSES} from '../../setting';
 import { blogService } from "./blogSevice";
-import { paginator } from "../../modules/paginator"; 
+import { paginator } from "../../utility/paginator"; 
 import { CodStatus, StatusResult } from "../../types/interfaces";
 import { PaginatorModel, QueryModel } from "../../types/types";
 import { postService } from "../posts/postService";
