@@ -41,7 +41,6 @@ export const userRepository = {
             ? {codResult: CodStatus.Created, data: answerInsert.insertedId.toString()}  
             : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
     },
-
     
     async delete(id: string):  Promise <StatusResult>{      
         const answerDelete: DeleteResult = await userCollection.deleteOne({_id: new ObjectId(id)})

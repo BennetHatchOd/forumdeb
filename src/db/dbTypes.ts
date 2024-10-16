@@ -22,6 +22,19 @@ export type UserDBModel = {
     createdAt:	string
 }
 
+export type UserUnconfirmedDBModel = {
+    user:{
+        login:	string,
+        email:	string,
+        password: string,
+        createdAt:	string},
+    confirmEmail: {
+        code: string,
+        expirationTime: string,
+        countSendingCode: number
+    }
+}
+
 export type CommentatorDBInfo ={
     userId:	    string,
     userLogin:  string	

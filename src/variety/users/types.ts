@@ -19,4 +19,23 @@ export type UserPasswordModel = {
     password: string,
 }
 
+export type UserUnconfirmedModel = {
+    id:     string,
+    user:{
+        login:	string,
+        email:	string,
+        password: string,
+        createdAt:	string
+    }
+    confirmEmail: {
+        code: string,
+        expirationTime: string,
+        countSendingCode: number
+    }
+}
 
+export type ConfirmEmailModel = {
+    code: string,
+    expirationTime: string,
+    countSendingCode: number
+}
