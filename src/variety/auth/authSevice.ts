@@ -108,7 +108,10 @@ export const authService = {
         if(foundUser.codResult == CodStatus.Ok)
             return foundUser;
         return {codResult: CodStatus.NotAuth}
-    }
+    },
     
+    async clear(): Promise < StatusResult > {
+        return await authRepository.clear()
+    },  
 }
 

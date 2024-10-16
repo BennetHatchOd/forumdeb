@@ -117,6 +117,13 @@ export const authRepository = {
             : true
     },
 
+    async clear(): Promise <StatusResult> {
+        await userUnconfirmedCollection.deleteMany()
+        return await userCollection.countDocuments({}) == 0 
+            ? {codResult: CodStatus.NoContent }  
+            : {codResult: CodStatus.Error, message: 'Collection isn\'t empty'};
+    },
+
     mapViewToDB(user: UserPasswordModel): WithId<UserDBModel> {
         return{
             _id:	new ObjectId(user.id),
