@@ -7,7 +7,7 @@ const codeTemplate = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{1
 
 export const loginEmailValidator = body('loginOrEmail').custom(async(value) => {
             if(!emailTemplate.test(value) 
-                || !(loginTemplate.test(value) && value.length > 2 && value.length < 11 )
+                && !(loginTemplate.test(value) && value.length > 2 && value.length < 11 )
             ){
                 throw('Login or email has incorrect values')
             }
