@@ -11,7 +11,7 @@ export const authControllers = {
     async authorization(req: Request<{},{},LoginInputModel>, res: Response){
         try{
             
-            const userToken = await authService.authUser(req.body.loginOrEmail, req.body.password)
+            const userToken = await authService.authorization(req.body.loginOrEmail, req.body.password)
  
             if(userToken.codResult == CodStatus.NotAuth){
                 res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401)

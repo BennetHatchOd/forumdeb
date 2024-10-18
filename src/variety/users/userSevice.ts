@@ -4,6 +4,7 @@ import { APIErrorResult, FieldError} from "../../types/types";
 import { userRepository } from "./repositories/userRepository"; 
 import bcrypt from "bcrypt"
 import { UserInputModel, UserPasswordModel } from "./types";
+import { authRepository } from "../auth/authRepository";
 
 export const userService = {
 
@@ -26,30 +27,35 @@ export const userService = {
     
     async checkUniq(login: string, email: string): Promise<StatusResult<APIErrorResult| undefined>> { 
         
-        const checkResult = await userRepository.checkUniq(login, email)
+        const userResult = await userRepository.checkUniq(login, email)
+        const authResult = await authRepository.checkUniq(login, email)
         
-        if (checkResult.data){
-            let errorsMessages: Array<FieldError> = checkResult.data.map(s => {
+        if (userResult.data || authResult.data){
+            const checkResult = userResult.data
+                            ? userResult.data
+                            : authResult.data
+            let errorsMessages: Array<FieldError> = checkResult!.map(s => {
                 return {
                     message: `${s} should be unique`,
                     field: s}
                 })
-                return{  
-                    codResult: CodStatus.BadRequest,
-                    data: {
-                        errorsMessages: errorsMessages
-                    } 
+            return{  
+                codResult: CodStatus.BadRequest,
+                data: {
+                    errorsMessages: errorsMessages} 
                 }    
             }
-            return checkResult as StatusResult
+            return {codResult: CodStatus.Ok}
         },
-        
+    // добавить удаление из временной базы
     async delete(id: string): Promise<StatusResult> {     
-        const isExistUser = await userRepository.isExist(id);
-        if (isExistUser.codResult != CodStatus.Ok)
-            return isExistUser;    
-        
-        return await userRepository.delete(id);
+        let isExistUser = await userRepository.isExist(id);
+        if (isExistUser.codResult == CodStatus.Ok)
+            return await userRepository.delete(id);
+        isExistUser = await authRepository.isExist(id);
+        if (isExistUser.codResult == CodStatus.Ok)
+            return await authRepository.delete(id);
+        return {codResult : CodStatus.NotFound}
         
     },
     

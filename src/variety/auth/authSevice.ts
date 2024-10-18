@@ -10,14 +10,13 @@ import { AboutUser } from "./types";
 import { ConfirmEmailModel, UserInputModel, UserUnconfirmedModel } from "../users/types";
 import { mailManager } from "../../utility/mailManager";
 import { UserDBModel } from "../../db/dbTypes";
-
-
+import { userRepository } from "../users/repositories/userRepository";
 
 export const authService = {
 
-    async authUser(loginOrEmail: string, password: string): Promise<StatusResult<string|undefined|APIErrorResult >> {
+    async authorization(loginOrEmail: string, password: string): Promise<StatusResult<string|undefined|APIErrorResult >> {
         
-        const foundUser: StatusResult<{id:string, passHash:string}|undefined> = await authRepository.getUserByLoginEmail(loginOrEmail)
+        const foundUser: StatusResult<{id:string, passHash:string}|undefined> = await userRepository.getUserByLoginEmail(loginOrEmail)
         if(foundUser.codResult != CodStatus.Ok) return {codResult: CodStatus.NotAuth};
         
         if(!await passwordHashAdapter.checkHash(password, foundUser.data!.passHash)) 
@@ -30,6 +29,7 @@ export const authService = {
     
     async confirmationUser(code: string): Promise<StatusResult<APIErrorResult|undefined>>{
         const foundUser: StatusResult<UserUnconfirmedModel|undefined> = await authRepository.findByConfirmCode(code)
+
         if (foundUser.codResult == CodStatus.NotFound)
             return {codResult: CodStatus.BadRequest, 
                 data:{
@@ -38,7 +38,6 @@ export const authService = {
                                         field: 'code'}]
                     }
                 }
-
         if(isBefore(foundUser.data!.confirmEmail.expirationTime, new Date()))
             return {codResult: CodStatus.BadRequest, 
                     data:{
@@ -50,11 +49,11 @@ export const authService = {
 
         const {user} = foundUser.data!
         
-        const addingUser: StatusResult = await authRepository.createConfirmUser(user)
+        const addingUser: StatusResult<string | undefined> = await userRepository.create(user)
         if(addingUser.codResult == CodStatus.Error)
-            return addingUser
+            return addingUser as StatusResult
         
-        const deletingUser: StatusResult = await authRepository.deleteUncorfirmUser(foundUser.data!.id)
+        const deletingUser: StatusResult = await authRepository.delete(foundUser.data!.id)
         if(deletingUser.codResult == CodStatus.Error)
             return deletingUser
 
@@ -104,7 +103,7 @@ export const authService = {
     },
 
     async aboutMe(id: string): Promise<StatusResult<AboutUser|undefined>>{
-        const foundUser: StatusResult<AboutUser|undefined> = await authRepository.findForOwnerById(id)
+        const foundUser: StatusResult<AboutUser|undefined> = await userRepository.findForOwnerById(id)
         if(foundUser.codResult == CodStatus.Ok)
             return foundUser;
         return {codResult: CodStatus.NotAuth}
