@@ -2,7 +2,6 @@ import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "m
 import { userCollection, authUserCollection } from "../../db/db";
 import { UserDBModel, UserUnconfirmedDBModel } from "../../db/dbTypes";
 import { CodStatus, StatusResult } from "../../types/interfaces";
-import { AboutUser } from "./types";
 import { ConfirmEmailModel, UserPasswordModel, UserUnconfirmedModel } from "../users/types";
 
 export const authRepository = {
