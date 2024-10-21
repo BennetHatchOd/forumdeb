@@ -14,8 +14,11 @@ export const mailManager = {
 
     async createConfirmEmail(mail: string, code: string){
         const message = 
-        `To confirm your registration, follow the link
-        https://some-front.com/auth/confirm-registration?code=${code}`
+          `<h1>Thank for your registration</h1>
+          <p> To finish registration please follow the link below:
+              <a href='https://somesite.com/confirm-email?code=${code}'>complete registration</a>
+          </p>`
+
         await mailAdapter.createEmail(mail, 'registration confirmation', message)
     }
  //   createEmail(){
