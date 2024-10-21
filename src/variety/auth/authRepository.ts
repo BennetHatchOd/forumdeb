@@ -10,6 +10,7 @@ export const authRepository = {
         
 
         const answerInsert: InsertOneResult = await authUserCollection.insertOne(createItem);
+  
         return answerInsert.acknowledged  
             ? {codResult: CodStatus.NoContent}  
             : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
@@ -25,26 +26,14 @@ export const authRepository = {
 
         return {
             codResult: CodStatus.Ok, 
-            data: { 
-                id:         searchItem._id.toString(),
-                user:{
-                    email:      searchItem.user.email,      
-                    login:      searchItem.user.login,
-                    password:   searchItem.user.password,
-                    createdAt:	searchItem.user.createdAt
-                },
-                confirmEmail: {
-                    code: searchItem.confirmEmail.code,
-                    expirationTime: searchItem.confirmEmail.expirationTime,
-                    countSendingCode: searchItem.confirmEmail.countSendingCode
-                }}
+            data: this.mapAuthDBToFull(searchItem) 
             }
     },
 
     async checkUniq(loginCheck: string, emailCheck: string): Promise<StatusResult<string[]|undefined>> {
         
-        const existEmail = await authUserCollection.countDocuments({ email: emailCheck })
-        const existLogin = await authUserCollection.countDocuments({ login: loginCheck })
+        const existEmail = await authUserCollection.countDocuments({ "user.email": emailCheck })
+        const existLogin = await authUserCollection.countDocuments({ "user.login": loginCheck })
 
         let arrayErrors: Array<string> = [] 
         if(existEmail > 0) 
@@ -57,10 +46,9 @@ export const authRepository = {
             :  {codResult: CodStatus.BadRequest, data: arrayErrors};
     },
 
-    async checkEmail(mail: string):  Promise <number>{      
+    async checkNotVerifEmail(mail: string):  Promise <number>{      
         const searchItem: WithId<UserUnconfirmedDBModel> | null  
-            = await authUserCollection.findOne({'confirmEmail.mail': mail})
-
+            = await authUserCollection.findOne({'user.email': mail})
         return searchItem 
             ? searchItem.confirmEmail.countSendingCode  
             : -1
@@ -70,7 +58,7 @@ export const authRepository = {
     
         const update: UpdateResult 
         = await authUserCollection.updateOne(
-                {'user.mail': mail},
+                {'user.email': mail},
                 {$set: {confirmEmail: confirmEmail}})
     
         return update.modifiedCount == 1
@@ -78,17 +66,22 @@ export const authRepository = {
             : {codResult: CodStatus.Error}        
     },
 
-    async checkUserByLoginEmail(login: string, email: string): Promise<boolean> {      
+    // async checkUserByLoginEmail(login: string, email: string): Promise<StatusResult<UserPasswordModel|UserUnconfirmedModel|undefined>> {      
 
-        const checkUser: WithId<UserDBModel>|null 
-            = await userCollection.findOne({$or: [{login: login},{email: email}]})           
-        const checkUncorfirmUser: WithId<UserUnconfirmedDBModel>|null 
-            = await authUserCollection.findOne({$or: [{'user.login': login},{'user.email': email}]})           
+    //     const checkUser: WithId<UserDBModel>|null 
+    //         = await userCollection.findOne({$or: [{login: login},{email: email}]})           
+    //     const checkUncorfirmUser: WithId<UserUnconfirmedDBModel>|null 
+    //         = await authUserCollection.findOne({$or: [{'user.login': login},{'user.email': email}]})           
         
-        return checkUser === null &&  checkUncorfirmUser === null
-            ? false 
-            : true
-    },
+    //     if (!checkUser) 
+    //         if (!checkUncorfirmUser)
+    //             return {codResult: CodStatus.NotFound}
+    //         else{
+    //             return {codResult: CodStatus.Ok, message: 'auth', data: this.mapAuthDBToFull(checkUncorfirmUser)}
+    //         }
+        
+    //         return {codResult: CodStatus.Ok, message: 'user', data: this.mapUserDBToFull(checkUser)}    
+    // },
 
     async clear(): Promise <StatusResult> {
         await authUserCollection.deleteMany()
@@ -125,5 +118,31 @@ export const authRepository = {
             createdAt:	user.createdAt,
             password: user.password,
         }
+    },
+
+    mapUserDBToFull(user: WithId<UserDBModel>): UserPasswordModel {
+        return { 
+            id:         user._id.toString(),
+            email:      user.email,      
+            login:      user.login,
+            password:   user.password,
+            createdAt:	user.createdAt
+            }
+    },
+
+    mapAuthDBToFull(user: WithId<UserUnconfirmedDBModel >): UserUnconfirmedModel  {
+        return { 
+            id:         user._id.toString(),
+            user:{
+                email:      user.user.email,      
+                login:      user.user.login,
+                password:   user.user.password,
+                createdAt:	user.user.createdAt
+            },
+            confirmEmail: {
+                code: user.confirmEmail.code,
+                expirationTime: user.confirmEmail.expirationTime,
+                countSendingCode: user.confirmEmail.countSendingCode
+            }}
     }
 }

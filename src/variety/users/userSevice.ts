@@ -47,7 +47,7 @@ export const userService = {
             }
             return {codResult: CodStatus.Ok}
         },
-    // добавить удаление из временной базы
+    
     async delete(id: string): Promise<StatusResult> {     
         let isExistUser = await userRepository.isExist(id);
         if (isExistUser.codResult == CodStatus.Ok)

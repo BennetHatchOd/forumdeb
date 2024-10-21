@@ -47,8 +47,8 @@ export const authControllers = {
              email: req.body.email,
              password: req.body.password
            }             
-           const registrAnswer: StatusResult = await authService.registrationUser(inputUserData)
-           res.sendStatus(registrAnswer.codResult)
+           const registrAnswer: StatusResult<undefined|APIErrorResult> = await authService.registrationUser(inputUserData)
+           res.status(registrAnswer.codResult).json(registrAnswer.data)
         }
         catch(err){
             console.log(err)
@@ -58,8 +58,8 @@ export const authControllers = {
 
     async reSendMail(req: Request, res: Response){
         try{
-           const sendAnswer: StatusResult = await authService.reSendEmail(req.body.email) 
-           res.sendStatus(sendAnswer.codResult)            
+           const sendAnswer: StatusResult<undefined|APIErrorResult> = await authService.reSendEmail(req.body.email) 
+           res.status(sendAnswer.codResult).json(sendAnswer.data)            
         }
         catch(err){
             console.log(err)

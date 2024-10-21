@@ -7,10 +7,11 @@ import { authRepository } from "./authRepository";
 import {v4 as uuidv4} from 'uuid'
 import {add, isBefore} from 'date-fns'
 import { AboutUser } from "./types";
-import { ConfirmEmailModel, UserInputModel, UserUnconfirmedModel } from "../users/types";
+import { ConfirmEmailModel, UserInputModel, UserPasswordModel, UserUnconfirmedModel } from "../users/types";
 import { mailManager } from "../../utility/mailManager";
 import { UserDBModel } from "../../db/dbTypes";
 import { userRepository } from "../users/repositories/userRepository";
+import { userService } from "../users/userSevice";
 
 export const authService = {
 
@@ -48,7 +49,7 @@ export const authService = {
                     }
 
         const {user} = foundUser.data!
-        
+        console.log(`confirmation user ${foundUser.data?.user.email}`)                                          // console.log
         const addingUser: StatusResult<string | undefined> = await userRepository.create(user)
         if(addingUser.codResult == CodStatus.Error)
             return addingUser as StatusResult
@@ -60,10 +61,11 @@ export const authService = {
         return {codResult: CodStatus.NoContent}
     },
 
-    async registrationUser(newUser: UserInputModel): Promise<StatusResult>{
+    async registrationUser(newUser: UserInputModel): Promise<StatusResult<undefined|APIErrorResult>>{
 
-        if(await authRepository.checkUserByLoginEmail(newUser.login, newUser.email))
-            return {codResult: CodStatus.BadRequest}
+        const isUniq: StatusResult<APIErrorResult|undefined> = await userService.checkUniq(newUser.login, newUser.email)
+        if(isUniq.codResult == CodStatus.BadRequest)
+            return isUniq;
         
         const passHash = await passwordHashAdapter.createHash(newUser.password)
         
@@ -83,11 +85,15 @@ export const authService = {
 
     },
 
-    async reSendEmail(mail: string): Promise<StatusResult>{
-        let countMail: number = await authRepository.checkEmail(mail)
+    async reSendEmail(mail: string): Promise<StatusResult<undefined|APIErrorResult>>{
+        let countMail: number = await authRepository.checkNotVerifEmail(mail)
 
         if(countMail == -1)
-            return {codResult: CodStatus.BadRequest}
+            return {codResult: CodStatus.BadRequest, data:{
+                "errorsMessages": [{
+                    "message": "string",
+                    "field": "email"}]
+                }}
         
         const confirmEmail: ConfirmEmailModel = {
             code: uuidv4(),
