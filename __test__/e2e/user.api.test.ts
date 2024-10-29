@@ -2,7 +2,7 @@ import request from "supertest";
 import { app } from "../../src/app";
 import {MongoMemoryServer} from 'mongodb-memory-server'
 import {MongoClient} from 'mongodb'
-import { UserEndPoint } from "./userClass";
+import { UserEndPoint } from './classes/userClass'
 import { initialize } from "./initialize";
 
 
@@ -12,7 +12,7 @@ describe('/users', () => {
     let uri : string
     let client: MongoClient
     let userTest: UserEndPoint
-    
+    userTest = new UserEndPoint()
     
     beforeAll(async() =>{  // clear db-array
         
@@ -26,7 +26,7 @@ describe('/users', () => {
         client = new MongoClient(uri)
         await client.connect()
         await request(app).delete('/testing/all-data')
-        postTest = (await initialize()).post
+        
     })
 
     afterAll(async() =>{
@@ -34,26 +34,45 @@ describe('/users', () => {
     })
 
     
-    it('a0.should return 200 and empty array', async () => { // watch all blogs [get.blog]
-        await userTest.getItems()    
-    })
- 
-    // it('a1.should return 201 and created object', async () => { // create the fisrt new blog [post.blog]
-    //     await postTest.createItem(0, undefined, "ho-ho-ho");
+    // it('c0.should return 200 and empty array', async () => { // watch all blogs [get.blog]
+    //     await userTest.getItems()    
     // })
+ 
+    it('c1.should return 201 and created objects', async () => { // create new users
+        await userTest.createItem(2);
+        await userTest.createItem(0);
+        await userTest.createItem(3);
+    })
     
+    it('c2.should return 200 and tokens', async () => { // 
+        await userTest.checkLogin(0);
+        await userTest.checkLogin(1);
+        await userTest.checkLogin(2);
+    })
+    
+
     //  it('a2.should return 201 and created object', async () => { // create the second new blog [post.blog]
     //     await postTest.createItem(1, undefined, 'top')   
     // })
     
-    // it('a3.should return 401', async () => {  // create the third new blog without Authorization [post.blog]       
-    //     await postTest.createItemNoAuth(1) 
-    // })
+    it('c3.should return 401', async () => {  //       
+        await userTest.checkLoginFaultPassword(0) 
+    })
 
-    // it('a4.should return 201 and created object', async () => {  // create the third new blog [post.blog]
+
+    it('c4.should return 401', async () => {  //       
+        await userTest.checkLoginFaultLogin(1) 
+    })
+
+    it('c5.should return 200 and object', async () => {  
     
-    //     await postTest.createItem(2);
-    // })
+        await userTest.aboutMe(1)
+    })
+
+    it('c5.should return 401', async () => {  
+    
+        await userTest.aboutMeFault(1)
+    })
         
     // it('a5.shouldn\'t delete blog and return 401', async () => { // delete the third blog  with wrong Authorization [delete.blog]
     //     await postTest.deleteNoItemOrBadAuth(true)
