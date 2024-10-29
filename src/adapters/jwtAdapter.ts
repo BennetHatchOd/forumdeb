@@ -1,17 +1,23 @@
 import jwt from 'jsonwebtoken'
-import { SECRET_KEY, TIME_LIFE_TOKEN } from '../setting'
+import { SECRET_KEY, TIME_LIFE_ACCESS_TOKEN, TIME_LIFE_REFRESH_TOKEN } from '../setting'
+import { tokenPayload } from '../types/interfaces'
 
 export const jwtAdapter ={
 
-    createToken(userId: string, secretKey: string):string{
-        const token = jwt.sign({userId: userId}, secretKey, {expiresIn: TIME_LIFE_TOKEN})
+    createAccessToken(userId: string):string{
+        const token = jwt.sign({userId: userId}, SECRET_KEY, {expiresIn: TIME_LIFE_ACCESS_TOKEN})
         return token
     },
 
-    findIdbyToken(token: string, secretKey: string): string|null{
+    createRefrashToken(userId: string, tokenVersion: string):string{
+        const token = jwt.sign({userId: userId, version: tokenVersion}, SECRET_KEY, {expiresIn: TIME_LIFE_REFRESH_TOKEN})
+        return token
+    },
+
+    calcPayload(token: string): {userId:string, version?:string, exp?: number}|null{
         try{
-            const answer: any = jwt.verify(token, secretKey)
-            return answer.userId
+            const {userId, version, exp} = jwt.verify(token, SECRET_KEY) as tokenPayload
+            return {userId, version, exp}
         }
         catch(err){
             return null

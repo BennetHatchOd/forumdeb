@@ -9,3 +9,6 @@ export type AboutUser = {
     userId:     string
   }
 
+export type Tokens = {
+    accessToken: string, 
+    refreshToken: string}

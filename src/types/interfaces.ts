@@ -1,3 +1,5 @@
+import { JwtPayload } from "jsonwebtoken";
+
 export enum CodStatus {
     Ok = 200,
     Created = 201,
@@ -14,3 +16,8 @@ export interface StatusResult <T = undefined> {
     message?: string,  
     data?: T;  
 }
+
+export interface tokenPayload extends JwtPayload {
+    userId: string;
+    version?: string;
+  }

@@ -26,7 +26,7 @@ export const authorizatorUser = (req: Request<any, any, any, any>, res: Response
     const authheader = req.headers.authorization
     if(authheader && authheader.split(' ')[0] == 'Bearer'){
         const token = authheader.split(' ')[1]
-        const userId: string|null = jwtAdapter.findIdbyToken(token, SECRET_KEY)
+        const userId = jwtAdapter.calcPayload(token)?.userId
         if(userId){
             req.user = {id: userId} as IdType;
             next();

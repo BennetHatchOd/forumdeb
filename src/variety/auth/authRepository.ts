@@ -1,6 +1,6 @@
 import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "mongodb";
-import { userCollection, authUserCollection } from "../../db/db";
-import { UserDBModel, UserUnconfirmedDBModel } from "../../db/dbTypes";
+import { userCollection, authUserCollection, tokenCollection } from "../../db/db";
+import { BlackListModel, TokenListDB, UserDBModel, UserUnconfirmedDBModel } from "../../db/dbTypes";
 import { CodStatus, StatusResult } from "../../types/interfaces";
 import { ConfirmEmailModel, UserPasswordModel, UserUnconfirmedModel } from "../users/types";
 
@@ -52,6 +52,26 @@ export const authRepository = {
         return searchItem 
             ? searchItem.confirmEmail.countSendingCode  
             : -1
+    },
+    
+    async getBlackList(userId: string): Promise<Array<BlackListModel>|null>{
+
+        const foundUser: TokenListDB|null = await tokenCollection.findOne({userId: userId})
+        return foundUser 
+            ? foundUser.blackList
+            : null
+
+    },
+    async setBlackList(userId: string, list: Array<BlackListModel> ):Promise<StatusResult>{
+        const foundUser = await tokenCollection.countDocuments({userId: userId})
+        const answer = (foundUser == 0)
+            ? await tokenCollection.insertOne({userId: userId, blackList: list})
+            : await tokenCollection.updateOne({userId: userId}, {blackList: list})
+
+            return answer.acknowledged  
+            ? {codResult: CodStatus.NoContent}  
+            : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
+
     },
 
     async updateCode(mail: string, confirmEmail: ConfirmEmailModel):  Promise <StatusResult>{    

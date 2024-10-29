@@ -2,23 +2,51 @@ import { Request, Response } from "express";
 import { HTTP_STATUSES } from "../../setting";
 import { authService } from "./authSevice";
 import { CodStatus, StatusResult } from "../../types/interfaces";
-import { AboutUser, LoginInputModel } from "./types";
+import { AboutUser, LoginInputModel, Tokens } from "./types";
 import { APIErrorResult } from "../../types/types";
 import { UserInputModel } from "../users/types";
+
 
 export const authControllers = { 
   
     async authorization(req: Request<{},{},LoginInputModel>, res: Response){
-        try{
-            
-            const userToken = await authService.authorization(req.body.loginOrEmail, req.body.password)
+        try{            
+            const userTokens = await authService.authorization(req.body.loginOrEmail, req.body.password)
  
-            if(userToken.codResult == CodStatus.NotAuth){
+            if(userTokens.codResult == CodStatus.NotAuth){
                 res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401)
-                return
+                return;
             }
-            res.status(HTTP_STATUSES.OK_200).json({"accessToken": userToken.data!}) 
+            res.cookie('rf_token', userTokens.data!.refreshToken, {httpOnly: true, secure: true,})
+            res.status(HTTP_STATUSES.OK_200).json({"accessToken": userTokens.data!.accessToken}) 
         }
+        catch(err){
+            console.log(err)
+            res.sendStatus(HTTP_STATUSES.ERROR_500)
+        }
+    },
+
+    async updateRefrashToken(req: Request, res:Response){
+        try{    
+            const refreshToken= req.cookies.rf_token
+            const userTokens: StatusResult<Tokens | undefined> = await authService.updateTokens(refreshToken)
+            if (userTokens.codResult != CodStatus.Ok){
+                res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401)
+                return;
+            }
+            res.cookie('rf_token', userTokens.data!.refreshToken, {httpOnly: true, secure: true,})
+            res.status(HTTP_STATUSES.OK_200).json({ "accessToken": userTokens.data!.accessToken})
+        }
+        catch(err){
+            console.log(err)
+            res.sendStatus(HTTP_STATUSES.ERROR_500)
+        }       
+    },
+
+    async logOut(req: Request, res:Response){
+        try{    
+            const refreshToken= req.cookies.rf_token
+            authService.logOut(refreshToken)        }
         catch(err){
             console.log(err)
             res.sendStatus(HTTP_STATUSES.ERROR_500)

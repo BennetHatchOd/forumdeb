@@ -40,10 +40,20 @@ export type CommentatorDBInfo ={
     userLogin:  string	
 }
 
-export type CommentDBModel ={
+export type CommentDBModel = {
     parentPostId:       string,
     content:	        string,
     commentatorInfo:	CommentatorDBInfo,
     createdAt:	        string,
 
+}
+
+export type TokenListDB = {
+    userId: string,
+    blackList: Array<BlackListModel>
+}
+
+export type BlackListModel = {
+    version: string,
+    expireTime: number
 }
