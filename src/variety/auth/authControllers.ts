@@ -46,7 +46,7 @@ export const authControllers = {
     async logOut(req: Request, res:Response){
         try{    
             const refreshToken= req.cookies.rf_token
-            authService.logOut(refreshToken)        }
+            authService.logOut(refreshToken)}
         catch(err){
             console.log(err)
             res.sendStatus(HTTP_STATUSES.ERROR_500)
