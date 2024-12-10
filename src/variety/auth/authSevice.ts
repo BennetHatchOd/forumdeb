@@ -57,7 +57,6 @@ export const authService = {
                     }
 
         const {user} = foundUser.data!
-        console.log(`confirmation user ${foundUser.data?.user.email}`)                                          // console.log
         const addingUser: StatusResult<string | undefined> = await userRepository.create(user)
         if(addingUser.codResult == CodStatus.Error)
             return addingUser as StatusResult
@@ -147,6 +146,7 @@ export const authService = {
             expireTime: payload.exp!
         }
         const blackList = await authRepository.getBlackList(payload.userId)    
+        
         if(!blackList){
             return await authRepository.setBlackList(payload.userId, [newItemBL])
         }
@@ -155,8 +155,8 @@ export const authService = {
         
         const newBL: BlackListModel[] = blackList.filter(p => isBefore(new Date(), new Date(1000 * p.expireTime)))
         newBL.push(newItemBL)
+
         return await authRepository.setBlackList(payload.userId, newBL)
-    
     },  
 
     async clear(): Promise < StatusResult > {

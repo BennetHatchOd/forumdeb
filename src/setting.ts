@@ -16,7 +16,7 @@ export const SECRET_KEY = process.env.SECRET_KEY || '114'
 export const PASSCODE_ADMIN = process.env.PASSCODE_ADMIN || 'admin:qwerty' 
 export const PASSWORD_MAIL = process.env.PASSWORD_MAIL  
 
-export const TIME_LIFE_ACCESS_TOKEN = '190s'
+export const TIME_LIFE_ACCESS_TOKEN = '10s'
 export const TIME_LIFE_REFRESH_TOKEN = '20s'
 
 export const HTTP_STATUSES = {
@@ -37,4 +37,13 @@ export const URL_PATH = {
     users:      '/users',
     auth:       '/auth',
     comments:   '/comments'
+}
+export const AUTH_PATH = {
+    login:           '/login',
+    confirm:         '/registration-confirmation',
+    registration:    '/registration',
+    resent:          '/registration-email-resending',
+    refresh:         '/refresh-token',
+    logout:          '/logout',
+    me:              '/me'
 }

@@ -47,7 +47,6 @@ export const postService = {
             return await postRepository.delete(id);
     },
    
-
     async clear(): Promise<StatusResult> {
         return await postRepository.clear()
     },

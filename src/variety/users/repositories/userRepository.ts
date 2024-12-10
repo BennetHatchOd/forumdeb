@@ -62,7 +62,8 @@ export const userRepository = {
 
     async create(createItem: UserDBModel): Promise <StatusResult<string|undefined>>{  
         
-        const answerInsert: InsertOneResult = await userCollection.insertOne(createItem);
+        const answerInsert: InsertOneResult = await userCollection.insertOne(createItem);     
+        
         return answerInsert.acknowledged  
             ? {codResult: CodStatus.Created, data: answerInsert.insertedId.toString()}  
             : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};

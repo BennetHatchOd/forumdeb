@@ -3,15 +3,16 @@ import { authControllers } from './authControllers';
 import { authorizatorUser } from '../../midlleware/authorization';
 import { authSplitValidator, authValidator, codeValidator, emailValidator } from './middleware/authValidator';
 import { checkInputValidation } from '../../midlleware/checkInputValidators';
+import { AUTH_PATH } from '../../setting';
 
 export const authRouter = Router({});
 
-authRouter.post('/login', authSplitValidator, checkInputValidation, authControllers.authorization)
-authRouter.post('/registration-confirmation', codeValidator, checkInputValidation, authControllers.confirmation)
-authRouter.post('/registration', authValidator, checkInputValidation, authControllers.registration)
-authRouter.post('/registration-email-resending', emailValidator, checkInputValidation, authControllers.reSendMail)
-authRouter.post('/refresh-token', authControllers.updateRefrashToken)
-authRouter.post('/logout', authControllers.logOut)
-authRouter.get('/me', authorizatorUser, authControllers.getMe)
+authRouter.post(AUTH_PATH.login, authSplitValidator, checkInputValidation, authControllers.authorization)
+authRouter.post(AUTH_PATH.confirm, codeValidator, checkInputValidation, authControllers.confirmation)
+authRouter.post(AUTH_PATH.registration, authValidator, checkInputValidation, authControllers.registration)
+authRouter.post(AUTH_PATH.resent, emailValidator, checkInputValidation, authControllers.reSendMail)
+authRouter.post(AUTH_PATH.refresh, authControllers.updateRefrashToken)
+authRouter.post(AUTH_PATH.logout, authControllers.logOut)
+authRouter.get(AUTH_PATH.me, authorizatorUser, authControllers.getMe)
 
   

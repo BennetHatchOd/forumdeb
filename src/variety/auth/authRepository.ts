@@ -66,9 +66,9 @@ export const authRepository = {
         const foundUser = await tokenCollection.countDocuments({userId: userId})
         const answer = (foundUser == 0)
             ? await tokenCollection.insertOne({userId: userId, blackList: list})
-            : await tokenCollection.updateOne({userId: userId}, {blackList: list})
-
-            return answer.acknowledged  
+            : await tokenCollection.updateOne({userId: userId}, {$set: {blackList: list}})
+        
+        return answer.acknowledged  
             ? {codResult: CodStatus.NoContent}  
             : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
 
