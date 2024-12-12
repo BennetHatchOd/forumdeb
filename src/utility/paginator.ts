@@ -25,6 +25,8 @@ export const emptyPaginator = {
 const pageValidator = (page: number): number =>{
    
     page = Number(page)
+    if(!page)
+        return 1
     if(page < 1 || (Math.floor(page) - page != 0))
         return 1;
 

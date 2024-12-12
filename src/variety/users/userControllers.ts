@@ -14,7 +14,6 @@ export const userControllers = {
             const queryPaginator:  QueryModel = paginator(req.query)
         
             const userPaginator: PaginatorModel<UserViewModel> = await userQueryRepository.find(queryPaginator)
-        
             res.status(HTTP_STATUSES.OK_200).json(userPaginator)
         }
         catch(err){

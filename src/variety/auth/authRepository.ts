@@ -105,7 +105,8 @@ export const authRepository = {
 
     async clear(): Promise <StatusResult> {
         await authUserCollection.deleteMany()
-        return await userCollection.countDocuments({}) == 0 
+        await tokenCollection.deleteMany()
+        return await authUserCollection.countDocuments({}) == 0 
             ? {codResult: CodStatus.NoContent }  
             : {codResult: CodStatus.Error, message: 'Collection isn\'t empty'};
     },

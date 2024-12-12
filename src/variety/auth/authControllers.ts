@@ -17,7 +17,7 @@ export const authControllers = {
                 res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401)
                 return;
             }
-            res.cookie('rf_token', userTokens.data!.refreshToken, {httpOnly: true, secure: true,})
+            res.cookie('refreshToken', userTokens.data!.refreshToken, {httpOnly: true, secure: true,})
             res.status(HTTP_STATUSES.OK_200).json({"accessToken": userTokens.data!.accessToken}) 
         }
         catch(err){
@@ -28,13 +28,13 @@ export const authControllers = {
 
     async updateRefrashToken(req: Request, res:Response){
         try{    
-            const refreshToken= req.cookies.rf_token
+            const refreshToken= req.cookies.refreshToken
             const userTokens: StatusResult<Tokens | undefined> = await authService.updateTokens(refreshToken)
             if (userTokens.codResult != CodStatus.Ok){
                 res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401)
                 return;
             }
-            res.cookie('rf_token', userTokens.data!.refreshToken, {httpOnly: true, secure: true,})
+            res.cookie('refreshToken', userTokens.data!.refreshToken, {httpOnly: true, secure: true,})
             res.status(HTTP_STATUSES.OK_200).json({ "accessToken": userTokens.data!.accessToken})
         }
         catch(err){
@@ -46,7 +46,7 @@ export const authControllers = {
     async logOut(req: Request, res:Response){
         try{  
  
-            const refreshToken= req.cookies.rf_token
+            const refreshToken= req.cookies.refreshToken
             const answerLogOut = await authService.logOut(refreshToken)
             res.status(answerLogOut.codResult).send({})
         }

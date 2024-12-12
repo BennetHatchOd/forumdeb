@@ -167,7 +167,7 @@ describe('/auth', () => {
     it('update refrashToken', async() => {
         
         const loginData = await request(app).post(`${URL_PATH.auth}${AUTH_PATH.refresh}`)
-                    .set("Cookie", 'rf_token='+ refreshToken)
+                    .set("Cookie", 'refreshToken='+ refreshToken)
                     .expect(HTTP_STATUSES.OK_200);
         accessToken = loginData.body.accessToken
         const cookies = loginData.headers['set-cookie'][0].split('')
@@ -178,7 +178,7 @@ describe('/auth', () => {
     it('logout', async() => {
         
         const loginData = await request(app).post(`${URL_PATH.auth}${AUTH_PATH.logout}`)
-                    .set("Cookie", 'rf_token='+ refreshToken)
+                    .set("Cookie", 'refreshToken='+ refreshToken)
                     .expect(HTTP_STATUSES.NO_CONTENT_204);
         expect(loginData.body.accessToken).toBeUndefined
         expect(loginData.headers['set-cookie']).toBeUndefined
@@ -195,7 +195,7 @@ describe('/auth', () => {
     it('update refrashToken after logout', async() => {
         
         const loginData = await request(app).post(`${URL_PATH.auth}${AUTH_PATH.refresh}`)
-                    .set("Cookie", 'rf_token='+ refreshToken)
+                    .set("Cookie", 'refreshToken='+ refreshToken)
                     .expect(HTTP_STATUSES.NO_AUTHOR_401);
         expect(loginData.body.accessToken).toBeUndefined
         expect(loginData.headers['set-cookie']).toBeUndefined
