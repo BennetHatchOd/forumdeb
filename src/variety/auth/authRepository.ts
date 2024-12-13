@@ -1,5 +1,5 @@
 import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "mongodb";
-import { userCollection, authUserCollection, tokenCollection } from "../../db/db";
+import { userCollection, authUserCollection, tokenCollection, requestCollection } from "../../db/db";
 import { BlackListModel, TokenListDB, UserDBModel, UserUnconfirmedDBModel } from "../../db/dbTypes";
 import { CodStatus, StatusResult } from "../../types/interfaces";
 import { ConfirmEmailModel, UserPasswordModel, UserUnconfirmedModel } from "../users/types";
@@ -85,6 +85,17 @@ export const authRepository = {
             ? {codResult: CodStatus.NoContent}
             : {codResult: CodStatus.Error}        
     },
+
+    async setRequestAPI(ip:string, url:string, date: Date){
+        await requestCollection.insertOne({ip:   ip,
+                                           url:  url,
+                                           date: date})
+    },
+
+    async getNumberRequestAPI(ip:string, url:string, dateFrom: Date){
+        return await requestCollection.countDocuments({ip: ip, url: url, date: {$gte: dateFrom}})
+    },
+
 
     // async checkUserByLoginEmail(login: string, email: string): Promise<StatusResult<UserPasswordModel|UserUnconfirmedModel|undefined>> {      
 

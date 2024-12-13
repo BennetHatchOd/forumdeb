@@ -16,7 +16,7 @@ export const app = express();
 
 app.use(cors())
 app.use(cookieParser())
-
+app.set('trust proxy', true)
 
 const jsonBodyMiddleware = express.json();
 app.use(jsonBodyMiddleware);

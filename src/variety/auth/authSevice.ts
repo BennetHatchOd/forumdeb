@@ -1,11 +1,10 @@
 import { CodStatus, StatusResult } from "../../types/interfaces";
 import { jwtAdapter } from "../../adapters/jwtAdapter";
 import { passwordHashAdapter } from "../../adapters/passwordHashAdapter";
-import { SECRET_KEY } from "../../setting";
 import { APIErrorResult} from "../../types/types";
 import { authRepository } from "./authRepository"; 
 import {v4 as uuidv4} from 'uuid'
-import {add, isBefore} from 'date-fns'
+import {add, isBefore, subSeconds} from 'date-fns'
 import { AboutUser, Tokens } from "./types";
 import { ConfirmEmailModel, UserInputModel, UserPasswordModel, UserUnconfirmedModel } from "../users/types";
 import { mailManager } from "../../utility/mailManager";
@@ -13,6 +12,7 @@ import { BlackListModel, UserDBModel } from "../../db/dbTypes";
 import { userRepository } from "../users/repositories/userRepository";
 import { userService } from "../users/userSevice";
 import ShortUniqueId from 'short-unique-id';
+import { rateLimiting } from "../../midlleware/rateLimiting";
 
 export const authService = {
 
@@ -25,6 +25,15 @@ export const authService = {
             return {codResult: CodStatus.NotAuth}
         
         return this.createTokens(foundUser.data!.id)  
+    },
+
+    async rateLimiting(ip: string, url: string, date: Date): Promise<boolean>{
+        await authRepository.setRequestAPI(ip, url, date)
+        const dateFrom = subSeconds(date, 10)
+        const count = await authRepository.getNumberRequestAPI(ip, url, dateFrom)
+        return count <= 5 
+            ? true
+            : false
     },
     
     createTokens(id: string): StatusResult<Tokens>{

@@ -9,6 +9,7 @@ export const POST_COLLECTION_NAME = 'posts'
 export const USER_COLLECTION_NAME = 'users' 
 export const COMMENT_COLLECTION_NAME = 'comments' 
 export const TOKEN_COLLECTION_NAME = 'tokens'
+export const REQUEST_COLLECTION_NAME = 'requestAPI'
 export const USER_UNCONFIRMED_COLLECTION_NAME = 'unconfirmedUsers' 
 
 export const PORT = process.env.PORT || 3014
@@ -20,14 +21,15 @@ export const TIME_LIFE_ACCESS_TOKEN = '10s'
 export const TIME_LIFE_REFRESH_TOKEN = '20s'
 
 export const HTTP_STATUSES = {
-    OK_200:             200,
-    CREATED_201:        201,
-    NO_CONTENT_204:     204,
-    BAD_REQUEST_400:    400,
-    NO_AUTHOR_401:      401,
-    FORBIDDEN:          403,
-    NOT_FOUND_404:      404,
-    ERROR_500:          500 
+    OK_200:                 200,
+    CREATED_201:            201,
+    NO_CONTENT_204:         204,
+    BAD_REQUEST_400:        400,
+    NO_AUTHOR_401:          401,
+    FORBIDDEN:              403,
+    NOT_FOUND_404:          404,
+    ERROR_500:              500,
+    TOO_MANY_REQUESTS_429:  429
 }
   
 export const URL_PATH = {
@@ -36,7 +38,7 @@ export const URL_PATH = {
     posts:      '/posts',
     users:      '/users',
     auth:       '/auth',
-    comments:   '/comments'
+    comments:   '/comments'security/devices
 }
 export const AUTH_PATH = {
     login:           '/login',

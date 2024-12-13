@@ -57,3 +57,9 @@ export type BlackListModel = {
     version: string,
     expireTime: number
 }
+
+export type requestAPIModelDB = {
+    ip:     string, 
+    url:    string, 
+    date:   Date
+}
