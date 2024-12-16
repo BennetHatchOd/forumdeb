@@ -177,7 +177,7 @@ export const authService = {
         if(checkRT.codResult == CodStatus.NotAuth)
             return {codResult: CodStatus.NotAuth}
             
-        return await deviceRepository.deleteThis(checkRT.data!.payload)
+        return await deviceRepository.deleteThis(checkRT.data!)
     },  
 
     async checkRefreshtoken(rfToken: string): Promise <StatusResult<tokenPayload|undefined> > {

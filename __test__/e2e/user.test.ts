@@ -63,15 +63,7 @@ describe('/auth', () => {
  
         const createResponse = await request(app).get(`${URL_PATH.users}?pageSize=50`)
                             .set("Authorization", AuthPassword)
-                            .expect(HTTP_STATUSES.OK_200);
-        
-        console.log(createResponse)
-        // expect(createResponse.body).toEqual({
-        //     "id": expect.any(String),
-        //     "login": user.login,
-        //     "email": user.email,
-        //     "createdAt": expect.any(String)
-        //   })
+                            .expect(HTTP_STATUSES.OK_200);   
  
     })
 

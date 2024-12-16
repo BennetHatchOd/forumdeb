@@ -54,26 +54,6 @@ export const authRepository = {
             : -1
     },
     
-    // async getBlackList(userId: string): Promise<Array<BlackListModel>|null>{
-
-    //     const foundUser: TokenListDB|null = await tokenCollection.findOne({userId: userId})
-    //     return foundUser 
-    //         ? foundUser.blackList
-    //         : null
-
-    // },
-    // async setBlackList(userId: string, list: Array<BlackListModel> ):Promise<StatusResult>{
-    //     const foundUser = await tokenCollection.countDocuments({userId: userId})
-    //     const answer = (foundUser == 0)
-    //         ? await tokenCollection.insertOne({userId: userId, blackList: list})
-    //         : await tokenCollection.updateOne({userId: userId}, {$set: {blackList: list}})
-        
-    //     return answer.acknowledged  
-    //         ? {codResult: CodStatus.NoContent}  
-    //         : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
-
-    // },
-
     async updateCode(mail: string, confirmEmail: ConfirmEmailModel):  Promise <StatusResult>{    
     
         const update: UpdateResult 

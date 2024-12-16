@@ -10,6 +10,18 @@ export const testSeeder = {
         }
     },
 
+    createManyGoodUsers(n: number){
+        
+        const users: Array<UserInputModel> = [];
+        
+        for(let i = 0; i < n; i++)
+            users.push({login: `lhfg${i}`,
+                        email: `gh2${i}@test.com`,
+                        password: `paSSword${i}`
+        })
+        return users;
+    },
+
     createBadUser(){
         return {
             login: 'lhfg',

@@ -53,7 +53,7 @@ export const deviceRepository = {
                                                                 deviceId: session.deviceId}) 
         
         return deleteAnswer.deletedCount == 1  
-                ? {codResult: CodStatus.Ok} 
+                ? {codResult: CodStatus.NoContent} 
                 : {codResult: CodStatus.Error};
 
     },

@@ -20,6 +20,7 @@ export interface StatusResult <T = undefined> {
 export interface tokenPayload extends JwtPayload {
     userId:     string;
     version:    string;
+    iat:        number;
     exp:        number;
     deviceId:   string;
   }

@@ -10,6 +10,7 @@ import { AuthPassword } from "./test.setting";
 import { authRepository } from "../../src/variety/auth/authRepository";
 import { CodStatus } from "../../src/types/interfaces";
 import { userRepository } from "../../src/variety/users/repositories/userRepository";
+import { register } from "module";
 
 describe('/auth', () => {
     
@@ -17,7 +18,7 @@ describe('/auth', () => {
     let uri : string
     let client: MongoClient
 
-    jest.setTimeout(30000)
+    jest.setTimeout(35000)
 
     beforeAll(async() =>{  // clear db-array
         
@@ -44,14 +45,15 @@ describe('/auth', () => {
     let refreshToken: string
     let user: UserInputModel
     let badUser: UserInputModel
-
-    it('User registration', async() => {
-      
-        mailManager.createConfirmEmail = jest.fn()
+    mailManager.createConfirmEmail = jest.fn()
           .mockImplementation(
             (email: string, code: string) =>
               Promise.resolve(true)
           );
+          
+    it('User registration', async() => {
+      
+        
 
           user = testSeeder.createGoodUser()
           badUser = testSeeder.createBadUser()
@@ -70,15 +72,6 @@ describe('/auth', () => {
 
     it('User registration with a bad password', async() => {
       
-        mailManager.createConfirmEmail = jest.fn()
-          .mockImplementation(
-            (email: string, code: string) =>
-              Promise.resolve(true)
-          );
-
-        user = testSeeder.createGoodUser()
-
-
         await request(app).post(`${URL_PATH.auth}${AUTH_PATH.registration}`)
                         .send(badUser)
                         .expect(HTTP_STATUSES.BAD_REQUEST_400);
@@ -155,14 +148,14 @@ describe('/auth', () => {
             })
     })
 
-    // it('User asking about him with an expired accessToken', async() => {
-    //     await new Promise((resolve) => {
-    //         setTimeout(resolve, 10500)})
+    it('User asking about him with an expired accessToken', async() => {
+        await new Promise((resolve) => {
+            setTimeout(resolve, 10500)})
 
-    //     await request(app).get(`${URL_PATH.auth}${AUTH_PATH.me}`)
-    //                 .set("Authorization", 'Bearer ' + accessToken)
-    //                 .expect(HTTP_STATUSES.NO_AUTHOR_401);
-    // })
+        await request(app).get(`${URL_PATH.auth}${AUTH_PATH.me}`)
+                    .set("Authorization", 'Bearer ' + accessToken)
+                    .expect(HTTP_STATUSES.NO_AUTHOR_401);
+    })
 
     it('update refrashToken', async() => {
         
@@ -172,7 +165,6 @@ describe('/auth', () => {
         accessToken = loginData.body.accessToken
         const cookies = loginData.headers['set-cookie'][0].split('')
         refreshToken = cookies.slice(cookies.indexOf('=') + 1,cookies.indexOf(';')).join('')
-//        console.log('aT = ', accessToken, '\nrt = ', refreshToken)
     })
 
     it('logout', async() => {
@@ -184,14 +176,6 @@ describe('/auth', () => {
         expect(loginData.headers['set-cookie']).toBeUndefined
     })
     
-    // it('User asking about him with a accessToken after logout', async() => {
-        
-    //     const loginData = await request(app).get(`${URL_PATH.auth}${AUTH_PATH.me}`)
-    //                 .set("Authorization", 'Bearer ' + accessToken)
-    //                 .expect(HTTP_STATUSES.NO_AUTHOR_401);
-
-    // })
-
     it('update refrashToken after logout', async() => {
         
         const loginData = await request(app).post(`${URL_PATH.auth}${AUTH_PATH.refresh}`)
@@ -201,6 +185,21 @@ describe('/auth', () => {
         expect(loginData.headers['set-cookie']).toBeUndefined
     })
 
+    it('User registration with burst attack', async() => {
+            
+        const users = testSeeder.createManyGoodUsers(6)
 
+        for(let i = 0; i <= 4; i++ ){
+            await request(app).post(`${URL_PATH.auth}${AUTH_PATH.registration}`)
+                            .send(users[i])
+                            .expect(HTTP_STATUSES.NO_CONTENT_204);
+
+        }
+                      
+        await request(app).post(`${URL_PATH.auth}${AUTH_PATH.registration}`)
+                        .send(users[5])
+                        .expect(HTTP_STATUSES.TOO_MANY_REQUESTS_429);
+                        
+  })
 
 })
