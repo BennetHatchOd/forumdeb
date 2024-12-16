@@ -56,7 +56,7 @@ export const postQueryRepository = {
             title:	item.title,
             shortDescription: item.shortDescription,
             content: item.content,
-            createdAt: item.createdAt,
+            createdAt: item.createdAt.toISOString(),
             blogId:	item.blogId,
             blogName:	item.blogName
         }       

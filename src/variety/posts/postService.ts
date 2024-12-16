@@ -2,6 +2,7 @@ import { postRepository } from "./repositories/postRepository";
 import { blogRepository } from "../blogs/repositories/blogRepository";
 import { CodStatus, StatusResult } from "../../types/interfaces";
 import { PostInputModel, PostViewModel } from "./types";
+import { PostDBModel } from "../../db/dbTypes";
 
 export const postService = {
  
@@ -13,10 +14,10 @@ export const postService = {
         const parentBlog = await blogRepository.findById(createItem.blogId)
         if(!parentBlog.data)
             return parentBlog as StatusResult;
-        const newPost: Omit<PostViewModel, 'id'> = {
+        const newPost: PostDBModel = {
                         ...createItem, 
                         blogName: parentBlog.data.name,
-                        createdAt: new Date().toISOString(),
+                        createdAt: new Date(),
                     }
         return await postRepository.create(newPost)
     },

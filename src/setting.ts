@@ -10,6 +10,7 @@ export const USER_COLLECTION_NAME = 'users'
 export const COMMENT_COLLECTION_NAME = 'comments' 
 export const TOKEN_COLLECTION_NAME = 'tokens'
 export const REQUEST_COLLECTION_NAME = 'requestAPI'
+export const SESSION_COLLECTION_NAME = 'sessions'
 export const USER_UNCONFIRMED_COLLECTION_NAME = 'unconfirmedUsers' 
 
 export const PORT = process.env.PORT || 3014
@@ -17,8 +18,8 @@ export const SECRET_KEY = process.env.SECRET_KEY || '114'
 export const PASSCODE_ADMIN = process.env.PASSCODE_ADMIN || 'admin:qwerty' 
 export const PASSWORD_MAIL = process.env.PASSWORD_MAIL  
 
-export const TIME_LIFE_ACCESS_TOKEN = '10s'
-export const TIME_LIFE_REFRESH_TOKEN = '20s'
+export const TIME_LIFE_ACCESS_TOKEN = 10
+export const TIME_LIFE_REFRESH_TOKEN = 20
 
 export const HTTP_STATUSES = {
     OK_200:                 200,
@@ -38,7 +39,8 @@ export const URL_PATH = {
     posts:      '/posts',
     users:      '/users',
     auth:       '/auth',
-    comments:   '/comments'security/devices
+    devices:    '/security/devices',
+    comments:   '/comments'
 }
 export const AUTH_PATH = {
     login:           '/login',

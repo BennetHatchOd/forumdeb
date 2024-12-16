@@ -8,10 +8,10 @@ import { rateLimiting } from '../../midlleware/rateLimiting';
 
 export const authRouter = Router({});
 
-authRouter.post(AUTH_PATH.login, authSplitValidator, checkInputValidation, authControllers.authorization)
-authRouter.post(AUTH_PATH.confirm, codeValidator, checkInputValidation, authControllers.confirmation)
+authRouter.post(AUTH_PATH.login, rateLimiting, authSplitValidator, checkInputValidation, authControllers.authorization)
+authRouter.post(AUTH_PATH.confirm, rateLimiting, codeValidator, checkInputValidation, authControllers.confirmation)
 authRouter.post(AUTH_PATH.registration, rateLimiting, authValidator, checkInputValidation, authControllers.registration)
-authRouter.post(AUTH_PATH.resent, emailValidator, checkInputValidation, authControllers.reSendMail)
+authRouter.post(AUTH_PATH.resent, rateLimiting, emailValidator, checkInputValidation, authControllers.reSendMail)
 authRouter.post(AUTH_PATH.refresh, authControllers.updateRefrashToken)
 authRouter.post(AUTH_PATH.logout, authControllers.logOut)
 authRouter.get(AUTH_PATH.me, authorizatorUser, authControllers.getMe)

@@ -120,7 +120,7 @@ export const userQueryRepository = {
             
             login: item.login,
             email: item.email,
-            createdAt: item.createdAt,
+            createdAt: item.createdAt.toISOString(),
         }       
     }
 }

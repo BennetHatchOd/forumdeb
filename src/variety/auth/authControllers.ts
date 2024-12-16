@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { HTTP_STATUSES } from "../../setting";
 import { authService } from "./authSevice";
 import { CodStatus, StatusResult } from "../../types/interfaces";
-import { AboutUser, LoginInputModel, Tokens } from "./types";
+import { AboutUser, AuthorizationModel, LoginInputModel, Tokens } from "./types";
 import { APIErrorResult } from "../../types/types";
 import { UserInputModel } from "../users/types";
 
@@ -10,8 +10,17 @@ import { UserInputModel } from "../users/types";
 export const authControllers = { 
   
     async authorization(req: Request<{},{},LoginInputModel>, res: Response){
-        try{            
-            const userTokens = await authService.authorization(req.body.loginOrEmail, req.body.password)
+        try{   
+            const device =  req.headers['user-agent']
+                     ? req.headers['user-agent'] 
+                     : 'unknown device'       
+            const user: AuthorizationModel = {
+                                            loginOrEmail:	req.body.loginOrEmail,
+                                            password:	    req.body.password,
+                                            deviceName:     device,
+                                            ip:             req.ip!
+                                        }
+            const userTokens = await authService.authorization(user)
  
             if(userTokens.codResult == CodStatus.NotAuth){
                 res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401)
@@ -29,7 +38,8 @@ export const authControllers = {
     async updateRefrashToken(req: Request, res:Response){
         try{    
             const refreshToken= req.cookies.refreshToken
-            const userTokens: StatusResult<Tokens | undefined> = await authService.updateTokens(refreshToken)
+            const userTokens: StatusResult<Tokens | undefined> 
+                = await authService.refreshingTokens(refreshToken)
             if (userTokens.codResult != CodStatus.Ok){
                 res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401)
                 return;

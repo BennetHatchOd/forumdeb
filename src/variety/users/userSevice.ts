@@ -5,6 +5,7 @@ import { userRepository } from "./repositories/userRepository";
 import bcrypt from "bcrypt"
 import { UserInputModel, UserPasswordModel } from "./types";
 import { authRepository } from "../auth/authRepository";
+import { UserDBModel } from "../../db/dbTypes";
 
 export const userService = {
 
@@ -15,11 +16,11 @@ export const userService = {
             return isUniq;
         
         const hash: string = await passwordHashAdapter.createHash(createItem.password)
-        const newUser: Omit<UserPasswordModel, 'id'> = {
+        const newUser: UserDBModel = {
                                 login: createItem.login,
                                 email: createItem.email,
                                 password: hash, 
-                                createdAt: new Date().toISOString(),
+                                createdAt: new Date(),
                             }
         return await userRepository.create(newUser)
 

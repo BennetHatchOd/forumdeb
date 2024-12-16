@@ -14,7 +14,7 @@ export type CommentFullModel ={
     id:                 string,
     content:	        string
     commentatorInfo:	CommentatorInfo,
-    createdAt:	        string,
+    createdAt:	        Date,
     parentPostId:       string
 }
 

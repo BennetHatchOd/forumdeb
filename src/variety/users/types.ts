@@ -15,7 +15,7 @@ export type UserPasswordModel = {
     id:	string,
     login:	string,
     email:	string,
-    createdAt:	string,
+    createdAt:	Date,
     password: string,
 }
 
@@ -25,17 +25,17 @@ export type UserUnconfirmedModel = {
         login:	string,
         email:	string,
         password: string,
-        createdAt:	string
+        createdAt:	Date
     }
     confirmEmail: {
         code: string,
-        expirationTime: string,
+        expirationTime: Date,
         countSendingCode: number
     }
 }
 
 export type ConfirmEmailModel = {
     code: string,
-    expirationTime: string,
+    expirationTime: Date,
     countSendingCode: number
 }

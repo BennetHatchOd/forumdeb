@@ -1,3 +1,4 @@
+import { BlogDBModel } from "../../db/dbTypes";
 import { CodStatus, StatusResult } from "../../types/interfaces";
 import { blogRepository } from "./repositories/blogRepository"; 
 import { BlogInputModel, BlogViewModel } from "./types";
@@ -6,9 +7,9 @@ export const blogService = {
 
     async create(createItem: BlogInputModel): Promise < StatusResult<string|undefined>>{ 
 
-        const newBlog: Omit<BlogViewModel, 'id'> = {
+        const newBlog: BlogDBModel = {
                                 ...createItem, 
-                                createdAt: new Date().toISOString(),
+                                createdAt: new Date(),
                                 isMembership: false,                                   
                             }
         return await blogRepository.create(newBlog)

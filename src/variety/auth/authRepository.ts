@@ -1,6 +1,6 @@
 import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "mongodb";
-import { userCollection, authUserCollection, tokenCollection, requestCollection } from "../../db/db";
-import { BlackListModel, TokenListDB, UserDBModel, UserUnconfirmedDBModel } from "../../db/dbTypes";
+import { authUserCollection, requestCollection } from "../../db/db";
+import { UserDBModel, UserUnconfirmedDBModel } from "../../db/dbTypes";
 import { CodStatus, StatusResult } from "../../types/interfaces";
 import { ConfirmEmailModel, UserPasswordModel, UserUnconfirmedModel } from "../users/types";
 
@@ -54,25 +54,25 @@ export const authRepository = {
             : -1
     },
     
-    async getBlackList(userId: string): Promise<Array<BlackListModel>|null>{
+    // async getBlackList(userId: string): Promise<Array<BlackListModel>|null>{
 
-        const foundUser: TokenListDB|null = await tokenCollection.findOne({userId: userId})
-        return foundUser 
-            ? foundUser.blackList
-            : null
+    //     const foundUser: TokenListDB|null = await tokenCollection.findOne({userId: userId})
+    //     return foundUser 
+    //         ? foundUser.blackList
+    //         : null
 
-    },
-    async setBlackList(userId: string, list: Array<BlackListModel> ):Promise<StatusResult>{
-        const foundUser = await tokenCollection.countDocuments({userId: userId})
-        const answer = (foundUser == 0)
-            ? await tokenCollection.insertOne({userId: userId, blackList: list})
-            : await tokenCollection.updateOne({userId: userId}, {$set: {blackList: list}})
+    // },
+    // async setBlackList(userId: string, list: Array<BlackListModel> ):Promise<StatusResult>{
+    //     const foundUser = await tokenCollection.countDocuments({userId: userId})
+    //     const answer = (foundUser == 0)
+    //         ? await tokenCollection.insertOne({userId: userId, blackList: list})
+    //         : await tokenCollection.updateOne({userId: userId}, {$set: {blackList: list}})
         
-        return answer.acknowledged  
-            ? {codResult: CodStatus.NoContent}  
-            : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
+    //     return answer.acknowledged  
+    //         ? {codResult: CodStatus.NoContent}  
+    //         : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
 
-    },
+    // },
 
     async updateCode(mail: string, confirmEmail: ConfirmEmailModel):  Promise <StatusResult>{    
     
@@ -116,7 +116,6 @@ export const authRepository = {
 
     async clear(): Promise <StatusResult> {
         await authUserCollection.deleteMany()
-        await tokenCollection.deleteMany()
         return await authUserCollection.countDocuments({}) == 0 
             ? {codResult: CodStatus.NoContent }  
             : {codResult: CodStatus.Error, message: 'Collection isn\'t empty'};

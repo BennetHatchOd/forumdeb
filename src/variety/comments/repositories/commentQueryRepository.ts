@@ -49,7 +49,7 @@ export const commentQueryRepository = {
                 userId:	item.commentatorInfo.userId.toString(),
                 userLogin: item.commentatorInfo.userLogin	
             },
-            createdAt:	item.createdAt,
+            createdAt:	item.createdAt.toISOString(),
         }       
     }
 }

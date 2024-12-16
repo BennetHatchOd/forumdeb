@@ -19,7 +19,7 @@ export const commentService = {
                                 parentPostId: parentPostId,
                                 commentatorInfo: { userId: userId,
                                                    userLogin: userLogin},
-                                createdAt: new Date().toISOString(),
+                                createdAt: new Date(),
                             }
         return await commentRepository.create(newComment)
 

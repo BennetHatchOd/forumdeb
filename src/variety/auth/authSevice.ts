@@ -1,32 +1,43 @@
-import { CodStatus, StatusResult } from "../../types/interfaces";
+import { CodStatus, StatusResult, tokenPayload } from "../../types/interfaces";
 import { jwtAdapter } from "../../adapters/jwtAdapter";
 import { passwordHashAdapter } from "../../adapters/passwordHashAdapter";
 import { APIErrorResult} from "../../types/types";
 import { authRepository } from "./authRepository"; 
 import {v4 as uuidv4} from 'uuid'
 import {add, isBefore, subSeconds} from 'date-fns'
-import { AboutUser, Tokens } from "./types";
+import { AboutUser, AuthorizationModel, Tokens } from "./types";
 import { ConfirmEmailModel, UserInputModel, UserPasswordModel, UserUnconfirmedModel } from "../users/types";
 import { mailManager } from "../../utility/mailManager";
-import { BlackListModel, UserDBModel } from "../../db/dbTypes";
+import { activeSessionDB, UserDBModel } from "../../db/dbTypes";
 import { userRepository } from "../users/repositories/userRepository";
 import { userService } from "../users/userSevice";
 import ShortUniqueId from 'short-unique-id';
 import { rateLimiting } from "../../midlleware/rateLimiting";
+import { deviceService } from "../devices/deviceService";
+import { deviceRepository } from "../devices/repositories/deviceRepository";
+import { TIME_LIFE_REFRESH_TOKEN } from "../../setting";
 
 export const authService = {
 
-    async authorization(loginOrEmail: string, password: string): Promise<StatusResult<Tokens|undefined >> {
+    //+
+    async authorization(user:AuthorizationModel): Promise<StatusResult<Tokens|undefined >> {
         
-        const foundUser: StatusResult<{id:string, passHash:string}|undefined> = await userRepository.getUserByLoginEmail(loginOrEmail)
-        if(foundUser.codResult != CodStatus.Ok) return {codResult: CodStatus.NotAuth};
+        const foundUser: StatusResult<{id:string, passHash:string}|undefined> 
+            = await userRepository.getUserByLoginEmail(user.loginOrEmail)
         
-        if(!await passwordHashAdapter.checkHash(password, foundUser.data!.passHash)) 
+        if(foundUser.codResult != CodStatus.Ok) 
+            return {codResult: CodStatus.NotAuth};
+        if(!await passwordHashAdapter.checkHash(user.password, foundUser.data!.passHash)) 
             return {codResult: CodStatus.NotAuth}
         
-        return this.createTokens(foundUser.data!.id)  
+        const createAnswer = await deviceService.createSession(foundUser.data!.id, user.deviceName, user.ip)
+        if (createAnswer.codResult == CodStatus.Error)
+            return {codResult: CodStatus.Error}
+        
+        return this.createTokens(createAnswer.data!)  
     },
 
+    //+
     async rateLimiting(ip: string, url: string, date: Date): Promise<boolean>{
         await authRepository.setRequestAPI(ip, url, date)
         const dateFrom = subSeconds(date, 10)
@@ -36,15 +47,16 @@ export const authService = {
             : false
     },
     
-    createTokens(id: string): StatusResult<Tokens>{
-        const uid = new ShortUniqueId({ length: 5 });
+    //+
+    createTokens(session: activeSessionDB): StatusResult<Tokens>{
 
-        let accessToken = jwtAdapter.createAccessToken(id)
-        let rfToken = jwtAdapter.createRefrashToken(id, uid.rnd())
+        let accessToken = jwtAdapter.createAccessToken(session)
+        let rfToken = jwtAdapter.createRefrashToken(session)
         return {codResult: CodStatus.Ok, data: {accessToken: accessToken, refreshToken: rfToken}}
                 
     },
 
+    //+
     async confirmationUser(code: string): Promise<StatusResult<APIErrorResult|undefined>>{
         const foundUser: StatusResult<UserUnconfirmedModel|undefined> = await authRepository.findByConfirmCode(code)
 
@@ -77,6 +89,7 @@ export const authService = {
         return {codResult: CodStatus.NoContent}
     },
 
+    //+
     async registrationUser(newUser: UserInputModel): Promise<StatusResult<undefined|APIErrorResult>>{
 
         const isUniq: StatusResult<APIErrorResult|undefined> = await userService.checkUniq(newUser.login, newUser.email)
@@ -85,11 +98,11 @@ export const authService = {
         
         const passHash = await passwordHashAdapter.createHash(newUser.password)
         
-        const createUser: UserDBModel = {...newUser, password: passHash, createdAt: (new Date()).toISOString()}
+        const createUser: UserDBModel = {...newUser, password: passHash, createdAt: new Date()}
 
         const confirmEmail: ConfirmEmailModel = {
             code: uuidv4(),
-            expirationTime: add(new Date(), { hours: 2}).toISOString(),
+            expirationTime: add(new Date(), { hours: 2}),
             countSendingCode: 1
         }
         
@@ -101,6 +114,7 @@ export const authService = {
 
     },
 
+    //+
     async reSendEmail(mail: string): Promise<StatusResult<undefined|APIErrorResult>>{
         let countMail: number = await authRepository.checkNotVerifEmail(mail)
 
@@ -113,7 +127,7 @@ export const authService = {
         
         const confirmEmail: ConfirmEmailModel = {
             code: uuidv4(),
-            expirationTime: add(new Date(), { hours: 2}).toISOString(),
+            expirationTime: add(new Date(), { hours: 2}),
             countSendingCode: ++countMail
         }
         
@@ -124,6 +138,7 @@ export const authService = {
 
     },
 
+    //+
     async aboutMe(id: string): Promise<StatusResult<AboutUser|undefined>>{
         const foundUser: StatusResult<AboutUser|undefined> = await userRepository.findForOwnerById(id)
         if(foundUser.codResult == CodStatus.Ok)
@@ -131,45 +146,58 @@ export const authService = {
         return {codResult: CodStatus.NotAuth}
     },
 
-    async updateTokens(rfToken: string): Promise<StatusResult<Tokens|undefined>> {
+    async refreshingTokens(rfToken: string): Promise<StatusResult<Tokens|undefined>> {
 
-        const logOut: StatusResult = await this.logOut(rfToken)
-        if (logOut.codResult != CodStatus.NoContent)
-            return logOut
- 
-        return this.createTokens(jwtAdapter.calcPayload(rfToken)!.userId)
+
+        const checkRT = await this.checkRefreshtoken(rfToken)
+        if(checkRT.codResult == CodStatus.NotAuth)
+            return {codResult: CodStatus.NotAuth}
+
+        const uid = new ShortUniqueId({ length: 5 });
+        const updateSession: activeSessionDB = {userId: checkRT.data!.userId,
+                                    deviceId: checkRT.data!.deviceId,
+                                    version:    uid.rnd(),
+                                    deviceName: '',
+                                    ip:         '',
+                                    createdAt:  new Date(),
+                                    expiresAt:  add(new Date, {seconds: TIME_LIFE_REFRESH_TOKEN})
+        }
+
+        if((await deviceRepository.update(updateSession)).codResult != CodStatus.Ok)
+            return {codResult: CodStatus.NotAuth}
+
+        return this.createTokens(updateSession)
        
     },
 
+    //+
     async logOut(rfToken: string): Promise <StatusResult > {
     
-        const payload = jwtAdapter.calcPayload(rfToken)
+        const checkRT = await this.checkRefreshtoken(rfToken)
+        if(checkRT.codResult == CodStatus.NotAuth)
+            return {codResult: CodStatus.NotAuth}
+            
+        return await deviceRepository.deleteThis(checkRT.data!.payload)
+    },  
+
+    async checkRefreshtoken(rfToken: string): Promise <StatusResult<tokenPayload|undefined> > {
+    
+        const payload: tokenPayload | null= jwtAdapter.calcPayloadRT(rfToken)
         if(!payload)
                  return {codResult: CodStatus.NotAuth}
-        const isUser: StatusResult = await userRepository.isExist(payload.userId)
-        if(isUser.codResult != CodStatus.Ok || !payload.version || !payload.exp )
+
+        if(!await deviceRepository.isActive(payload))
             return  {codResult: CodStatus.NotAuth}
             
-        const newItemBL = {
-            version: payload.version!,
-            expireTime: payload.exp!
-        }
-        const blackList = await authRepository.getBlackList(payload.userId)    
-        
-        if(!blackList){
-            return await authRepository.setBlackList(payload.userId, [newItemBL])
-        }
-        if(blackList!.some(p => p.version == payload.version))
-            return  {codResult: CodStatus.NotAuth}
-        
-        const newBL: BlackListModel[] = blackList.filter(p => isBefore(new Date(), new Date(1000 * p.expireTime)))
-        newBL.push(newItemBL)
-
-        return await authRepository.setBlackList(payload.userId, newBL)
+        return {codResult: CodStatus.Ok, data: payload}
     },  
 
     async clear(): Promise < StatusResult > {
         return await authRepository.clear()
     },  
+}
+
+function clearExpired(userId: string) {
+    throw new Error("Function not implemented.");
 }
 
