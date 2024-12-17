@@ -2,7 +2,7 @@ import { ObjectId, WithId } from "mongodb";
 import { CodStatus, StatusResult, tokenPayload } from "../../../types/interfaces";
 import { requestCollection, sessionCollection } from "../../../db/db";
 import { activeSessionDB } from "../../../db/dbTypes";
-import { activeSessionModel } from "../types";
+import { activeSessionModel, updateSessionModel } from "../types";
 import { getTime } from "date-fns";
 
 export const deviceRepository = {
@@ -86,7 +86,7 @@ export const deviceRepository = {
 
     // },
 
-    async update(session: activeSessionDB): Promise <StatusResult>{
+    async update(session: updateSessionModel): Promise <StatusResult>{
          
         const updateSessions = await sessionCollection.updateOne({  userId: session.userId, 
                                                                     deviceId: session.deviceId},

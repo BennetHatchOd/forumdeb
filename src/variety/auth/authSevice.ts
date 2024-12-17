@@ -48,10 +48,10 @@ export const authService = {
     },
     
     //+
-    createTokens(session: activeSessionDB): StatusResult<Tokens>{
+    createTokens(payload: tokenPayload): StatusResult<Tokens>{
 
-        let accessToken = jwtAdapter.createAccessToken(session)
-        let rfToken = jwtAdapter.createRefrashToken(session)
+        let accessToken = jwtAdapter.createAccessToken(payload)
+        let rfToken = jwtAdapter.createRefrashToken(payload)
         return {codResult: CodStatus.Ok, data: {accessToken: accessToken, refreshToken: rfToken}}
                 
     },
@@ -153,21 +153,13 @@ export const authService = {
         if(checkRT.codResult == CodStatus.NotAuth)
             return {codResult: CodStatus.NotAuth}
 
-        const uid = new ShortUniqueId({ length: 5 });
-        const updateSession: activeSessionDB = {userId: checkRT.data!.userId,
-                                    deviceId: checkRT.data!.deviceId,
-                                    version:    uid.rnd(),
-                                    deviceName: '',
-                                    ip:         '',
-                                    createdAt:  new Date(),
-                                    expiresAt:  add(new Date, {seconds: TIME_LIFE_REFRESH_TOKEN})
-        }
+        const newToken = await deviceService.updateSession(checkRT.data!)
 
-        if((await deviceRepository.update(updateSession)).codResult != CodStatus.Ok)
-            return {codResult: CodStatus.NotAuth}
 
-        return this.createTokens(updateSession)
-       
+        if(newToken.codResult != CodStatus.Ok)
+            return newToken as StatusResult
+
+        return this.createTokens(newToken.data!)    
     },
 
     //+
