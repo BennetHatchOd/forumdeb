@@ -7,14 +7,14 @@ import { getTime } from "date-fns";
 
 export const deviceRepository = {
  
-    async findByDeviceID(deviceId: string): Promise<string|null> {     
+    // async findByDeviceID(deviceId: string): Promise<string|null> {     
             
-        const findSession: WithId<activeSessionDB>|null = await sessionCollection.findOne({deviceId: deviceId})
-        if(!findSession)
-            return null
+    //     const findSession: WithId<activeSessionDB>|null = await sessionCollection.findOne({deviceId: deviceId})
+    //     if(!findSession)
+    //         return null
         
-        return findSession.userId
-    },
+    //     return findSession.userId
+    // },
 
     async insert(session: activeSessionDB): Promise<StatusResult> {     
 
@@ -96,18 +96,18 @@ export const deviceRepository = {
 
     },
 
-    mapDbView(user: WithId<activeSessionDB>): activeSessionModel{
-        return {
-           // id:         user._id.toString(),
-            userId:     user.userId,
-            version:    user.version,
-            deviceId:   user.deviceId,
-            deviceName: user.deviceName,
-            ip:         user.ip,
-            createdAt:  user.createdAt,
-            expiresAt:  user.expiresAt
-            }
-    },
+    // mapDbView(user: WithId<activeSessionDB>): activeSessionModel{
+    //     return {
+    //        // id:         user._id.toString(),
+    //         userId:     user.userId,
+    //         version:    user.version,
+    //         deviceId:   user.deviceId,
+    //         deviceName: user.deviceName,
+    //         ip:         user.ip,
+    //         createdAt:  user.createdAt,
+    //         expiresAt:  user.expiresAt
+    //         }
+    // },
 
 
     async clear(): Promise <StatusResult> {
