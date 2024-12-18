@@ -96,9 +96,11 @@ export const userQueryRepository = {
 
 
 
-        const totalCount: number= (await userCollection.aggregate(countPipeline).toArray())[0].totalCount
-        if (totalCount == 0)
+        const countArray= await userCollection.aggregate(countPipeline).toArray()
+        // console.log(countArray)
+        if (countArray.length == 0)
             return emptyPaginator;
+        const totalCount: number= countArray[0].totalCount
          
         const searchItem: Array<WithId<UserDBModel>>   
             = await userCollection.aggregate(findPipeline).toArray() as Array<WithId<UserDBModel>>;
