@@ -7,18 +7,13 @@ import { getTime } from "date-fns";
 
 export const deviceRepository = {
  
-    async findManyByUserId(userId: string): Promise<StatusResult<Array<activeSessionModel>|undefined>> {     
+    async findByDeviceID(deviceId: string): Promise<string|null> {     
             
-        if(!ObjectId.isValid(userId))    
-            return {codResult : CodStatus.NotFound};
-
-        const findSessions: Array<WithId<activeSessionDB>> = await (sessionCollection.find({_id: new ObjectId(userId)})).toArray() 
-        const sessions = findSessions.map(s => this.mapDBview(s))
-
-        return sessions.length > 0  
-                ? {codResult: CodStatus.Ok, data: sessions} 
-                : {codResult: CodStatus.NotFound};
-
+        const findSession: WithId<activeSessionDB>|null = await sessionCollection.findOne({deviceId: deviceId})
+        if(!findSession)
+            return null
+        
+        return findSession.userId
     },
 
     async insert(session: activeSessionDB): Promise<StatusResult> {     
@@ -58,26 +53,25 @@ export const deviceRepository = {
 
     },
 
-    async deleteOneOther(session: tokenPayload): Promise<StatusResult> {     
+    async deleteOneOther(userId: string, deviceId: string): Promise<StatusResult> {     
 
-        const deleteAnswer = await sessionCollection.deleteOne({userId: session.userId, 
-                                                              deviceId: session.deviceId}) 
+        const deleteAnswer = await sessionCollection.deleteOne({userId: userId, 
+                                                              deviceId: deviceId}) 
         
         return deleteAnswer.deletedCount == 1  
-                ? {codResult: CodStatus.Ok} 
+                ? {codResult: CodStatus.NoContent} 
                 : {codResult: CodStatus.NotFound};
 
     },
 
-    async deleteOthers(session: tokenPayload): Promise<StatusResult> {     
+    async deleteOthers(userId: string, deviceId: string): Promise<StatusResult> {     
 
-        const deleteAnswer = await sessionCollection.deleteMany({userId:   session.userId, 
-                                                                version:  { $ne: session.version }, 
-                                                                deviceId: { $ne: session.deviceId }}) 
+        const deleteAnswer = await sessionCollection.deleteMany({userId:   userId, 
+                                                               deviceId: { $ne: deviceId }}) 
         
         return deleteAnswer.acknowledged  
-                ? {codResult: CodStatus.Ok} 
-                : {codResult: CodStatus.NotFound};
+                ? {codResult: CodStatus.NoContent} 
+                : {codResult: CodStatus.Error};
     },
 
     // async clearExpired(userId: string): Promise<void> {
@@ -102,9 +96,9 @@ export const deviceRepository = {
 
     },
 
-    mapDBview(user: WithId<activeSessionDB>): activeSessionModel{
+    mapDbView(user: WithId<activeSessionDB>): activeSessionModel{
         return {
-            id:         user._id.toString(),
+           // id:         user._id.toString(),
             userId:     user.userId,
             version:    user.version,
             deviceId:   user.deviceId,

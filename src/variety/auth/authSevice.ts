@@ -178,7 +178,7 @@ export const authService = {
         if(!payload)
                  return {codResult: CodStatus.NotAuth}
 
-        if(!await deviceRepository.isActive(payload))
+        if(!await deviceService.isActive(payload))
             return  {codResult: CodStatus.NotAuth}
             
         return {codResult: CodStatus.Ok, data: payload}

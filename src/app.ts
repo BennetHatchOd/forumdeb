@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser'
 import { authRouter } from './variety/auth/authRouter';
 import { commentsRouter } from './variety/comments/commentsRouter';
 import { deleteAllController } from './deleteAllController';
+import { deviceRouter } from './variety/devices/deviceRouter';
 
 
 
@@ -31,6 +32,7 @@ app.use(URL_PATH.blogs, blogsRouter)
 app.use(URL_PATH.posts, postsRouter)
 app.use(URL_PATH.users, usersRouter)
 app.use(URL_PATH.auth,  authRouter)
+app.use(URL_PATH.devices,  deviceRouter)
 app.use(URL_PATH.comments, commentsRouter)
 
 app.delete('/testing/all-data', deleteAllController);

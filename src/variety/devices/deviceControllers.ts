@@ -2,13 +2,24 @@ import { HTTP_STATUSES } from "../../setting";
 import { PaginatorModel, QueryModel } from "../../types/types";
 import { PostViewModel } from "../posts/types";
 import { Request, Response } from "express";
-import { DeviceViewModel } from "./types";
+import { activeSessionModel, DeviceViewModel } from "./types";
+import { authService } from "../auth/authSevice";
+import { CodStatus } from "../../types/interfaces";
+import { deviceQueryRepository } from "./repositories/deviceQueryRepository";
+import { deviceService } from "./deviceService";
 
 export const deviceControllers = {   
     
     async getDevices(req: Request, res: Response<Array<DeviceViewModel>>) {
         try{
-            //    
+            const refreshToken= req.cookies.refreshToken
+            const checkToken = await authService.checkRefreshtoken(refreshToken)
+            if(checkToken.codResult == CodStatus.NotAuth){
+                res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401)
+                return;
+            }
+            const devices = await deviceQueryRepository.findManyByUserId(checkToken.data!.userId)
+            res.status(HTTP_STATUSES.OK_200).send(devices) 
         }
         catch(err){
             console.log(err)
@@ -18,7 +29,14 @@ export const deviceControllers = {
 
     async closeManySessions(req: Request, res: Response) {
         try{
-
+            const refreshToken= req.cookies.refreshToken
+            const checkToken = await authService.checkRefreshtoken(refreshToken)
+            if(checkToken.codResult == CodStatus.NotAuth){
+                res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401)
+                return;
+            }
+            const deleteAnswer = await deviceService.deleteOtherSessions(checkToken.data!)
+            res.status(deleteAnswer.codResult).send({})
         }
         catch(err){
             console.log(err)
@@ -26,9 +44,16 @@ export const deviceControllers = {
         }
     },
 
-    async closeOneSession(req: Request<{},{},{},QueryModel>, res: Response<PaginatorModel<PostViewModel>>) {
+    async closeOneSession(req: Request<{deviceId: string},{},{},{}>, res: Response) {
         try{
- 
+            const refreshToken= req.cookies.refreshToken
+            const checkToken = await authService.checkRefreshtoken(refreshToken)
+            if(checkToken.codResult == CodStatus.NotAuth){
+                res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401)
+                return;
+            }
+            const deleteAnswer = await deviceService.deleteSession(checkToken.data!.userId, req.params.deviceId)
+            res.status(deleteAnswer.codResult).send({})
         }
         catch(err){
             console.log(err)

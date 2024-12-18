@@ -6,7 +6,7 @@ export type DeviceViewModel = {
   }
 
   export type activeSessionModel = {
-    id:         string,
+    //id:         string,
     userId:     string,
     version:    string,
     deviceId:   string,

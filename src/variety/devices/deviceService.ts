@@ -3,13 +3,13 @@ import ShortUniqueId from 'short-unique-id';
 import { CodStatus, StatusResult, tokenPayload } from "../../types/interfaces";
 import { activeSessionDB } from "../../db/dbTypes";
 import {add, getTime} from 'date-fns'
-import { TIME_LIFE_REFRESH_TOKEN } from "../../setting";
+import { LENGTH_VERSION_ID, TIME_LIFE_REFRESH_TOKEN } from "../../setting";
 import { updateSessionModel } from "./types";
 
 export const deviceService = {
  
     async createSession(userId: string, deviceName: string, ip: string): Promise <StatusResult<tokenPayload|undefined>>{
-        const uid = new ShortUniqueId({ length: 5 });
+        const uid = new ShortUniqueId({ length: LENGTH_VERSION_ID });
         const session: activeSessionDB = {
                                 userId:     userId,
                                 version:    uid.rnd(),
@@ -27,7 +27,7 @@ export const deviceService = {
     },
 
     async updateSession(payload: tokenPayload): Promise <StatusResult<tokenPayload|undefined>>{
-        const uid = new ShortUniqueId({ length: 5 });
+        const uid = new ShortUniqueId({ length: LENGTH_VERSION_ID });
         const session: updateSessionModel = {
                                 userId:     payload.userId,
                                 version:    uid.rnd(),
@@ -44,13 +44,27 @@ export const deviceService = {
 
     },
 
+    async isActive(session: tokenPayload): Promise<boolean> {     
+
+        return await deviceRepository.isActive(session)  
+    },
+
     // async checkRefreshToken(): Promise <StatusResult>{
     // },
 
-    // async deleteManySessions(): Promise <StatusResult>{
-    // },
-    // async deleteSession(): Promise <StatusResult>{
-    // },
+    async deleteOtherSessions(payload: tokenPayload): Promise <StatusResult>{
+        return await deviceRepository.deleteOthers(payload.userId, payload.deviceId)
+
+    },
+    async deleteSession(userId: string, deviceId: string): Promise <StatusResult>{
+        const userDevice: string| null = await deviceRepository.findByDeviceID(deviceId)
+        if(!userDevice)
+            return {codResult: CodStatus.NotFound}
+        if (userDevice != userId)
+            return {codResult: CodStatus.Forbidden}
+
+        return await deviceRepository.deleteOneOther(userId, deviceId)
+    },
     // async updateSession(): Promise <StatusResult>{
     // },
         

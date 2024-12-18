@@ -21,6 +21,8 @@ export const PASSWORD_MAIL = process.env.PASSWORD_MAIL
 export const TIME_LIFE_ACCESS_TOKEN = 10
 export const TIME_LIFE_REFRESH_TOKEN = 20
 
+export const LENGTH_VERSION_ID = 7
+
 export const HTTP_STATUSES = {
     OK_200:                 200,
     CREATED_201:            201,
