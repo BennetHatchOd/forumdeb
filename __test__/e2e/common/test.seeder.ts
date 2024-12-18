@@ -1,11 +1,11 @@
-import { authUserCollection } from "../../src/db/db"
-import { UserInputModel } from "../../src/variety/users/types"
+import { authUserCollection } from "../../../src/db/db"
+import { UserInputModel } from "../../../src/variety/users/types"
 
 export const testSeeder = {
-    createGoodUser(){
+    createGoodUser(prefix: string = ''){
         return {
-            login: 'lhfg',
-            email: 'gh2@test.com',
+            login: prefix + 'lhfg',
+            email: prefix + 'gh2@test.com',
             password: 'paSSword'
         }
     },
@@ -30,8 +30,7 @@ export const testSeeder = {
         }
     },
 
-    insertUncorfirmedUser(newUser: UserInputModel){
-        // const newUser: UserUnconfirmedDBModel
-        // authUserCollection.insertOne()      
+    createTitleDevices(){
+        return ['Chrome 12', 'Chrome 34', 'Android 17', 'Android 5', 'IoS 6']
     }
 }

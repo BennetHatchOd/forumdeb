@@ -3,10 +3,10 @@ import { app } from "../../src/app";
 import {MongoMemoryServer} from 'mongodb-memory-server'
 import {MongoClient} from 'mongodb'
 import { mailManager } from "../../src/utility/mailManager";
-import { testSeeder } from "./test.seeder";
+import { testSeeder } from "./common/test.seeder";
 import { UserInputModel } from "../../src/variety/users/types";
 import { AUTH_PATH, HTTP_STATUSES, TIME_LIFE_ACCESS_TOKEN, URL_PATH } from "../../src/setting";
-import { AuthPassword } from "./test.setting";
+import { AuthPassword } from "./common/test.setting";
 import { authRepository } from "../../src/variety/auth/authRepository";
 import { CodStatus } from "../../src/types/interfaces";
 import { userRepository } from "../../src/variety/users/repositories/userRepository";
@@ -43,6 +43,15 @@ describe('/auth', () => {
     let user: UserInputModel = testSeeder.createGoodUser()
     let badUser: UserInputModel = testSeeder.createBadUser()
  
+
+    it('Users reading', async() => {
+ 
+        const createResponse = await request(app).get(`${URL_PATH.users}?pageSize=50`)
+                            .set("Authorization", AuthPassword)
+                            .expect(HTTP_STATUSES.OK_200);   
+ 
+    })
+
     it('User create', async() => {
  
         const createResponse = await request(app).post(`${URL_PATH.users}`)
