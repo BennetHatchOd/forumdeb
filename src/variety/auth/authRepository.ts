@@ -1,12 +1,12 @@
 import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "mongodb";
 import { authUserCollection, requestCollection } from "../../db/db";
-import { UserDBModel, UserUnconfirmedDBModel } from "../../db/dbTypes";
+import { UserDBType, UserUnconfirmedDBType } from "../../db/dbTypes";
 import { CodStatus, StatusResult } from "../../types/interfaces";
-import { ConfirmEmailModel, UserPasswordModel, UserUnconfirmedModel } from "../users/types";
+import { ConfirmEmailType, UserPasswordType, UserUnconfirmedType } from "../users/types";
 
 export const authRepository = {
   
-    async createUnconfirmUser(createItem: UserUnconfirmedDBModel): Promise <StatusResult>{  
+    async createUnconfirmUser(createItem: UserUnconfirmedDBType): Promise <StatusResult>{  
         
 
         const answerInsert: InsertOneResult = await authUserCollection.insertOne(createItem);
@@ -16,9 +16,9 @@ export const authRepository = {
             : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
     },
 
-    async findByConfirmCode(code: string): Promise < StatusResult<UserUnconfirmedModel|undefined> > {     
+    async findByConfirmCode(code: string): Promise < StatusResult<UserUnconfirmedType|undefined> > {     
              
-        const searchItem: WithId<UserUnconfirmedDBModel> | null = 
+        const searchItem: WithId<UserUnconfirmedDBType> | null = 
             await authUserCollection.findOne({'confirmEmail.code': code})  
         
         if(!searchItem)
@@ -47,14 +47,14 @@ export const authRepository = {
     },
 
     async checkNotVerifEmail(mail: string):  Promise <number>{      
-        const searchItem: WithId<UserUnconfirmedDBModel> | null  
+        const searchItem: WithId<UserUnconfirmedDBType> | null  
             = await authUserCollection.findOne({'user.email': mail})
         return searchItem 
             ? searchItem.confirmEmail.countSendingCode  
             : -1
     },
     
-    async updateCode(mail: string, confirmEmail: ConfirmEmailModel):  Promise <StatusResult>{    
+    async updateCode(mail: string, confirmEmail: ConfirmEmailType):  Promise <StatusResult>{    
     
         const update: UpdateResult 
         = await authUserCollection.updateOne(
@@ -77,11 +77,11 @@ export const authRepository = {
     },
 
 
-    // async checkUserByLoginEmail(login: string, email: string): Promise<StatusResult<UserPasswordModel|UserUnconfirmedModel|undefined>> {      
+    // async checkUserByLoginEmail(login: string, email: string): Promise<StatusResult<UserPasswordType|UserUnconfirmedType|undefined>> {      
 
-    //     const checkUser: WithId<UserDBModel>|null 
+    //     const checkUser: WithId<UserDBType>|null 
     //         = await userCollection.findOne({$or: [{login: login},{email: email}]})           
-    //     const checkUncorfirmUser: WithId<UserUnconfirmedDBModel>|null 
+    //     const checkUncorfirmUser: WithId<UserUnconfirmedDBType>|null 
     //         = await authUserCollection.findOne({$or: [{'user.login': login},{'user.email': email}]})           
         
     //     if (!checkUser) 
@@ -121,7 +121,7 @@ export const authRepository = {
             : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
     },
 
-    mapViewToDB(user: UserPasswordModel): WithId<UserDBModel> {
+    mapViewToDB(user: UserPasswordType): WithId<UserDBType> {
         return{
             _id:	new ObjectId(user.id),
             login:	user.login,
@@ -131,7 +131,7 @@ export const authRepository = {
         }
     },
 
-    mapUserDBToFull(user: WithId<UserDBModel>): UserPasswordModel {
+    mapUserDBToFull(user: WithId<UserDBType>): UserPasswordType {
         return { 
             id:         user._id.toString(),
             email:      user.email,      
@@ -141,7 +141,7 @@ export const authRepository = {
             }
     },
 
-    mapAuthDBToFull(user: WithId<UserUnconfirmedDBModel >): UserUnconfirmedModel  {
+    mapAuthDBToFull(user: WithId<UserUnconfirmedDBType >): UserUnconfirmedType  {
         return { 
             id:         user._id.toString(),
             user:{

@@ -1,8 +1,8 @@
 import { blogCollection } from "../../../db/db";
-import { BlogDBModel } from "../../../db/dbTypes";
+import { BlogDBType } from "../../../db/dbTypes";
 import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "mongodb";
 import { CodStatus, StatusResult} from "../../../types/interfaces";
-import { BlogInputModel, BlogViewModel } from "../types";
+import { BlogInputType, BlogViewType } from "../types";
 
 export const blogRepository = {
 
@@ -18,18 +18,18 @@ export const blogRepository = {
                 : {codResult: CodStatus.NotFound};
     },
  
-    async findById(id: string): Promise < StatusResult<BlogViewModel|undefined> > {     
+    async findById(id: string): Promise < StatusResult<BlogViewType|undefined> > {     
         
          
         if(!ObjectId.isValid(id))
             return {codResult: CodStatus.NotFound};
-        const searchItem: WithId<BlogDBModel> | null = await blogCollection.findOne({_id: new ObjectId(id)})           
+        const searchItem: WithId<BlogDBType> | null = await blogCollection.findOne({_id: new ObjectId(id)})           
         return searchItem  
             ? {codResult: CodStatus.Ok, data: this.mapDbToView(searchItem)} 
             : {codResult: CodStatus.NotFound};
     },
 
-    async create(createItem: BlogDBModel): Promise <StatusResult<string|undefined>>{      
+    async create(createItem: BlogDBType): Promise <StatusResult<string|undefined>>{      
         const answerInsert: InsertOneResult = await blogCollection.insertOne(createItem);
         
         return answerInsert.acknowledged  
@@ -38,7 +38,7 @@ export const blogRepository = {
     },
 
     
-    async edit(id: string, editDate: BlogInputModel): Promise <StatusResult>{    
+    async edit(id: string, editDate: BlogInputType): Promise <StatusResult>{    
         const answerUpdate: UpdateResult = await blogCollection.updateOne({_id: new ObjectId(id)}, {$set: editDate});
         
         if(!answerUpdate.acknowledged)
@@ -67,7 +67,7 @@ export const blogRepository = {
     
     },
 
-    mapDbToView(item: WithId<BlogDBModel>): BlogViewModel {
+    mapDbToView(item: WithId<BlogDBType>): BlogViewType {
         
         return {
             id: item._id.toString(),

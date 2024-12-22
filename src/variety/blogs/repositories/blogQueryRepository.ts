@@ -1,24 +1,24 @@
-import { PaginatorModel, QueryModel} from "../../../types/types";
+import { PaginatorType, QueryType} from "../../../types/types";
 import { blogCollection } from "../../../db/db";
-import { BlogDBModel } from "../../../db/dbTypes";
+import { BlogDBType } from "../../../db/dbTypes";
 import { ObjectId, WithId } from "mongodb";
 import { emptyPaginator } from "../../../utility/paginator";
-import { BlogViewModel } from "../types";
+import { BlogViewType } from "../types";
 
 export const blogQueryRepository = {
 
  
-    async findById(id: string): Promise <BlogViewModel | null > {      
+    async findById(id: string): Promise <BlogViewType | null > {      
         
         if(!ObjectId.isValid(id))
             return null;                   
-            const searchItem: WithId<BlogDBModel> | null = await blogCollection.findOne({_id: new ObjectId(id)})           
+            const searchItem: WithId<BlogDBType> | null = await blogCollection.findOne({_id: new ObjectId(id)})           
             return searchItem 
                  ? this.mapDbToView(searchItem) 
                  : null 
     },
   
-    async find(queryReq:  QueryModel): Promise < PaginatorModel<BlogViewModel> > {      
+    async find(queryReq:  QueryType): Promise < PaginatorType<BlogViewType> > {      
         
         const nameSearch = queryReq.searchNameTerm ? {name: {$regex: queryReq.searchNameTerm, $options: 'i'}} : {}    
         const queryFilter = {...nameSearch}
@@ -28,7 +28,7 @@ export const blogQueryRepository = {
         if (totalCount == 0)
             return emptyPaginator;  
         
-        const searchItem: Array<WithId<BlogDBModel>>  = 
+        const searchItem: Array<WithId<BlogDBType>>  = 
             await blogCollection.find(queryFilter)
                                 .limit(queryReq.pageSize)
                                 .skip((queryReq.pageNumber - 1) * queryReq.pageSize)
@@ -43,7 +43,7 @@ export const blogQueryRepository = {
         }
     },
 
-    mapDbToView(item: WithId<BlogDBModel>): BlogViewModel {
+    mapDbToView(item: WithId<BlogDBType>): BlogViewType {
         
         return {
             id: item._id.toString(),

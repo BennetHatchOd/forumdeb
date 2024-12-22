@@ -1,5 +1,5 @@
-import { PostViewModel, PostInputModel} from "../types";
-import { PostDBModel } from "../../../db/dbTypes";
+import { PostViewType, PostInputType} from "../types";
+import { PostDBType } from "../../../db/dbTypes";
 import { postCollection } from "../../../db/db";
 import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "mongodb";
 import { CodStatus, StatusResult } from "../../../types/interfaces";
@@ -19,14 +19,14 @@ export const postRepository = {
 
     },
      
-    async create(createItem: PostDBModel): Promise <StatusResult<string|undefined>>{ 
+    async create(createItem: PostDBType): Promise <StatusResult<string|undefined>>{ 
         const answerInsert: InsertOneResult = await postCollection.insertOne(createItem);
         return answerInsert.acknowledged  
             ? {codResult: CodStatus.Created, data: answerInsert.insertedId.toString()}  
             : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
     },
 
-    async edit(id: string, editData: PostInputModel, addingData = {}): Promise<StatusResult>{      
+    async edit(id: string, editData: PostInputType, addingData = {}): Promise<StatusResult>{      
         const answerUpdate: UpdateResult = await postCollection.updateOne({_id: new ObjectId(id)}, {$set: {...editData, ...addingData}});
         if(!answerUpdate.acknowledged)
             return {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};

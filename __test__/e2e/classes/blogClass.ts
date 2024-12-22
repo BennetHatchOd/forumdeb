@@ -3,9 +3,9 @@ import { app } from "../../../src/app";
 import request from "supertest";
 import { SortDirection } from 'mongodb';
 import { PostEndPoint } from './postClass';
-import { BlogInputModel, BlogViewModel } from '../../../src/variety/blogs/types';
+import { BlogInputType, BlogViewType } from '../../../src/variety/blogs/types';
 import { APIErrorResult, FieldError } from '../../../src/types/types';
-import { PostInputModel, PostViewModel } from '../../../src/variety/posts/types';
+import { PostInputType, PostViewType } from '../../../src/variety/posts/types';
 
 type InputQuery = {
     sortBy?: string,
@@ -16,10 +16,10 @@ type InputQuery = {
 
 export class BlogEndPoint{
     
-    private blogView: Array<BlogViewModel> = []
+    private blogView: Array<BlogViewType> = []
 
-    private blogCorrect: Array<BlogInputModel> = []
-    private blogIncorrect: Array<BlogInputModel>
+    private blogCorrect: Array<BlogInputType> = []
+    private blogIncorrect: Array<BlogInputType>
     private blogErrors: Array<APIErrorResult>
     private errorName: FieldError
     private errorDescription: FieldError
@@ -232,7 +232,7 @@ export class BlogEndPoint{
 
     async createPost(numberBlogInView: number, titleIn?: string, shortDescriptionIn?: string, contentIn?: string ){
     
-        const newItem: PostInputModel = {
+        const newItem: PostInputType = {
                 title: titleIn ? titleIn : 'title',                   
                 shortDescription: shortDescriptionIn ? shortDescriptionIn : 'this is post for ' + this.blogView[numberBlogInView].id,            
                 content: contentIn ? contentIn : 'this is text for content',
@@ -246,7 +246,7 @@ export class BlogEndPoint{
                 .send(newItem)
                 .expect(HTTP_STATUSES.CREATED_201);
 
-        let createdItem: PostViewModel = createdResponse.body;
+        let createdItem: PostViewType = createdResponse.body;
         this.posts.setItemView(createdItem)
 
         expect(createdItem).toEqual({
@@ -271,7 +271,7 @@ export class BlogEndPoint{
         
         let foundItems = foundResponse.body
         
-        const inArray: Array<PostViewModel> = this.posts.getItemView()
+        const inArray: Array<PostViewType> = this.posts.getItemView()
         const outArray = inArray.filter(s => s.blogId == this.blogView[numberBlogInView].id)
                
         expect(foundItems).toEqual(this.posts.setPaginator(inputQuery, outArray))
@@ -282,7 +282,7 @@ export class BlogEndPoint{
     async createBadPost(authOrBadOrId: string, data = 'y7u77uhttfrf6'){
         let status = 0
         let url = `${URL_PATH.blogs}/${this.blogView[0].id}/posts`
-        let newItem: PostInputModel = {
+        let newItem: PostInputType = {
                     title: 'title',                   
                     shortDescription: 'this is post for ' + this.blogView[0].id,            
                     content: 'this is text for content',
@@ -313,7 +313,7 @@ export class BlogEndPoint{
         
     }    
 
-    setPaginator(inputQuery: InputQuery, inArray: Array<BlogViewModel>){
+    setPaginator(inputQuery: InputQuery, inArray: Array<BlogViewType>){
         let {pageSize = 10, pageNumber} = inputQuery
         const page = pageNumber ? pageNumber : 1
         
@@ -326,7 +326,7 @@ export class BlogEndPoint{
                 items: []
             }
 
-        type BlogField = keyof BlogViewModel    
+        type BlogField = keyof BlogViewType    
         const fieldSort: BlogField = (inputQuery.sortBy ? inputQuery.sortBy : 'createdAt') as BlogField
         const directSort = inputQuery.sortDirection == 'asc' ? 1 : -1   
         
@@ -340,7 +340,7 @@ export class BlogEndPoint{
                                 return -directSort
                             return 0}) 
         
-        let outArray: Array<BlogViewModel> = inArray.slice(pageSize * (page - 1), pageSize * page)
+        let outArray: Array<BlogViewType> = inArray.slice(pageSize * (page - 1), pageSize * page)
         
         return {
             pagesCount: Math.ceil(outArray.length / pageSize),

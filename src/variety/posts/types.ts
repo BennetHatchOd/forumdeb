@@ -1,10 +1,10 @@
-export type PostInputModel = {
+export type PostInputType = {
     title:	string,                 // length 1-30
     shortDescription: string,       // length 1-100
     content: string,                // length 1-1000
     blogId:	string,
 }
-export type PostViewModel = {
+export type PostViewType = {
     id:	string,
     title:	string,
     shortDescription: string,
@@ -14,7 +14,7 @@ export type PostViewModel = {
     blogName:	string
 }
 
-export type BlogPostInputModel = {
+export type BlogPostInputType = {
     title:	string,                 // length 1-30
     shortDescription: string,       // length 1-100
     content: string,                // length 1-1000

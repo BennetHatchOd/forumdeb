@@ -1,8 +1,8 @@
 import { userCollection } from "../../../db/db";
-import { UserDBModel } from "../../../db/dbTypes";
+import { UserDBType } from "../../../db/dbTypes";
 import { DeleteResult, InsertOneResult, ObjectId, WithId } from "mongodb";
 import { CodStatus, StatusResult } from "../../../types/interfaces";
-import { UserPasswordModel } from "../types";
+import { UserPasswordType } from "../types";
 import { AboutUser } from "../../auth/types";
 
 export const userRepository = {
@@ -37,7 +37,7 @@ export const userRepository = {
    
     async getUserByLoginEmail(loginOrEmail: string): Promise<StatusResult<{id:string, passHash:string}|undefined>> {      
 
-        const checkedUser: WithId<UserDBModel>|null = await userCollection.findOne({$or: [{login: loginOrEmail},{email: loginOrEmail}]})           
+        const checkedUser: WithId<UserDBType>|null = await userCollection.findOne({$or: [{login: loginOrEmail},{email: loginOrEmail}]})           
         
         return checkedUser === null 
             ? {codResult: CodStatus.NotFound} 
@@ -47,7 +47,7 @@ export const userRepository = {
 
     async findForOwnerById(id: string): Promise < StatusResult<AboutUser|undefined> > {     
              
-        const searchItem: WithId<UserDBModel> | null = await userCollection.findOne({_id: new ObjectId(id)})  
+        const searchItem: WithId<UserDBType> | null = await userCollection.findOne({_id: new ObjectId(id)})  
         if(!searchItem)
             return {codResult: CodStatus.NotFound}
 
@@ -60,7 +60,7 @@ export const userRepository = {
             }
     },
 
-    async create(createItem: UserDBModel): Promise <StatusResult<string|undefined>>{  
+    async create(createItem: UserDBType): Promise <StatusResult<string|undefined>>{  
         
         const answerInsert: InsertOneResult = await userCollection.insertOne(createItem);     
         

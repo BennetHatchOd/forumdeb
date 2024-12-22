@@ -2,17 +2,17 @@ import { Request, Response } from "express";
 import {HTTP_STATUSES} from '../../setting';
 import { paginator } from "../../utility/paginator"; 
 import { CodStatus, StatusResult } from "../../types/interfaces";
-import { PaginatorModel, QueryModel } from "../../types/types";
+import { PaginatorType, QueryType } from "../../types/types";
 import { commentQueryRepository } from "./repositories/commentQueryRepository";
-import { CommentInputModel, CommentViewModel } from "./types";
+import { CommentInputType, CommentViewType } from "./types";
 import { commentService } from "./commentSevice";
 
 export const commentControllers ={ 
     
     
-    async getCommentById(req: Request<{id: string}>, res: Response<CommentViewModel>){
+    async getCommentById(req: Request<{id: string}>, res: Response<CommentViewType>){
         try{
-            const foundItem: CommentViewModel|null = await commentQueryRepository.findById(req.params.id);
+            const foundItem: CommentViewType|null = await commentQueryRepository.findById(req.params.id);
             if(foundItem){
                 res.status(HTTP_STATUSES.OK_200).json(foundItem);
                 return;
@@ -26,7 +26,7 @@ export const commentControllers ={
     },
 
     
-    async putComment(req: Request<{id: string},{},CommentInputModel>, res: Response){
+    async putComment(req: Request<{id: string},{},CommentInputType>, res: Response){
         try{
             const answer: StatusResult  = await commentService.edit(req.params.id, req.user!.id, req.body)  
             res.sendStatus(answer.codResult);
@@ -49,11 +49,11 @@ export const commentControllers ={
         }
     },
     
-    async getCommentToPost(req: Request<{id: string},{},{},QueryModel>, res: Response <PaginatorModel<CommentViewModel>|{}> ){
+    async getCommentToPost(req: Request<{id: string},{},{},QueryType>, res: Response <PaginatorType<CommentViewType>|{}> ){
         
-        const queryPaginator: QueryModel = paginator(req.query)
+        const queryPaginator: QueryType = paginator(req.query)
         try{
-            const commentPaginator: PaginatorModel<CommentViewModel> = await commentQueryRepository.find(req.params.id, queryPaginator)
+            const commentPaginator: PaginatorType<CommentViewType> = await commentQueryRepository.find(req.params.id, queryPaginator)
             
             const status = commentPaginator.totalCount == 0 
             ?   HTTP_STATUSES.NOT_FOUND_404  
@@ -68,13 +68,13 @@ export const commentControllers ={
         }
     },
 
-    async postCommentToPost(req: Request<{id: string},{},CommentInputModel>, res: Response){
+    async postCommentToPost(req: Request<{id: string},{},CommentInputType>, res: Response){
 
         try{
             const answerCreate: StatusResult<string|undefined>  =  await commentService.create(req.params.id, req.user!.id, req.body)
   
             if(answerCreate.codResult == CodStatus.Created){ 
-                const commentOut: CommentViewModel | null = await commentQueryRepository.findById(answerCreate.data!)
+                const commentOut: CommentViewType | null = await commentQueryRepository.findById(answerCreate.data!)
                 if(!commentOut) throw 'commentQueryRepository didn\'t find comment'
                 res.status(HTTP_STATUSES.CREATED_201).json(commentOut) 
                 return;
@@ -88,17 +88,17 @@ export const commentControllers ={
     },
     
     
-    // async getComment(req: Request<{},{},{},QueryModel>, res: Response<PaginatorModel<CommentViewModel> | {}>){
+    // async getComment(req: Request<{},{},{},QueryType>, res: Response<PaginatorType<CommentViewType> | {}>){
     
-    // async postComment(req: Request<{},{},CommentInputModel>, res: Response){
+    // async postComment(req: Request<{},{},CommentInputType>, res: Response){
     //     try{
     //         const answer: StatusResult<string | undefined>  = await commentService.create(req.body); 
     //         if(answer.codResult == CodStatus.Created){ 
-    //             const comment: CommentViewModel | null = await commentQueryRepository.findById(answer.data as string)
+    //             const comment: CommentViewType | null = await commentQueryRepository.findById(answer.data as string)
 
     //     try{
-    //         const queryPaginator:  QueryModel =paginator(req.query)
-    //         const commentPaginator: PaginatorModel<CommentViewModel> = await commentQueryRepository.find(queryPaginator)
+    //         const queryPaginator:  QueryType =paginator(req.query)
+    //         const commentPaginator: PaginatorType<CommentViewType> = await commentQueryRepository.find(queryPaginator)
     
     //         res.status(HTTP_STATUSES.OK_200).json(commentPaginator)
     //     }

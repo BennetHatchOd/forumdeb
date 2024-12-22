@@ -1,11 +1,11 @@
-export type DeviceViewModel = {
+export type DeviceViewType = {
     ip:             string,
     title:          string,
     lastActiveDate: string,
     deviceId:       string
   }
 
-  export type activeSessionModel = {
+  export type activeSessionType = {
     //id:         string,
     userId:     string,
     version:    string,
@@ -16,7 +16,7 @@ export type DeviceViewModel = {
     expiresAt:  Date
 }
 
-// export type payloadFromSessionModel = {
+// export type payloadFromSessionType = {
 //   id:         string,
 //   userId:     string,
 //   version:    string,
@@ -25,7 +25,7 @@ export type DeviceViewModel = {
 //   exp:        number
 // }
 
-export type updateSessionModel = {
+export type updateSessionType = {
   userId:     string,
   version:    string,
   deviceId:   string,

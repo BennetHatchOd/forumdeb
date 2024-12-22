@@ -1,13 +1,13 @@
-import {UserInputModel, UserPasswordModel, UserViewModel} from '../../../src/variety/users/types'
+import {UserInputType, UserPasswordType, UserViewType} from '../../../src/variety/users/types'
 import { app } from "../../../src/app";
 import request from "supertest";
 import { HTTP_STATUSES, URL_PATH } from '../../../src/setting';
 
 
 export class UserEndPoint{
-    private itemView: Array<UserPasswordModel> = []
+    private itemView: Array<UserPasswordType> = []
     private itemToken: Array<{userId:string, token:string}> = []
-    private itemCorrect: Array<UserInputModel> = []
+    private itemCorrect: Array<UserInputType> = []
     private AuthAdmin!: string
 
     constructor(){
@@ -30,7 +30,7 @@ export class UserEndPoint{
 
     async createItem(i: number = 0){
         
-        const createItem: UserInputModel = this.itemCorrect[i]
+        const createItem: UserInputType = this.itemCorrect[i]
 
         let createdResponse = await 
                 request(app)
@@ -39,7 +39,7 @@ export class UserEndPoint{
                 .send(createItem)
                 .expect(HTTP_STATUSES.CREATED_201);
 
-        let createdItem: UserPasswordModel = {...createdResponse.body, 
+        let createdItem: UserPasswordType = {...createdResponse.body, 
                                                 password: this.itemCorrect[i].password}
         this.itemView.push({...createdItem})
 

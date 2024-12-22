@@ -1,21 +1,21 @@
-import { PaginatorModel, QueryModel} from "../../../types/types";
+import { PaginatorType, QueryType} from "../../../types/types";
 import { userCollection } from "../../../db/db";
-import { UserDBModel } from "../../../db/dbTypes";
+import { UserDBType } from "../../../db/dbTypes";
 import { ObjectId, WithId } from "mongodb";
 import { emptyPaginator } from "../../../utility/paginator";
-import { UserViewModel } from "../types";
+import { UserViewType } from "../types";
 
 export const userQueryRepository = {
 
-    async findById(id: string): Promise < UserViewModel | null > {      // searches for a user by id and returns this user or null
+    async findById(id: string): Promise < UserViewType | null > {      // searches for a user by id and returns this user or null
         
         if(!ObjectId.isValid(id))
             return null;
-        const searchItem: WithId<UserDBModel> | null = await userCollection.findOne({_id: new ObjectId(id)})           
+        const searchItem: WithId<UserDBType> | null = await userCollection.findOne({_id: new ObjectId(id)})           
         return searchItem ? this.mapDbToOutput(searchItem) : null;
     },
 
-    async find(queryReq:  QueryModel): Promise < PaginatorModel<UserViewModel> > {      // searches for users by filter, returns  paginator or null
+    async find(queryReq:  QueryType): Promise < PaginatorType<UserViewType> > {      // searches for users by filter, returns  paginator or null
         
         
         let queryUserFilter = {$match: {}}
@@ -102,8 +102,8 @@ export const userQueryRepository = {
             return emptyPaginator;
         const totalCount: number= countArray[0].totalCount
          
-        const searchItem: Array<WithId<UserDBModel>>   
-            = await userCollection.aggregate(findPipeline).toArray() as Array<WithId<UserDBModel>>;
+        const searchItem: Array<WithId<UserDBType>>   
+            = await userCollection.aggregate(findPipeline).toArray() as Array<WithId<UserDBType>>;
 
         const pagesCount =  Math.ceil(totalCount / queryReq.pageSize) 
         return {
@@ -115,7 +115,7 @@ export const userQueryRepository = {
             }
     },
 
-    mapDbToOutput(item: WithId<UserDBModel>): UserViewModel {
+    mapDbToOutput(item: WithId<UserDBType>): UserViewType {
         
         return {
             id: item._id.toString(),

@@ -1,4 +1,4 @@
-export type BlogDBModel = {
+export type BlogDBType = {
     name:   string,
     description: string,
     createdAt: Date,
@@ -6,7 +6,7 @@ export type BlogDBModel = {
     websiteUrl:	string
 }
 
-export type PostDBModel = {
+export type PostDBType = {
     title:	string,
     shortDescription: string,
     content: string,
@@ -15,14 +15,14 @@ export type PostDBModel = {
     blogName:	string
 }
 
-export type UserDBModel = {
+export type UserDBType = {
     login:	string,
     email:	string,
     password: string,
     createdAt:	Date
 }
 
-export type UserUnconfirmedDBModel = {
+export type UserUnconfirmedDBType = {
     user:{
         login:	string,
         email:	string,
@@ -40,7 +40,7 @@ export type CommentatorDBInfo ={
     userLogin:  string	
 }
 
-export type CommentDBModel = {
+export type CommentDBType = {
     parentPostId:       string,
     content:	        string,
     commentatorInfo:	CommentatorDBInfo,
@@ -50,15 +50,15 @@ export type CommentDBModel = {
 
 // export type TokenListDB = {
 //     userId: string,
-//     blackList: Array<BlackListModel>
+//     blackList: Array<BlackListType>
 // }
 
-// export type BlackListModel = {
+// export type BlackListType = {
 //     version: string,
 //     expireTime: number
 // }
 
-export type requestAPIModelDB = {
+export type requestAPITypeDB = {
     ip:     string, 
     url:    string, 
     date:   Date

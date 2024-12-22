@@ -1,5 +1,5 @@
 import { authUserCollection } from "../../../src/db/db"
-import { UserInputModel } from "../../../src/variety/users/types"
+import { UserInputType } from "../../../src/variety/users/types"
 
 export const testSeeder = {
     createGoodUser(prefix: string = ''){
@@ -12,7 +12,7 @@ export const testSeeder = {
 
     createManyGoodUsers(n: number){
         
-        const users: Array<UserInputModel> = [];
+        const users: Array<UserInputType> = [];
         
         for(let i = 0; i < n; i++)
             users.push({login: `lhfg${i}`,

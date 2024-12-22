@@ -1,6 +1,6 @@
 import { SortDirection } from 'mongodb';
 import { BlogEndPoint } from './blogClass';
-import { UserInputModel, UserViewModel } from '../../../src/variety/users/types';
+import { UserInputType, UserViewType } from '../../../src/variety/users/types';
 import { APIErrorResult, FieldError } from '../../../src/types/types';
 
 type InputQuery = {
@@ -10,9 +10,9 @@ type InputQuery = {
     pageSize?: number}
 
 export class UserEndPoint{
-    private itemView: Array<UserViewModel> = []
-    private itemCorrect: Array<UserInputModel> = []
-    private itemIncorrect!: Array<UserInputModel>
+    private itemView: Array<UserViewType> = []
+    private itemCorrect: Array<UserInputType> = []
+    private itemIncorrect!: Array<UserInputType>
     private itemErrors: Array<APIErrorResult>
     private errorTitle: FieldError
     private errorShortDescription: FieldError

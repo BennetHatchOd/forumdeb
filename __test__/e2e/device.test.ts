@@ -4,7 +4,7 @@ import {MongoMemoryServer} from 'mongodb-memory-server'
 import {MongoClient} from 'mongodb'
 import { mailManager } from "../../src/utility/mailManager";
 import { testSeeder } from "./common/test.seeder";
-import { UserInputModel } from "../../src/variety/users/types";
+import { UserInputType } from "../../src/variety/users/types";
 import { AUTH_PATH, HTTP_STATUSES, TIME_LIFE_ACCESS_TOKEN, URL_PATH } from "../../src/setting";
 import { AuthPassword } from "./common/test.setting";
 import { authRepository } from "../../src/variety/auth/authRepository";
@@ -12,7 +12,7 @@ import { CodStatus } from "../../src/types/interfaces";
 import { userRepository } from "../../src/variety/users/repositories/userRepository";
 import { register } from "module";
 import { de } from "date-fns/locale";
-import { DeviceViewModel } from "../../src/variety/devices/types";
+import { DeviceViewType } from "../../src/variety/devices/types";
 import { compareArr } from "./common/helper";
 
 describe('/device', () => {
@@ -26,8 +26,8 @@ describe('/device', () => {
     let deviceId: string
     let accessToken: string
     let refreshToken: string
-    let user: UserInputModel = testSeeder.createGoodUser()
-    let user2: UserInputModel = testSeeder.createGoodUser('ff') 
+    let user: UserInputType = testSeeder.createGoodUser()
+    let user2: UserInputType = testSeeder.createGoodUser('ff') 
     let devices = testSeeder.createTitleDevices()
     let RFtokens: Array<string> = []
     let numberDevices = devices.length

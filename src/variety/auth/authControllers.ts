@@ -2,19 +2,19 @@ import { Request, Response } from "express";
 import { HTTP_STATUSES } from "../../setting";
 import { authService } from "./authSevice";
 import { CodStatus, StatusResult } from "../../types/interfaces";
-import { AboutUser, AuthorizationModel, LoginInputModel, Tokens } from "./types";
+import { AboutUser, AuthorizationType, LoginInputType, Tokens } from "./types";
 import { APIErrorResult } from "../../types/types";
-import { UserInputModel } from "../users/types";
+import { UserInputType } from "../users/types";
 
 
 export const authControllers = { 
   
-    async authorization(req: Request<{},{},LoginInputModel>, res: Response){
+    async authorization(req: Request<{},{},LoginInputType>, res: Response){
         try{   
             const device =  req.headers['user-agent']
                      ? req.headers['user-agent'] 
                      : 'unknown device'       
-            const user: AuthorizationModel = {
+            const user: AuthorizationType = {
                                             loginOrEmail:	req.body.loginOrEmail,
                                             password:	    req.body.password,
                                             deviceName:     device,
@@ -82,9 +82,9 @@ export const authControllers = {
         }
     },
 
-    async registration(req: Request<{},{},UserInputModel>, res: Response){
+    async registration(req: Request<{},{},UserInputType>, res: Response){
         try{
-           const inputUserData: UserInputModel ={
+           const inputUserData: UserInputType ={
              login: req.body.login,
              email: req.body.email,
              password: req.body.password

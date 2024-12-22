@@ -1,18 +1,18 @@
-import { QueryModel, PaginatorModel} from "../../../types/types";
+import { QueryType, PaginatorType} from "../../../types/types";
 import { postCollection } from "../../../db/db";
-import { PostDBModel } from "../../../db/dbTypes";
+import { PostDBType } from "../../../db/dbTypes";
 import { ObjectId, WithId } from "mongodb";
 import { emptyPaginator } from "../../../utility/paginator";
-import { PostViewModel } from "../types";
+import { PostViewType } from "../types";
 
 export const postQueryRepository = {
 
  
-    async findById(id: string): Promise < PostViewModel | null > {      
+    async findById(id: string): Promise < PostViewType | null > {      
         
         if(!ObjectId.isValid(id))
             return null;
-        const searchItem: WithId<PostDBModel> | null = 
+        const searchItem: WithId<PostDBType> | null = 
             await postCollection.findOne({_id: new ObjectId(id)})
         
         return searchItem 
@@ -20,7 +20,7 @@ export const postQueryRepository = {
             : null;
     },
 
-    async find(queryReq:  QueryModel): Promise < PaginatorModel<PostViewModel> > { 
+    async find(queryReq:  QueryType): Promise < PaginatorType<PostViewType> > { 
         
         const bloqIdSearch = queryReq.blogId ? {blogId: queryReq.blogId} : {}   
         const queryFilter = {...bloqIdSearch}
@@ -30,7 +30,7 @@ export const postQueryRepository = {
         if (totalCount == 0)
             return emptyPaginator;
                 
-        const searchItem: Array<WithId<PostDBModel>> = 
+        const searchItem: Array<WithId<PostDBType>> = 
             await postCollection.find(queryFilter)
                                 .limit(queryReq.pageSize)
                                 .skip((queryReq.pageNumber - 1) * queryReq.pageSize)
@@ -49,7 +49,7 @@ export const postQueryRepository = {
 
     },
 
-    mapDbToOutput(item: WithId<PostDBModel>): PostViewModel {
+    mapDbToOutput(item: WithId<PostDBType>): PostViewType {
         
         return { 
             id: item._id.toString(),

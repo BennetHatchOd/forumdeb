@@ -3,20 +3,20 @@ import {HTTP_STATUSES} from '../../setting';
 import { blogService } from "./blogSevice";
 import { paginator } from "../../utility/paginator"; 
 import { CodStatus, StatusResult } from "../../types/interfaces";
-import { PaginatorModel, QueryModel } from "../../types/types";
+import { PaginatorType, QueryType } from "../../types/types";
 import { postService } from "../posts/postService";
 import { postQueryRepository } from "../posts/repositories/postQueryRepository";
 import { blogQueryRepository } from "./repositories/blogQueryRepository";
-import { BlogInputModel, BlogPostInputModel, BlogViewModel } from "./types";
-import { PostViewModel } from "../posts/types";
+import { BlogInputType, BlogPostInputType, BlogViewType } from "./types";
+import { PostViewType } from "../posts/types";
 
 export const blogControllers ={ 
     
-    async getBlog(req: Request<{},{},{},QueryModel>, res: Response<PaginatorModel<BlogViewModel> | {}>){
+    async getBlog(req: Request<{},{},{},QueryType>, res: Response<PaginatorType<BlogViewType> | {}>){
 
         try{
-            const queryPaginator:  QueryModel =paginator(req.query)
-            const blogPaginator: PaginatorModel<BlogViewModel> = await blogQueryRepository.find(queryPaginator)
+            const queryPaginator:  QueryType =paginator(req.query)
+            const blogPaginator: PaginatorType<BlogViewType> = await blogQueryRepository.find(queryPaginator)
     
             res.status(HTTP_STATUSES.OK_200).json(blogPaginator)
         }
@@ -26,9 +26,9 @@ export const blogControllers ={
         }
     },
 
-    async getBlogById(req: Request<{id: string}>, res: Response<BlogViewModel>){
+    async getBlogById(req: Request<{id: string}>, res: Response<BlogViewType>){
         try{
-            const foundBlog: BlogViewModel|null = await blogQueryRepository.findById(req.params.id);
+            const foundBlog: BlogViewType|null = await blogQueryRepository.findById(req.params.id);
             if(foundBlog){
                 res.status(HTTP_STATUSES.OK_200).json(foundBlog);
                 return;
@@ -41,11 +41,11 @@ export const blogControllers ={
         }
     },
 
-    async postBlog(req: Request<{},{},BlogInputModel>, res: Response){
+    async postBlog(req: Request<{},{},BlogInputType>, res: Response){
         try{
             const answer: StatusResult<string | undefined>  = await blogService.create(req.body); 
             if(answer.codResult == CodStatus.Created){ 
-                const blog: BlogViewModel | null = await blogQueryRepository.findById(answer.data as string)
+                const blog: BlogViewType | null = await blogQueryRepository.findById(answer.data as string)
                 res.status(HTTP_STATUSES.CREATED_201).json(blog)
                 return;
             }
@@ -57,7 +57,7 @@ export const blogControllers ={
         }
     },
 
-    async putBlog(req: Request<{id: string},{},BlogInputModel>, res: Response){
+    async putBlog(req: Request<{id: string},{},BlogInputType>, res: Response){
         try{
             const answer: StatusResult  = await blogService.edit(req.params.id, req.body)  
             res.sendStatus(answer.codResult);
@@ -80,11 +80,11 @@ export const blogControllers ={
         }
     },
 
-    async getPostByBlog(req: Request<{id: string},{},{},QueryModel>, res: Response <PaginatorModel<PostViewModel>|{}> ){
+    async getPostByBlog(req: Request<{id: string},{},{},QueryType>, res: Response <PaginatorType<PostViewType>|{}> ){
    
-        const queryPaginator: QueryModel = paginator({...req.query, blogId: req.params.id})
+        const queryPaginator: QueryType = paginator({...req.query, blogId: req.params.id})
         try{
-            const postPaginator: PaginatorModel<PostViewModel> = await postQueryRepository.find(queryPaginator)
+            const postPaginator: PaginatorType<PostViewType> = await postQueryRepository.find(queryPaginator)
 
             const status = postPaginator.totalCount == 0 
                         ?   HTTP_STATUSES.NOT_FOUND_404  
@@ -99,13 +99,13 @@ export const blogControllers ={
         }
     },
 
-    async postPostByBlog(req: Request<{id: string},{},BlogPostInputModel>, res: Response){
+    async postPostByBlog(req: Request<{id: string},{},BlogPostInputType>, res: Response){
 
         try{
             const answerCreate: StatusResult<string|undefined>  =  await postService.create({...req.body, blogId: req.params.id})
   
             if(answerCreate.codResult == CodStatus.Created){ 
-                const postOut: PostViewModel | null = await postQueryRepository.findById(answerCreate.data as string)
+                const postOut: PostViewType | null = await postQueryRepository.findById(answerCreate.data as string)
                 res.status(HTTP_STATUSES.CREATED_201).json(postOut) 
                 return;
             }

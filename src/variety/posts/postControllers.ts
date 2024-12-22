@@ -2,18 +2,18 @@ import { Request, Response } from "express";
 import {HTTP_STATUSES} from '../../setting';
 import { postService } from "./postService";
 import { CodStatus, StatusResult } from "../../types/interfaces";
-import { APIErrorResult, PaginatorModel, QueryModel } from "../../types/types";
+import { APIErrorResult, PaginatorType, QueryType } from "../../types/types";
 import { postQueryRepository } from "./repositories/postQueryRepository";
 import { paginator } from "../../utility/paginator";
-import { PostInputModel, PostViewModel } from "./types";
+import { PostInputType, PostViewType } from "./types";
 
 export const postControllers = {   
     
-    async getPost(req: Request<{},{},{},QueryModel>, res: Response<PaginatorModel<PostViewModel>>) {
+    async getPost(req: Request<{},{},{},QueryType>, res: Response<PaginatorType<PostViewType>>) {
 
-        const queryPaginator:  QueryModel = paginator(req.query)
+        const queryPaginator:  QueryType = paginator(req.query)
         try{
-            const blogPaginator: PaginatorModel<PostViewModel> = await postQueryRepository.find(queryPaginator)  
+            const blogPaginator: PaginatorType<PostViewType> = await postQueryRepository.find(queryPaginator)  
             res.status(HTTP_STATUSES.OK_200).json(blogPaginator)
         }
         catch(err){
@@ -22,9 +22,9 @@ export const postControllers = {
         }
     },
 
-    async getPostById(req: Request<{id: string}>, res: Response<PostViewModel>){
+    async getPostById(req: Request<{id: string}>, res: Response<PostViewType>){
         try{    
-            const foundPost: PostViewModel | null = await postQueryRepository.findById(req.params.id);
+            const foundPost: PostViewType | null = await postQueryRepository.findById(req.params.id);
             
             if(!foundPost){
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
@@ -39,11 +39,11 @@ export const postControllers = {
         }
     },
     
-    async postPost(req: Request<{},{},PostInputModel>, res: Response){
+    async postPost(req: Request<{},{},PostInputType>, res: Response){
         try{
             const answer: StatusResult<string | undefined>  = await postService.create(req.body); 
             if(answer.codResult == CodStatus.Created){ 
-                const blog: PostViewModel | null = await postQueryRepository.findById(answer.data as string)
+                const blog: PostViewType | null = await postQueryRepository.findById(answer.data as string)
                 res.status(HTTP_STATUSES.CREATED_201).json(blog)
                 return;
             }
@@ -56,7 +56,7 @@ export const postControllers = {
     },
 
 
-    async putPost(req: Request<{id: string},{},PostInputModel>, res: Response<APIErrorResult|{}>){
+    async putPost(req: Request<{id: string},{},PostInputType>, res: Response<APIErrorResult|{}>){
         try{     
             const answer: StatusResult  = await postService.edit(req.params.id, req.body)  
             res.sendStatus(answer.codResult);

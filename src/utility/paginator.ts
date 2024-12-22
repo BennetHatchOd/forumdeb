@@ -1,6 +1,6 @@
-import { QueryModel} from "../types/types";
+import { QueryType} from "../types/types";
 
-export function paginator(input: QueryModel): QueryModel {
+export function paginator(input: QueryType): QueryType {
     
     return {
         sortBy: input.sortBy ? input.sortBy : 'createdAt',

@@ -1,11 +1,11 @@
 import { ObjectId, WithId } from "mongodb";
 import { activeSessionDB } from "../../../db/dbTypes";
 import { CodStatus, StatusResult } from "../../../types/interfaces";
-import { activeSessionModel, DeviceViewModel } from "../types";
+import { activeSessionType, DeviceViewType } from "../types";
 import { sessionCollection } from "../../../db/db";
 
 export const deviceQueryRepository = {
-    async findManyByUserId(userId: string): Promise<Array<DeviceViewModel>> {     
+    async findManyByUserId(userId: string): Promise<Array<DeviceViewType>> {     
             
         if(!ObjectId.isValid(userId))    
             return [];
@@ -20,7 +20,7 @@ export const deviceQueryRepository = {
 
     },
 
-    mapDbView(user: WithId<activeSessionDB>): DeviceViewModel{
+    mapDbView(user: WithId<activeSessionDB>): DeviceViewType{
         return {
             deviceId:   user.deviceId,
             title: user.deviceName,

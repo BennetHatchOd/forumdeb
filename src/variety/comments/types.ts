@@ -3,14 +3,14 @@ export type CommentatorInfo ={
     userLogin:  string	
 }
 
-export type CommentViewModel ={
+export type CommentViewType ={
     id:                 string,
     content:	        string
     commentatorInfo:	CommentatorInfo,
     createdAt:	        string
 }
 
-export type CommentFullModel ={
+export type CommentFullType ={
     id:                 string,
     content:	        string
     commentatorInfo:	CommentatorInfo,
@@ -19,6 +19,6 @@ export type CommentFullModel ={
 }
 
 
-export type CommentInputModel = {
+export type CommentInputType = {
     content:	string    //maxLength: 300, minLength: 20
 }

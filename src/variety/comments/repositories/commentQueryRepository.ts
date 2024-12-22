@@ -1,23 +1,23 @@
-import { PaginatorModel, QueryModel} from "../../../types/types";
+import { PaginatorType, QueryType} from "../../../types/types";
 import { commentCollection } from "../../../db/db";
-import { CommentDBModel } from "../../../db/dbTypes";
+import { CommentDBType } from "../../../db/dbTypes";
 import { ObjectId, WithId } from "mongodb";
 import { emptyPaginator } from "../../../utility/paginator";
-import { CommentViewModel } from "../types";
+import { CommentViewType } from "../types";
 
 export const commentQueryRepository = {
 
-    async findById(id: string): Promise <CommentViewModel | null > {      
+    async findById(id: string): Promise <CommentViewType | null > {      
         
         if(!ObjectId.isValid(id))
             return null;                   
-        const searchItem: WithId<CommentDBModel> | null = await commentCollection.findOne({_id: new ObjectId(id)})           
+        const searchItem: WithId<CommentDBType> | null = await commentCollection.findOne({_id: new ObjectId(id)})           
         return searchItem 
                 ? this.mapDbToView(searchItem) 
                 : null 
     },
   
-    async find(postId: string, queryReq:  QueryModel): Promise < PaginatorModel<CommentViewModel> > {      
+    async find(postId: string, queryReq:  QueryType): Promise < PaginatorType<CommentViewType> > {      
         
         const totalCount: number= await commentCollection.countDocuments({parentPostId: postId}) 
         const pagesCount =  Math.ceil(totalCount / queryReq.pageSize)
@@ -25,7 +25,7 @@ export const commentQueryRepository = {
         if (totalCount == 0)
             return emptyPaginator;  
         
-        const searchItem: Array<WithId<CommentDBModel>>   
+        const searchItem: Array<WithId<CommentDBType>>   
                 =    await commentCollection.find({parentPostId: postId})
                                 .limit(queryReq.pageSize)
                                 .skip((queryReq.pageNumber - 1) * queryReq.pageSize)
@@ -40,7 +40,7 @@ export const commentQueryRepository = {
         }
     },
 
-    mapDbToView(item: WithId<CommentDBModel>): CommentViewModel {
+    mapDbToView(item: WithId<CommentDBType>): CommentViewType {
         
         return {
             id: item._id.toString(),

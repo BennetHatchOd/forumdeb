@@ -2,11 +2,11 @@ import { CodStatus, StatusResult } from "../../types/interfaces";
 import { postRepository } from "../posts/repositories/postRepository";
 import { userQueryRepository } from "../users/repositories/userQueryRepository";
 import { commentRepository } from "./repositories/commentRepository"; 
-import { CommentFullModel, CommentInputModel} from "./types";
+import { CommentFullType, CommentInputType} from "./types";
 
 export const commentService = {
 
-    async create(parentPostId: string, userId: string, createItem: CommentInputModel ): Promise < StatusResult<string|undefined>>{ 
+    async create(parentPostId: string, userId: string, createItem: CommentInputType ): Promise < StatusResult<string|undefined>>{ 
 
         const checkPost: StatusResult = await postRepository.isExist(parentPostId)
         if(checkPost.codResult == CodStatus.NotFound){
@@ -14,7 +14,7 @@ export const commentService = {
         }
 
         const userLogin: string = (await userQueryRepository.findById(userId))!.login
-        const newComment: Omit<CommentFullModel, 'id'> = {
+        const newComment: Omit<CommentFullType, 'id'> = {
                                 content: createItem.content,
                                 parentPostId: parentPostId,
                                 commentatorInfo: { userId: userId,
@@ -25,9 +25,9 @@ export const commentService = {
 
     },
  
-    async edit(id: string, userId: string, editData: CommentInputModel): Promise < StatusResult >{    
+    async edit(id: string, userId: string, editData: CommentInputType): Promise < StatusResult >{    
        
-        const oldComment: StatusResult<CommentFullModel | undefined> = await commentRepository.findById(id)
+        const oldComment: StatusResult<CommentFullType | undefined> = await commentRepository.findById(id)
        
         if(oldComment.codResult == CodStatus.NotFound)
             return oldComment as StatusResult
@@ -40,7 +40,7 @@ export const commentService = {
 
    async delete(id: string, userId: string): Promise < StatusResult > {     
 
-        const foundResult: StatusResult<CommentFullModel | undefined> = await commentRepository.findById(id)
+        const foundResult: StatusResult<CommentFullType | undefined> = await commentRepository.findById(id)
 
         if (foundResult.codResult != CodStatus.Ok )
             return foundResult as StatusResult;

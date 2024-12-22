@@ -9,7 +9,7 @@ export type APIErrorResult = {
     errorsMessages: Array<FieldError>
 }
 
-export type PaginatorModel<T> = {
+export type PaginatorType<T> = {
     pagesCount: number,
     page: number,
     pageSize: number,
@@ -17,7 +17,7 @@ export type PaginatorModel<T> = {
     items: Array<T>
 }
 
-export type QueryModel = {
+export type QueryType = {
     sortBy: string,
     sortDirection: SortDirection,
     pageNumber: number,

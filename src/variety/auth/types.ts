@@ -1,9 +1,9 @@
-export type LoginInputModel = {
+export type LoginInputType = {
     loginOrEmail:	string,
     password:	    string,
 }
 
-export type AuthorizationModel = {
+export type AuthorizationType = {
   loginOrEmail:	string,
   password:	    string,
   deviceName:   string,

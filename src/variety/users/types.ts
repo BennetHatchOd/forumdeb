@@ -1,17 +1,17 @@
-export type UserInputModel = {
+export type UserInputType = {
     login:	string,         // unique, length 3-10, ^[a-zA-Z0-9_-]*$
     password:	string,     // length: 6-20
     email:	string,         // unique, ^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$
 }
 
-export type UserViewModel = {
+export type UserViewType = {
     id:	string,
     login:	string,
     email:	string,
     createdAt:	string
 }
 
-export type UserPasswordModel = {
+export type UserPasswordType = {
     id:	string,
     login:	string,
     email:	string,
@@ -19,7 +19,7 @@ export type UserPasswordModel = {
     password: string,
 }
 
-export type UserUnconfirmedModel = {
+export type UserUnconfirmedType = {
     id:     string,
     user:{
         login:	string,
@@ -34,7 +34,7 @@ export type UserUnconfirmedModel = {
     }
 }
 
-export type ConfirmEmailModel = {
+export type ConfirmEmailType = {
     code: string,
     expirationTime: Date,
     countSendingCode: number

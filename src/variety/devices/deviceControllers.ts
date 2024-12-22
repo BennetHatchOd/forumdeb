@@ -1,8 +1,8 @@
 import { HTTP_STATUSES } from "../../setting";
-import { PaginatorModel, QueryModel } from "../../types/types";
-import { PostViewModel } from "../posts/types";
+import { PaginatorType, QueryType } from "../../types/types";
+import { PostViewType } from "../posts/types";
 import { Request, Response } from "express";
-import { activeSessionModel, DeviceViewModel } from "./types";
+import { activeSessionType, DeviceViewType } from "./types";
 import { authService } from "../auth/authSevice";
 import { CodStatus } from "../../types/interfaces";
 import { deviceQueryRepository } from "./repositories/deviceQueryRepository";
@@ -10,7 +10,7 @@ import { deviceService } from "./deviceService";
 
 export const deviceControllers = {   
     
-    async getDevices(req: Request, res: Response<Array<DeviceViewModel>>) {
+    async getDevices(req: Request, res: Response<Array<DeviceViewType>>) {
         try{
             const refreshToken= req.cookies.refreshToken
             const checkToken = await authService.checkRefreshtoken(refreshToken)

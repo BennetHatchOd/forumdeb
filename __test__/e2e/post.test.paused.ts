@@ -3,8 +3,8 @@ import {HTTP_STATUSES, URL_PATH} from '../../src/setting'
 import { app } from "../../src/app";
 import {MongoMemoryServer} from 'mongodb-memory-server'
 import {MongoClient} from 'mongodb'
-import { PostInputModel, PostViewModel } from "../../src/variety/posts/types";
-import { BlogInputModel } from "../../src/variety/blogs/types";
+import { PostInputType, PostViewType } from "../../src/variety/posts/types";
+import { BlogInputType } from "../../src/variety/blogs/types";
 
 
 
@@ -38,13 +38,13 @@ describe('/posts', () => {
         await server.stop()
     })
     
-    let createdItem1: PostViewModel;  
+    let createdItem1: PostViewType;  
     let createdBlogId: Array<string> = []
     const createdBlogName: Array<string> =["The first", "The second"]
       
     
     it('should return 201 and created object', async () => { // create the new blog [blog.post]
-           const data: BlogInputModel = {
+           const data: BlogInputType = {
                 name: "The first",
                 description: "Copolla",
                 websiteUrl: "https://google.dcfghgfhgc.com",
@@ -61,7 +61,7 @@ describe('/posts', () => {
     })
 
     it('should return 201 and created object', async () => { // create the second new blog [blog.post]
-        const data: BlogInputModel = {
+        const data: BlogInputType = {
              name: "The second",
              description: "J.Copolla",
              websiteUrl: "https://google.dcgc.com",
@@ -85,7 +85,7 @@ describe('/posts', () => {
  
     it('should return 201 and created object', async () => { // create the fisrt new post [post.post]
         
-        const data: PostInputModel = {
+        const data: PostInputType = {
                     title: "The first",
                     shortDescription: "Copolla",
                     content: "https://google.dcfghgfhgc.com",
@@ -113,11 +113,11 @@ describe('/posts', () => {
     })
 
     
-    let createdItem2: PostViewModel;
+    let createdItem2: PostViewType;
 
     it('should return 201 and created object', async () => { // create the second new post [post.post]
 
-        const data: PostInputModel = {
+        const data: PostInputType = {
             title: "The second",
                     shortDescription: "this post by Tarantino",
                     content: "https://google.dcfghgfhgc.com",
@@ -145,11 +145,11 @@ describe('/posts', () => {
     })
 
    
-    let createdItem3: PostViewModel;
+    let createdItem3: PostViewType;
 
     it('should return 401', async () => {  // create the third new post without Authorization [post.post]
     
-        const data: PostInputModel = {
+        const data: PostInputType = {
                 title: "The thirt",
                 shortDescription: "this post not by Tarantino",
                 content: "https://google.com",
@@ -165,7 +165,7 @@ describe('/posts', () => {
 
     it('should return 401', async () => {  // create the third new post with wrong Authorization [post.post]
     
-        const data: PostInputModel = {
+        const data: PostInputType = {
                 title: "The thirt",
                 shortDescription: "this post not by Tarantino",
                 content: "https://google.com",
@@ -183,7 +183,7 @@ describe('/posts', () => {
 
     it('should return 201 and created object', async () => {  // create the third new post [post.post]
     
-        const data: PostInputModel = {
+        const data: PostInputType = {
             title: "The thirt",
                 shortDescription: "this post not by Tarantino",
                 content: "https://google.com",
@@ -270,7 +270,7 @@ describe('/posts', () => {
     
     it("shouldn't create a post with incorrect datas and  return 400 and return object of errors", async () => { // create a bad post [post.post]
         
-        const data: PostInputModel = {
+        const data: PostInputType = {
                     title: "",
                     shortDescription: "0123",
                     content: "length_10112345678901123456789011234567890112345678901123456789011234567890112345678901123456789011234567891",
@@ -300,7 +300,7 @@ describe('/posts', () => {
         
     it("shouldn't create a post with incorrect datas and  return 400 and return object of errors", async () => { // create a bad post [post.post]
         
-        const data: PostInputModel = {
+        const data: PostInputType = {
                     title: "length_311245845269854125745612",
                     shortDescription: "",
                     content: "ttps://google123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890.com432",
@@ -333,7 +333,7 @@ describe('/posts', () => {
 
      it('should edit the fisrt post return 204', async () => { // edit the fisrt post [put.post]
         
-        const data: PostInputModel = {
+        const data: PostInputType = {
             title: "Correct",
             shortDescription: "Gaidai",
             content: "https://fig.dedf.cfghgfhgc.net/34",
@@ -366,7 +366,7 @@ describe('/posts', () => {
     
     it('should edit the not exist post and return 404', async () => { // edit the not exist post [put.post]
 
-        const data: PostInputModel = {
+        const data: PostInputType = {
                     title: "The mistake",
                     shortDescription: "Gaidai",
                     content: "https://fig.dedf.cfghgfhgc.net/34",
@@ -388,7 +388,7 @@ describe('/posts', () => {
 
     it("shouldn't create a post with incorrect blogID and  return 400 and return object of errors", async () => { // create a bad post [post.post]
     
-        const data: PostInputModel = {
+        const data: PostInputType = {
                     title: "The first",
                     shortDescription: "Copolla",
                     content: "https://google.dcfghgfhgc.com",
@@ -414,7 +414,7 @@ describe('/posts', () => {
 
     it("shouldn't create a post with ID of not existed blog and  return 400 and return object of errors", async () => { // create a bad post [post.post]
     
-        const data: PostInputModel = {
+        const data: PostInputType = {
                     title: "The first",
                     shortDescription: "Copolla",
                     content: "https://google.dcfghgfhgc.com",
@@ -440,7 +440,7 @@ describe('/posts', () => {
 
     it('shouldn\'t edit the fisrt post return 400', async () => { // edit the fisrt post [put.post]
         
-        const data: PostInputModel = {
+        const data: PostInputType = {
             title: "Correct",
             shortDescription: "Gaidai",
             content: "https://fig.dedf.cfghgfhgc.net/34",

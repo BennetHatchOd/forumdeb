@@ -1,19 +1,19 @@
 import { Request, Response } from "express";
 import { paginator } from "../../utility/paginator"
 import { HTTP_STATUSES } from "../../setting"
-import { APIErrorResult, PaginatorModel, QueryModel} from "../../types/types"
+import { APIErrorResult, PaginatorType, QueryType} from "../../types/types"
 import { userQueryRepository } from "./repositories/userQueryRepository"
 import { userService } from "./userSevice"
 import { CodStatus, StatusResult } from "../../types/interfaces";
-import { UserInputModel, UserViewModel } from "./types";
+import { UserInputType, UserViewType } from "./types";
 
 export const userControllers = {   
 
-    async getUser(req: Request<{},{},{},QueryModel>, res: Response<PaginatorModel<UserViewModel>>){
+    async getUser(req: Request<{},{},{},QueryType>, res: Response<PaginatorType<UserViewType>>){
         try{
-            const queryPaginator:  QueryModel = paginator(req.query)
+            const queryPaginator:  QueryType = paginator(req.query)
         
-            const userPaginator: PaginatorModel<UserViewModel> = await userQueryRepository.find(queryPaginator)
+            const userPaginator: PaginatorType<UserViewType> = await userQueryRepository.find(queryPaginator)
             res.status(HTTP_STATUSES.OK_200).json(userPaginator)
         }
         catch(err){
@@ -22,12 +22,12 @@ export const userControllers = {
         }
     },
 
-    async postUser(req: Request<{},{},UserInputModel>, res: Response){
+    async postUser(req: Request<{},{},UserInputType>, res: Response){
         try{  
             const newUserId: StatusResult<string | APIErrorResult | undefined> = await userService.create(req.body); 
             
             if(newUserId.codResult == CodStatus.Created){ 
-                const newUser: UserViewModel | null = await userQueryRepository.findById(newUserId.data as string)
+                const newUser: UserViewType | null = await userQueryRepository.findById(newUserId.data as string)
                 if(newUser){ 
                     res.status(HTTP_STATUSES.CREATED_201).json(newUser)
                     return;

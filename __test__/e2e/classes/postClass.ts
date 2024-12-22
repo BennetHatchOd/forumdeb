@@ -3,7 +3,7 @@ import { app } from "../../../src/app";
 import request from "supertest";
 import { SortDirection } from 'mongodb';
 import { BlogEndPoint } from './blogClass';
-import { PostInputModel, PostViewModel } from '../../../src/variety/posts/types';
+import { PostInputType, PostViewType } from '../../../src/variety/posts/types';
 import { APIErrorResult, FieldError } from '../../../src/types/types';
 
 type InputQuery = {
@@ -14,9 +14,9 @@ type InputQuery = {
 
 export class PostEndPoint{
     
-    private itemView: Array<PostViewModel> = []
-    private itemCorrect: Array<PostInputModel> = []
-    private itemIncorrect!: Array<PostInputModel>
+    private itemView: Array<PostViewType> = []
+    private itemCorrect: Array<PostInputType> = []
+    private itemIncorrect!: Array<PostInputType>
     private itemErrors: Array<APIErrorResult>
     private errorTitle: FieldError
     private errorShortDescription: FieldError
@@ -111,7 +111,7 @@ export class PostEndPoint{
                 .send(newItem)
                 .expect(HTTP_STATUSES.CREATED_201);
 
-        let createdItem: PostViewModel = createdResponse.body;
+        let createdItem: PostViewType = createdResponse.body;
         this.itemView.push({...createdItem})
 
         expect(createdItem).toEqual({
@@ -241,7 +241,7 @@ export class PostEndPoint{
         this.onAuthorization()
     }
 
-    setPaginator(inputQuery: InputQuery, inArray: Array<PostViewModel>){
+    setPaginator(inputQuery: InputQuery, inArray: Array<PostViewType>){
         let {pageSize = 10, pageNumber} = inputQuery
         const page = pageNumber ? pageNumber : 1
         
@@ -254,14 +254,14 @@ export class PostEndPoint{
                 items: []
             }
 
-        type ItemField = keyof PostViewModel    
+        type ItemField = keyof PostViewType    
         const fieldSort: ItemField = (inputQuery.sortBy ? inputQuery.sortBy : 'createdAt') as ItemField
         const directSort = inputQuery.sortDirection == 'asc' ? 1 : -1   
         
         inArray.sort((a,b) => {
             return a[fieldSort].localeCompare(b[fieldSort]) * directSort} ) 
        
-        let outArray: Array<PostViewModel> = inArray.slice(pageSize * (page - 1), pageSize * page)
+        let outArray: Array<PostViewType> = inArray.slice(pageSize * (page - 1), pageSize * page)
         
         return {
             pagesCount: Math.ceil(outArray.length / pageSize),
@@ -297,11 +297,11 @@ export class PostEndPoint{
         return this.blogs.getNameItem( i % 3)
     }
 
-    setItemView(newItem: PostViewModel){
+    setItemView(newItem: PostViewType){
         this.itemView.push(newItem)
     }
 
-    getItemView(): Array<PostViewModel>{
+    getItemView(): Array<PostViewType>{
         return this.itemView
     }
     

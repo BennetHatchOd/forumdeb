@@ -5,10 +5,10 @@ import { APIErrorResult} from "../../types/types";
 import { authRepository } from "./authRepository"; 
 import {v4 as uuidv4} from 'uuid'
 import {add, isBefore, subSeconds} from 'date-fns'
-import { AboutUser, AuthorizationModel, Tokens } from "./types";
-import { ConfirmEmailModel, UserInputModel, UserPasswordModel, UserUnconfirmedModel } from "../users/types";
+import { AboutUser, AuthorizationType, Tokens } from "./types";
+import { ConfirmEmailType, UserInputType, UserPasswordType, UserUnconfirmedType } from "../users/types";
 import { mailManager } from "../../utility/mailManager";
-import { activeSessionDB, UserDBModel } from "../../db/dbTypes";
+import { activeSessionDB, UserDBType } from "../../db/dbTypes";
 import { userRepository } from "../users/repositories/userRepository";
 import { userService } from "../users/userSevice";
 import ShortUniqueId from 'short-unique-id';
@@ -20,7 +20,7 @@ import { TIME_LIFE_REFRESH_TOKEN } from "../../setting";
 export const authService = {
 
     //+
-    async authorization(user:AuthorizationModel): Promise<StatusResult<Tokens|undefined >> {
+    async authorization(user:AuthorizationType): Promise<StatusResult<Tokens|undefined >> {
         
         const foundUser: StatusResult<{id:string, passHash:string}|undefined> 
             = await userRepository.getUserByLoginEmail(user.loginOrEmail)
@@ -58,7 +58,7 @@ export const authService = {
 
     //+
     async confirmationUser(code: string): Promise<StatusResult<APIErrorResult|undefined>>{
-        const foundUser: StatusResult<UserUnconfirmedModel|undefined> = await authRepository.findByConfirmCode(code)
+        const foundUser: StatusResult<UserUnconfirmedType|undefined> = await authRepository.findByConfirmCode(code)
 
         if (foundUser.codResult == CodStatus.NotFound)
             return {codResult: CodStatus.BadRequest, 
@@ -90,7 +90,7 @@ export const authService = {
     },
 
     //+
-    async registrationUser(newUser: UserInputModel): Promise<StatusResult<undefined|APIErrorResult>>{
+    async registrationUser(newUser: UserInputType): Promise<StatusResult<undefined|APIErrorResult>>{
 
         const isUniq: StatusResult<APIErrorResult|undefined> = await userService.checkUniq(newUser.login, newUser.email)
         if(isUniq.codResult == CodStatus.BadRequest)
@@ -98,9 +98,9 @@ export const authService = {
         
         const passHash = await passwordHashAdapter.createHash(newUser.password)
         
-        const createUser: UserDBModel = {...newUser, password: passHash, createdAt: new Date()}
+        const createUser: UserDBType = {...newUser, password: passHash, createdAt: new Date()}
 
-        const confirmEmail: ConfirmEmailModel = {
+        const confirmEmail: ConfirmEmailType = {
             code: uuidv4(),
             expirationTime: add(new Date(), { hours: 2}),
             countSendingCode: 1
@@ -125,7 +125,7 @@ export const authService = {
                     "field": "email"}]
                 }}
         
-        const confirmEmail: ConfirmEmailModel = {
+        const confirmEmail: ConfirmEmailType = {
             code: uuidv4(),
             expirationTime: add(new Date(), { hours: 2}),
             countSendingCode: ++countMail

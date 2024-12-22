@@ -4,7 +4,7 @@ import { CodStatus, StatusResult, tokenPayload } from "../../types/interfaces";
 import { activeSessionDB } from "../../db/dbTypes";
 import {add, getTime} from 'date-fns'
 import { LENGTH_VERSION_ID, TIME_LIFE_REFRESH_TOKEN } from "../../setting";
-import { updateSessionModel } from "./types";
+import { updateSessionType } from "./types";
 
 export const deviceService = {
  
@@ -28,7 +28,7 @@ export const deviceService = {
 
     async updateSession(payload: tokenPayload): Promise <StatusResult<tokenPayload|undefined>>{
         const uid = new ShortUniqueId({ length: LENGTH_VERSION_ID });
-        const session: updateSessionModel = {
+        const session: updateSessionType = {
                                 userId:     payload.userId,
                                 version:    uid.rnd(),
                                 deviceId:   payload.deviceId,
@@ -72,7 +72,7 @@ export const deviceService = {
         return await deviceRepository.clear()
     },
 
-    mapTokenFromSession(session: updateSessionModel): tokenPayload{
+    mapTokenFromSession(session: updateSessionType): tokenPayload{
         return {
             userId:     session.userId,
             version:    session.version,

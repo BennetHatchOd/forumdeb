@@ -3,20 +3,20 @@ import { passwordHashAdapter } from "../../adapters/passwordHashAdapter";
 import { APIErrorResult, FieldError} from "../../types/types";
 import { userRepository } from "./repositories/userRepository"; 
 import bcrypt from "bcrypt"
-import { UserInputModel, UserPasswordModel } from "./types";
+import { UserInputType, UserPasswordType } from "./types";
 import { authRepository } from "../auth/authRepository";
-import { UserDBModel } from "../../db/dbTypes";
+import { UserDBType } from "../../db/dbTypes";
 
 export const userService = {
 
  
-    async create(createItem: UserInputModel): Promise<StatusResult<string|APIErrorResult|undefined>>{      
+    async create(createItem: UserInputType): Promise<StatusResult<string|APIErrorResult|undefined>>{      
         const isUniq: StatusResult<APIErrorResult|undefined> = await this.checkUniq(createItem.login, createItem.email)
         if(isUniq.codResult == CodStatus.BadRequest)
             return isUniq;
         
         const hash: string = await passwordHashAdapter.createHash(createItem.password)
-        const newUser: UserDBModel = {
+        const newUser: UserDBType = {
                                 login: createItem.login,
                                 email: createItem.email,
                                 password: hash, 

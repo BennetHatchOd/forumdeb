@@ -1,8 +1,8 @@
 import { commentCollection } from "../../../db/db";
 import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "mongodb";
 import { CodStatus, StatusResult} from "../../../types/interfaces";
-import { CommentFullModel, CommentInputModel, CommentViewModel } from "../types";
-import { CommentDBModel } from "../../../db/dbTypes";
+import { CommentFullType, CommentInputType, CommentViewType } from "../types";
+import { CommentDBType } from "../../../db/dbTypes";
 
 export const commentRepository = {
 
@@ -18,18 +18,18 @@ export const commentRepository = {
                 : {codResult: CodStatus.NotFound};
     },
  
-    async findById(id: string): Promise < StatusResult<CommentFullModel|undefined> > {     
+    async findById(id: string): Promise < StatusResult<CommentFullType|undefined> > {     
         
          
         if(!ObjectId.isValid(id))
             return {codResult: CodStatus.NotFound};
-        const searchItem: WithId<CommentDBModel> | null = await commentCollection.findOne({_id: new ObjectId(id)})           
+        const searchItem: WithId<CommentDBType> | null = await commentCollection.findOne({_id: new ObjectId(id)})           
         return searchItem  
             ? {codResult: CodStatus.Ok, data: this.mapDbToFull(searchItem)} 
             : {codResult: CodStatus.NotFound};
     },
 
-    async create(createItem: CommentDBModel): Promise <StatusResult<string|undefined>>{      
+    async create(createItem: CommentDBType): Promise <StatusResult<string|undefined>>{      
         const answerInsert: InsertOneResult = await commentCollection.insertOne(createItem)
         return answerInsert.acknowledged  
             ? {codResult: CodStatus.Created, data: answerInsert.insertedId.toString()}  
@@ -37,7 +37,7 @@ export const commentRepository = {
     },
 
     
-    async edit(id: string, editDate: CommentInputModel): Promise <StatusResult>{    
+    async edit(id: string, editDate: CommentInputType): Promise <StatusResult>{    
         const answerUpdate: UpdateResult = await commentCollection.updateOne({_id: new ObjectId(id)}, {$set: editDate});
         if(!answerUpdate.acknowledged)
             return {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
@@ -65,7 +65,7 @@ export const commentRepository = {
     
     },
 
-    mapDbToFull(item: WithId<CommentDBModel>): CommentFullModel {
+    mapDbToFull(item: WithId<CommentDBType>): CommentFullType {
         
         return {
             id: item._id.toString(),
