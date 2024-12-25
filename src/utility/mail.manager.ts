@@ -1,4 +1,4 @@
-import { mailAdapter } from "../adapters/mailAdapter"
+import { mailAdapter } from "../adapters/mail.adapter"
 
 const mailOptions = {
   from: 'vng114.work@gmail.com',

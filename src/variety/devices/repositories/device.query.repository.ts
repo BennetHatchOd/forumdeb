@@ -1,5 +1,5 @@
 import { ObjectId, WithId } from "mongodb";
-import { activeSessionDB } from "../../../db/dbTypes";
+import { activeSessionDB } from "../../../db/db.types";
 import { CodStatus, StatusResult } from "../../../types/interfaces";
 import { activeSessionType, DeviceViewType } from "../types";
 import { sessionCollection } from "../../../db/db";

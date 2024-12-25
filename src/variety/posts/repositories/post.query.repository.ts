@@ -1,6 +1,6 @@
 import { QueryType, PaginatorType} from "../../../types/types";
 import { postCollection } from "../../../db/db";
-import { PostDBType } from "../../../db/dbTypes";
+import { PostDBType } from "../../../db/db.types";
 import { ObjectId, WithId } from "mongodb";
 import { emptyPaginator } from "../../../utility/paginator";
 import { PostViewType } from "../types";

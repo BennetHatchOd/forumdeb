@@ -1,9 +1,8 @@
 //import { CodStatus, StatusResult } from "../../../types/interfaces";
-import { passwordHashAdapter } from "../../../adapters/passwordHashAdapter";
+import { passwordHashAdapter } from "../../../adapters/password.hash.adapter";
 import { APIErrorResult, CodStatus, FieldError, StatusResult} from "../../../types/types";
 import { UserRepository } from "../repositories/user.repository"; 
 import { UserInputType } from "../types";
-import { AuthRepository } from "../../auth/authRepository";
 import { UserModel, UserType } from "../domain/user.entity";
 
 export class UserService {

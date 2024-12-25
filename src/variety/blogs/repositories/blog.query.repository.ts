@@ -1,6 +1,6 @@
 import { PaginatorType, QueryType} from "../../../types/types";
 import { blogCollection } from "../../../db/db";
-import { BlogDBType } from "../../../db/dbTypes";
+import { BlogDBType } from "../../../db/db.types";
 import { ObjectId, WithId } from "mongodb";
 import { emptyPaginator } from "../../../utility/paginator";
 import { BlogViewType } from "../types";

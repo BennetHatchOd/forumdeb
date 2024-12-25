@@ -1,6 +1,6 @@
 import { PaginatorType, QueryType} from "../../../types/types";
 import { commentCollection } from "../../../db/db";
-import { CommentDBType } from "../../../db/dbTypes";
+import { CommentDBType } from "../../../db/db.types";
 import { ObjectId, WithId } from "mongodb";
 import { emptyPaginator } from "../../../utility/paginator";
 import { CommentViewType } from "../types";

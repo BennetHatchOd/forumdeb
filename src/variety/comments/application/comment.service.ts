@@ -1,7 +1,5 @@
-import { CodStatus, StatusResult } from "../../../types/interfaces";
-import { postRepository } from "../../posts/repositories/postRepository";
-import { userQueryRepository } from "../../users/repositories/user.query.repository";
-import { commentRepository } from "../repositories/commentRepository"; 
+import { postRepository } from "../../posts/repositories/post.repository";
+import { commentRepository } from "../repositories/comment.repository"; 
 import { CommentFullType, CommentInputType} from "../types";
 
 export const commentService = {

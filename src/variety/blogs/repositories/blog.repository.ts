@@ -1,5 +1,5 @@
 import { blogCollection } from "../../../db/db";
-import { BlogDBType } from "../../../db/dbTypes";
+import { BlogDBType } from "../../../db/db.types";
 import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "mongodb";
 import { CodStatus, StatusResult} from "../../../types/interfaces";
 import { BlogInputType, BlogViewType } from "../types";

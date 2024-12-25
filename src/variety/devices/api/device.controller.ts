@@ -3,10 +3,9 @@ import { PaginatorType, QueryType } from "../../../types/types";
 import { PostViewType } from "../../posts/types";
 import { Request, Response } from "express";
 import { activeSessionType, DeviceViewType } from "../types";
-import { authService } from "../../auth/application/authSevice";
-import { CodStatus } from "../../../types/interfaces";
-import { deviceQueryRepository } from "../repositories/deviceQueryRepository";
-import { deviceService } from "../application/deviceService";
+import { authService } from "../../auth/application/auth.service";
+import { deviceQueryRepository } from "../repositories/device.query.repository";
+import { deviceService } from "../application/device.service";
 
 export const deviceControllers = {   
     

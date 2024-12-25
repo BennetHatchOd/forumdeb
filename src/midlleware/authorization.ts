@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from "express";
 import { HTTP_STATUSES, PASSCODE_ADMIN, SECRET_KEY } from "../setting";
-import { jwtAdapter } from "../adapters/jwtAdapter";
+import { jwtAdapter } from "../adapters/jwt.adapter";
 import { IdType } from "../types/types";
 
 export const authorizatorAdmin = (req: Request<any, any, any, any>, res: Response, next: NextFunction) =>{

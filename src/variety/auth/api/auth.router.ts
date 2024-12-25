@@ -1,10 +1,10 @@
 import {Router} from 'express';
-import { authControllers } from './authControllers';
-import { authorizatorUser } from '../../midlleware/authorization';
-import { authSplitValidator, authValidator, codeValidator, emailValidator } from './middleware/authValidator';
-import { checkInputValidation } from '../../midlleware/checkInputValidators';
-import { AUTH_PATH } from '../../setting';
-import { rateLimiting } from '../../midlleware/rateLimiting';
+import { authControllers } from './auth.controller';
+import { authSplitValidator, authValidator, codeValidator, emailValidator } from './middleware/auth.validator';
+import { AUTH_PATH } from '../../../setting';
+import { rateLimiting } from '../../../midlleware/rate.limiting';
+import { authorizatorUser } from '../../../midlleware/authorization';
+import { checkInputValidation } from '../../../midlleware/check.input.validators';
 
 export const authRouter = Router({});
 

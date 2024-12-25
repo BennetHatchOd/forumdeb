@@ -1,10 +1,6 @@
 import {Router} from 'express';
-import { authorizatorAdmin, authorizatorUser } from '../../midlleware/authorization';
-import { checkInputValidation } from '../../midlleware/checkInputValidators';
-import { postValidator } from './middleware/postValidator';
-import { postControllers } from './postControllers';
-import { commentValidator } from '../comments/middleware/commentValidator';
-import { commentControllers } from '../comments/commentControllers';
+import { postValidator } from './middleware/post.validator';
+import { postControllers } from './post.controller';
 
 export const postsRouter = Router({});
 

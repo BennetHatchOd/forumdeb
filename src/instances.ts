@@ -1,4 +1,4 @@
-import { AuthRepository } from "./variety/auth/authRepository"
+import { AuthRepository } from "./variety/auth/repositories/auth.repository"
 import { UserControllers } from "./variety/users/api/user.controllers"
 import { UserService } from "./variety/users/application/user.service"
 import { UserQueryRepository } from "./variety/users/repositories/user.query.repository"

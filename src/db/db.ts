@@ -1,7 +1,7 @@
 import { MongoClient, Collection, Db } from "mongodb";
 import mongoose from 'mongoose'
 import * as SETTING from "../setting";
-import { activeSessionDB, BlogDBType, CommentDBType, PostDBType, requestAPITypeDB, UserDBType, UserUnconfirmedDBType } from "./dbTypes";
+import { activeSessionDB, BlogDBType, CommentDBType, PostDBType, requestAPITypeDB, UserDBType, UserUnconfirmedDBType } from "./db.types";
 
 // const client: MongoClient = new MongoClient(SETTING.mongoURI)
 // export const db: Db = client.db(SETTING.DB_NAME);

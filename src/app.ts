@@ -1,14 +1,12 @@
 import express from 'express';
 import cors from 'cors'
-import { blogsRouter } from './variety/blogs/api/blogsRouter';
+import { blogsRouter } from './variety/blogs/api/blog.router';
 import { usersRouter } from './variety/users/api/users.router';
-import { postsRouter } from './variety/posts/postsRouter';
 import { URL_PATH } from './setting'
 import cookieParser from 'cookie-parser'
-import { authRouter } from './variety/auth/authRouter';
-import { commentsRouter } from './variety/comments/api/commentsRouter';
-import { deleteAllController } from './deleteAllController';
-import { deviceRouter } from './variety/devices/api/deviceRouter';
+import { commentsRouter } from './variety/comments/api/comments.router';
+import { deleteAllController } from './delete.all.controller';
+import { deviceRouter } from './variety/devices/api/device.router';
 
 
 

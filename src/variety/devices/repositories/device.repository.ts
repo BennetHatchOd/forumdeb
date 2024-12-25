@@ -1,7 +1,7 @@
 import { ObjectId, WithId } from "mongodb";
 import { CodStatus, StatusResult, tokenPayload } from "../../../types/interfaces";
 import { requestCollection, sessionCollection } from "../../../db/db";
-import { activeSessionDB } from "../../../db/dbTypes";
+import { activeSessionDB } from "../../../db/db.types";
 import { activeSessionType, updateSessionType } from "../types";
 import { getTime } from "date-fns";
 

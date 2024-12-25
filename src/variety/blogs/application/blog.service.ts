@@ -1,6 +1,5 @@
-import { BlogDBType } from "../../../db/dbTypes";
-import { CodStatus, StatusResult } from "../../../types/interfaces";
-import { blogRepository } from "../repositories/blogRepository"; 
+import { BlogDBType } from "../../../db/db.types";
+import { blogRepository } from "../repositories/blog.repository"; 
 import { BlogInputType, BlogViewType } from "../types";
 
 export const blogService = {

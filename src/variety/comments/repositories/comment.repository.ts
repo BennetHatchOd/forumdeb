@@ -2,7 +2,7 @@ import { commentCollection } from "../../../db/db";
 import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "mongodb";
 import { CodStatus, StatusResult} from "../../../types/interfaces";
 import { CommentFullType, CommentInputType, CommentViewType } from "../types";
-import { CommentDBType } from "../../../db/dbTypes";
+import { CommentDBType } from "../../../db/db.types";
 
 export const commentRepository = {
 

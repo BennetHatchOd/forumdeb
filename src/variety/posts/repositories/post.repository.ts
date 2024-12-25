@@ -1,5 +1,5 @@
 import { PostViewType, PostInputType} from "../types";
-import { PostDBType } from "../../../db/dbTypes";
+import { PostDBType } from "../../../db/db.types";
 import { postCollection } from "../../../db/db";
 import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "mongodb";
 import { CodStatus, StatusResult } from "../../../types/interfaces";

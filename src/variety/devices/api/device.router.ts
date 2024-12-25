@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import { deviceControllers } from './deviceControllers';
+import { deviceControllers } from './device.controller';
 
 export const deviceRouter = Router({});
 

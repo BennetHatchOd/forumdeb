@@ -1,4 +1,4 @@
-import { UserDBType } from "../../../db/dbTypes";
+import { UserDBType } from "../../../db/db.types";
 import { DeleteResult, ObjectId, WithId } from "mongodb";
 import { CodStatus, StatusResult } from "../../../types/types";
 import { AboutUser } from "../../auth/types";

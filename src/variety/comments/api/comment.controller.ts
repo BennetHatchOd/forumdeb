@@ -1,11 +1,10 @@
 import { Request, Response } from "express";
 import {HTTP_STATUSES} from '../../../setting';
 import { paginator } from "../../../utility/paginator"; 
-import { CodStatus, StatusResult } from "../../../types/interfaces";
 import { PaginatorType, QueryType } from "../../../types/types";
-import { commentQueryRepository } from "../repositories/commentQueryRepository";
+import { commentQueryRepository } from "../repositories/comment.query.repository";
 import { CommentInputType, CommentViewType } from "../types";
-import { commentService } from "../application/commentSevice";
+import { commentService } from "../application/comment.service";
 
 export const commentControllers ={ 
     
