@@ -1,6 +1,6 @@
 import { CodStatus, StatusResult } from "../../types/interfaces";
 import { postRepository } from "../posts/repositories/postRepository";
-import { userQueryRepository } from "../users/repositories/userQueryRepository";
+import { userQueryRepository } from "../users/repositories/user.query.repository";
 import { commentRepository } from "./repositories/commentRepository"; 
 import { CommentFullType, CommentInputType} from "./types";
 

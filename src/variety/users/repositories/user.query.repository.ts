@@ -1,26 +1,26 @@
 import { PaginatorType, QueryType} from "../../../types/types";
-import { userCollection } from "../../../db/db";
-import { UserDBType } from "../../../db/dbTypes";
-import { ObjectId, WithId } from "mongodb";
+import { ObjectId} from "mongodb";
 import { emptyPaginator } from "../../../utility/paginator";
 import { UserViewType } from "../types";
+import { UserDocument, UserModel } from "../domain/user.entity";
+import { PipelineStage } from "mongoose";
 
-export const userQueryRepository = {
+export class UserQueryRepository {
 
     async findById(id: string): Promise < UserViewType | null > {      // searches for a user by id and returns this user or null
         
         if(!ObjectId.isValid(id))
             return null;
-        const searchItem: WithId<UserDBType> | null = await userCollection.findOne({_id: new ObjectId(id)})           
+        const searchItem: UserDocument | null = await UserModel.findOne({_id: new ObjectId(id)})           
         return searchItem ? this.mapDbToOutput(searchItem) : null;
-    },
+    }
 
     async find(queryReq:  QueryType): Promise < PaginatorType<UserViewType> > {      // searches for users by filter, returns  paginator or null
         
         
-        let queryUserFilter = {$match: {}}
-        let queryAuthFilter = {$match: {}}
-        let directSort = [1, 'asc', 'ascending'].includes(queryReq.sortDirection as string|number) ? 1 : -1
+        let queryUserFilter: PipelineStage.Match = {$match: {}}
+        let queryAuthFilter: PipelineStage.Match = {$match: {}}
+        let directSort = ([1, 'asc', 'ascending'].includes(queryReq.sortDirection as string|number) ? 1 : -1) as -1|1
         if(queryReq.searchLoginTerm || queryReq.searchEmailTerm){
             queryUserFilter = {$match:{
                 $or: [
@@ -36,11 +36,11 @@ export const userQueryRepository = {
             }}        
         }
 
-        const pipeline = [
+        const pipeline: PipelineStage[] = [
             queryUserFilter, 
             {$project: {_id: 1, login: 1, email: 1, createdAt: 1, password: 1}},
             {$unionWith: {
-                    coll: "unconfirmedUsers", 
+                    coll: "unconfirmedusers", 
                     pipeline: [
                         queryAuthFilter,
                         {$project: {_id: 1, 
@@ -52,58 +52,23 @@ export const userQueryRepository = {
             },
         ];
 
-        const countPipeline = [...pipeline, { $count: "totalCount" }]
-        const findPipeline = [
+        const countPipeline: PipelineStage[]  = [...pipeline, { $count: "totalCount" }]
+        const findPipeline: PipelineStage[] = [
                  ...pipeline,             
                 { $sort: {[queryReq.sortBy]: directSort} },
                 { $skip: (queryReq.pageNumber - 1) * queryReq.pageSize }, 
                 { $limit: queryReq.pageSize }]
 
 
-        // const countPipeline = [
-        //     queryUserFilter, 
-        //     {$project: {_id: 1, login: 1, email: 1, createdAt: 1}},
-        //     {$unionWith: {
-        //             coll: "unconfirmedUsers", 
-        //             pipeline: [
-        //                 queryAuthFilter,
-        //                 {$project: {_id: 1, 
-        //                             login: "$user.login", 
-        //                             email: "$user.email", 
-        //                             createdAt: "$user.createdAt"}}]
-        //         }
-        //     },
-        //     { $count: "totalCount" },
-        // ];
 
-        // const findPipeline = [
-        //     queryUserFilter, 
-        //     {$project: {_id: 1, login: 1, email: 1, createdAt: 1}},
-        //     {$unionWith: {
-        //             coll: "unconfirmedUsers", 
-        //             pipeline: [
-        //                 queryAuthFilter,
-        //                 {$project: {_id: 1, 
-        //                             login: "$user.login", 
-        //                             email: "$user.email", 
-        //                             createdAt: "$user.createdAt"}}]
-        //         }
-        //     },
-        //     { $sort: {[queryReq.sortBy]: directSort} },
-        //     { $skip: (queryReq.pageNumber - 1) * queryReq.pageSize }, 
-        //     { $limit: queryReq.pageSize }
-        // ];
-
-
-
-        const countArray= await userCollection.aggregate(countPipeline).toArray()
+        const countArray= await UserModel.aggregate(countPipeline)
         // console.log(countArray)
         if (countArray.length == 0)
             return emptyPaginator;
         const totalCount: number= countArray[0].totalCount
          
-        const searchItem: Array<WithId<UserDBType>>   
-            = await userCollection.aggregate(findPipeline).toArray() as Array<WithId<UserDBType>>;
+        const searchItem: UserDocument[]   
+            = await UserModel.aggregate(findPipeline) 
 
         const pagesCount =  Math.ceil(totalCount / queryReq.pageSize) 
         return {
@@ -113,13 +78,12 @@ export const userQueryRepository = {
                 totalCount: totalCount,
                 items: searchItem.map(s => this.mapDbToOutput(s))
             }
-    },
+    }
 
-    mapDbToOutput(item: WithId<UserDBType>): UserViewType {
+    mapDbToOutput(item: UserDocument): UserViewType {
         
         return {
             id: item._id.toString(),
-            
             login: item.login,
             email: item.email,
             createdAt: item.createdAt.toISOString(),

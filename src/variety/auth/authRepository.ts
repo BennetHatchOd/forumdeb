@@ -4,7 +4,7 @@ import { UserDBType, UserUnconfirmedDBType } from "../../db/dbTypes";
 import { CodStatus, StatusResult } from "../../types/interfaces";
 import { ConfirmEmailType, UserPasswordType, UserUnconfirmedType } from "../users/types";
 
-export const authRepository = {
+export class AuthRepository {
   
     async createUnconfirmUser(createItem: UserUnconfirmedDBType): Promise <StatusResult>{  
         
@@ -14,7 +14,7 @@ export const authRepository = {
         return answerInsert.acknowledged  
             ? {codResult: CodStatus.NoContent}  
             : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
-    },
+    }
 
     async findByConfirmCode(code: string): Promise < StatusResult<UserUnconfirmedType|undefined> > {     
              
@@ -28,7 +28,7 @@ export const authRepository = {
             codResult: CodStatus.Ok, 
             data: this.mapAuthDBToFull(searchItem) 
             }
-    },
+    }
 
     async checkUniq(loginCheck: string, emailCheck: string): Promise<StatusResult<string[]|undefined>> {
         
@@ -44,7 +44,7 @@ export const authRepository = {
         return arrayErrors.length == 0
             ?  {codResult: CodStatus.Ok}
             :  {codResult: CodStatus.BadRequest, data: arrayErrors};
-    },
+    }
 
     async checkNotVerifEmail(mail: string):  Promise <number>{      
         const searchItem: WithId<UserUnconfirmedDBType> | null  
@@ -52,7 +52,7 @@ export const authRepository = {
         return searchItem 
             ? searchItem.confirmEmail.countSendingCode  
             : -1
-    },
+    }
     
     async updateCode(mail: string, confirmEmail: ConfirmEmailType):  Promise <StatusResult>{    
     
@@ -64,17 +64,17 @@ export const authRepository = {
         return update.modifiedCount == 1
             ? {codResult: CodStatus.NoContent}
             : {codResult: CodStatus.Error}        
-    },
+    }
 
     async setRequestAPI(ip:string, url:string, date: Date){
         await requestCollection.insertOne({ip:   ip,
                                            url:  url,
                                            date: date})
-    },
+    }
 
     async getNumberRequestAPI(ip:string, url:string, dateFrom: Date){
         return await requestCollection.countDocuments({ip: ip, url: url, date: {$gte: dateFrom}})
-    },
+    }
 
 
     // async checkUserByLoginEmail(login: string, email: string): Promise<StatusResult<UserPasswordType|UserUnconfirmedType|undefined>> {      
@@ -99,7 +99,7 @@ export const authRepository = {
         return await authUserCollection.countDocuments({}) == 0 
             ? {codResult: CodStatus.NoContent }  
             : {codResult: CodStatus.Error, message: 'Collection isn\'t empty'};
-    },
+    }
 
     async isExist(id: string): Promise<StatusResult>{     
         
@@ -111,7 +111,7 @@ export const authRepository = {
         return exist > 0  
                 ? {codResult: CodStatus.Ok} 
                 : {codResult: CodStatus.NotFound};
-    },
+    }
  
     async delete(id: string):  Promise <StatusResult>{      
         const answerDelete: DeleteResult = await authUserCollection.deleteOne({_id: new ObjectId(id)})
@@ -119,7 +119,7 @@ export const authRepository = {
         return answerDelete.deletedCount == 1 
             ? {codResult: CodStatus.NoContent}  
             : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
-    },
+    }
 
     mapViewToDB(user: UserPasswordType): WithId<UserDBType> {
         return{
@@ -129,7 +129,7 @@ export const authRepository = {
             createdAt:	user.createdAt,
             password: user.password,
         }
-    },
+    }
 
     mapUserDBToFull(user: WithId<UserDBType>): UserPasswordType {
         return { 
@@ -139,7 +139,7 @@ export const authRepository = {
             password:   user.password,
             createdAt:	user.createdAt
             }
-    },
+    }
 
     mapAuthDBToFull(user: WithId<UserUnconfirmedDBType >): UserUnconfirmedType  {
         return { 

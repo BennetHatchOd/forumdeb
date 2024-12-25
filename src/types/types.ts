@@ -1,3 +1,4 @@
+import { JwtPayload } from "jsonwebtoken"
 import { SortDirection } from "mongodb"
 
  export type FieldError = {
@@ -30,3 +31,27 @@ export type QueryType = {
 
 export type IdType = { id: string }
 
+export enum CodStatus {
+    Ok =        200,
+    Created =   201,
+    NoContent = 204,
+    BadRequest = 400, 
+    NotAuth =   401,
+    Forbidden = 403,
+    NotFound =  404,
+    Error =     500,
+}
+
+export type StatusResult <T = undefined> = {
+    codResult:  CodStatus;
+    message?:   string,  
+    data?: T;  
+}
+
+export type tokenPayload = {
+    userId:     string;
+    version:    string;
+    iat:        number;
+    exp:        number;
+    deviceId:   string;
+  }

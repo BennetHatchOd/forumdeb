@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { HTTP_STATUSES } from "./setting";
-import { userService } from "./variety/users/userSevice";
+import { userService } from "./variety/users/application/user.service";
 import { postService } from "./variety/posts/postService";
 import { blogService } from "./variety/blogs/blogSevice";
 import { commentService } from "./variety/comments/commentSevice";

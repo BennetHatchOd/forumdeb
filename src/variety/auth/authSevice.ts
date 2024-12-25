@@ -1,7 +1,6 @@
-import { CodStatus, StatusResult, tokenPayload } from "../../types/interfaces";
 import { jwtAdapter } from "../../adapters/jwtAdapter";
 import { passwordHashAdapter } from "../../adapters/passwordHashAdapter";
-import { APIErrorResult} from "../../types/types";
+import { APIErrorResult, CodStatus, StatusResult, tokenPayload } from "../../types/types";
 import { authRepository } from "./authRepository"; 
 import {v4 as uuidv4} from 'uuid'
 import {add, isBefore, subSeconds} from 'date-fns'
@@ -9,8 +8,8 @@ import { AboutUser, AuthorizationType, Tokens } from "./types";
 import { ConfirmEmailType, UserInputType, UserPasswordType, UserUnconfirmedType } from "../users/types";
 import { mailManager } from "../../utility/mailManager";
 import { activeSessionDB, UserDBType } from "../../db/dbTypes";
-import { userRepository } from "../users/repositories/userRepository";
-import { userService } from "../users/userSevice";
+import { UserRepository } from "../users/repositories/user.repository";
+import { userService } from "../users/application/user.service";
 import ShortUniqueId from 'short-unique-id';
 import { rateLimiting } from "../../midlleware/rateLimiting";
 import { deviceService } from "../devices/deviceService";
@@ -23,7 +22,7 @@ export const authService = {
     async authorization(user:AuthorizationType): Promise<StatusResult<Tokens|undefined >> {
         
         const foundUser: StatusResult<{id:string, passHash:string}|undefined> 
-            = await userRepository.getUserByLoginEmail(user.loginOrEmail)
+            = await UserRepository.getUserByLoginEmail(user.loginOrEmail)
         
         if(foundUser.codResult != CodStatus.Ok) 
             return {codResult: CodStatus.NotAuth};
@@ -78,7 +77,7 @@ export const authService = {
                     }
 
         const {user} = foundUser.data!
-        const addingUser: StatusResult<string | undefined> = await userRepository.create(user)
+        const addingUser: StatusResult<string | undefined> = await UserRepository.create(user)
         if(addingUser.codResult == CodStatus.Error)
             return addingUser as StatusResult
         
@@ -140,7 +139,7 @@ export const authService = {
 
     //+
     async aboutMe(id: string): Promise<StatusResult<AboutUser|undefined>>{
-        const foundUser: StatusResult<AboutUser|undefined> = await userRepository.findForOwnerById(id)
+        const foundUser: StatusResult<AboutUser|undefined> = await UserRepository.findForOwnerById(id)
         if(foundUser.codResult == CodStatus.Ok)
             return foundUser;
         return {codResult: CodStatus.NotAuth}

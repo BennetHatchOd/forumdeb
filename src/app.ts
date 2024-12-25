@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors'
 import { blogsRouter } from './variety/blogs/blogsRouter';
-import { usersRouter } from './variety/users/usersRouter';
+import { usersRouter } from './variety/users/api/users.router';
 import { postsRouter } from './variety/posts/postsRouter';
 import { URL_PATH } from './setting'
 import cookieParser from 'cookie-parser'
