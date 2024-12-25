@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { HTTP_STATUSES } from "./setting";
 import { userService } from "./variety/users/application/user.service";
-import { postService } from "./variety/posts/postService";
-import { blogService } from "./variety/blogs/blogSevice";
-import { commentService } from "./variety/comments/commentSevice";
-import { authService } from "./variety/auth/authSevice";
-import { deviceService } from "./variety/devices/deviceService";
+import { postService } from "./variety/posts/application/postService";
+import { blogService } from "./variety/blogs/application/blogSevice";
+import { commentService } from "./variety/comments/application/commentSevice";
+import { authService } from "./variety/auth/application/authSevice";
+import { deviceService } from "./variety/devices/application/deviceService";
 
 export const deleteAllController = async (req: Request, res: Response) =>{
     

@@ -1,8 +1,8 @@
 import {Router} from 'express';
 import { commentControllers } from './commentControllers';
 import { commentValidator } from './middleware/commentValidator';
-import { authorizatorUser } from '../../midlleware/authorization';
-import {checkInputValidation} from '../../midlleware/checkInputValidators'
+import { authorizatorUser } from '../../../midlleware/authorization';
+import {checkInputValidation} from '../../../midlleware/checkInputValidators'
 
 export const commentsRouter = Router({});
 

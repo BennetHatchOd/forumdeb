@@ -1,10 +1,10 @@
-import { deviceRepository } from "./repositories/deviceRepository";
+import { deviceRepository } from "../repositories/deviceRepository";
 import ShortUniqueId from 'short-unique-id';
-import { CodStatus, StatusResult, tokenPayload } from "../../types/interfaces";
-import { activeSessionDB } from "../../db/dbTypes";
+import { CodStatus, StatusResult, tokenPayload } from "../../../types/interfaces";
+import { activeSessionDB } from "../../../db/dbTypes";
 import {add, getTime} from 'date-fns'
-import { LENGTH_VERSION_ID, TIME_LIFE_REFRESH_TOKEN } from "../../setting";
-import { updateSessionType } from "./types";
+import { LENGTH_VERSION_ID, TIME_LIFE_REFRESH_TOKEN } from "../../../setting";
+import { updateSessionType } from "../types";
 
 export const deviceService = {
  

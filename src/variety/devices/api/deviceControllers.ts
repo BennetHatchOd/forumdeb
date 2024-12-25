@@ -1,12 +1,12 @@
-import { HTTP_STATUSES } from "../../setting";
-import { PaginatorType, QueryType } from "../../types/types";
-import { PostViewType } from "../posts/types";
+import { HTTP_STATUSES } from "../../../setting";
+import { PaginatorType, QueryType } from "../../../types/types";
+import { PostViewType } from "../../posts/types";
 import { Request, Response } from "express";
-import { activeSessionType, DeviceViewType } from "./types";
-import { authService } from "../auth/authSevice";
-import { CodStatus } from "../../types/interfaces";
-import { deviceQueryRepository } from "./repositories/deviceQueryRepository";
-import { deviceService } from "./deviceService";
+import { activeSessionType, DeviceViewType } from "../types";
+import { authService } from "../../auth/application/authSevice";
+import { CodStatus } from "../../../types/interfaces";
+import { deviceQueryRepository } from "../repositories/deviceQueryRepository";
+import { deviceService } from "../application/deviceService";
 
 export const deviceControllers = {   
     

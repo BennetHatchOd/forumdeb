@@ -1,20 +1,20 @@
-import { jwtAdapter } from "../../adapters/jwtAdapter";
-import { passwordHashAdapter } from "../../adapters/passwordHashAdapter";
-import { APIErrorResult, CodStatus, StatusResult, tokenPayload } from "../../types/types";
-import { authRepository } from "./authRepository"; 
+import { jwtAdapter } from "../../../adapters/jwtAdapter";
+import { passwordHashAdapter } from "../../../adapters/passwordHashAdapter";
+import { APIErrorResult, CodStatus, StatusResult, tokenPayload } from "../../../types/types";
+import { authRepository } from "../authRepository"; 
 import {v4 as uuidv4} from 'uuid'
 import {add, isBefore, subSeconds} from 'date-fns'
-import { AboutUser, AuthorizationType, Tokens } from "./types";
-import { ConfirmEmailType, UserInputType, UserPasswordType, UserUnconfirmedType } from "../users/types";
-import { mailManager } from "../../utility/mailManager";
-import { activeSessionDB, UserDBType } from "../../db/dbTypes";
-import { UserRepository } from "../users/repositories/user.repository";
-import { userService } from "../users/application/user.service";
+import { AboutUser, AuthorizationType, Tokens } from "../types";
+import { ConfirmEmailType, UserInputType, UserPasswordType, UserUnconfirmedType } from "../../users/types";
+import { mailManager } from "../../../utility/mailManager";
+import { activeSessionDB, UserDBType } from "../../../db/dbTypes";
+import { UserRepository } from "../../users/repositories/user.repository";
+import { userService } from "../../users/application/user.service";
 import ShortUniqueId from 'short-unique-id';
-import { rateLimiting } from "../../midlleware/rateLimiting";
-import { deviceService } from "../devices/deviceService";
-import { deviceRepository } from "../devices/repositories/deviceRepository";
-import { TIME_LIFE_REFRESH_TOKEN } from "../../setting";
+import { rateLimiting } from "../../../midlleware/rateLimiting";
+import { deviceService } from "../../devices/application/deviceService";
+import { deviceRepository } from "../../devices/repositories/deviceRepository";
+import { TIME_LIFE_REFRESH_TOKEN } from "../../../setting";
 
 export const authService = {
 

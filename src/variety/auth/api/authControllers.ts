@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { HTTP_STATUSES } from "../../setting";
-import { authService } from "./authSevice";
+import { authService } from "./application/authSevice";
 import { CodStatus, StatusResult } from "../../types/interfaces";
 import { AboutUser, AuthorizationType, LoginInputType, Tokens } from "./types";
 import { APIErrorResult } from "../../types/types";

@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
-import {HTTP_STATUSES} from '../../setting';
-import { blogService } from "./blogSevice";
-import { paginator } from "../../utility/paginator"; 
-import { CodStatus, StatusResult } from "../../types/interfaces";
-import { PaginatorType, QueryType } from "../../types/types";
-import { postService } from "../posts/postService";
-import { postQueryRepository } from "../posts/repositories/postQueryRepository";
-import { blogQueryRepository } from "./repositories/blogQueryRepository";
-import { BlogInputType, BlogPostInputType, BlogViewType } from "./types";
-import { PostViewType } from "../posts/types";
+import {HTTP_STATUSES} from '../../../setting';
+import { blogService } from "../application/blogSevice";
+import { paginator } from "../../../utility/paginator"; 
+import { CodStatus, StatusResult } from "../../../types/interfaces";
+import { PaginatorType, QueryType } from "../../../types/types";
+import { postService } from "../../posts/application/postService";
+import { postQueryRepository } from "../../posts/repositories/postQueryRepository";
+import { blogQueryRepository } from "../repositories/blogQueryRepository";
+import { BlogInputType, BlogPostInputType, BlogViewType } from "../types";
+import { PostViewType } from "../../posts/types";
 
 export const blogControllers ={ 
     

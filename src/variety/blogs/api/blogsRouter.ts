@@ -1,10 +1,10 @@
 import {Router} from 'express';
 import { blogControllers } from './blogControllers';
 import { blogValidator } from './middleware/blogValidator';
-import { authorizatorAdmin } from '../../midlleware/authorization';
-import {checkInputValidation} from '../../midlleware/checkInputValidators'
+import { authorizatorAdmin } from '../../../midlleware/authorization';
+import {checkInputValidation} from '../../../midlleware/checkInputValidators'
 import { postForBlogValidator } from '../posts/middleware/postValidator';
-import { URL_PATH } from '../../setting';
+import { URL_PATH } from '../../../setting';
 
 export const blogsRouter = Router({});
 

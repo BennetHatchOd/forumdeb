@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from "express";
-import { authService } from "../variety/auth/authSevice";
+import { authService } from "../variety/auth/application/authSevice";
 import { HTTP_STATUSES } from "../setting";
 
 export const rateLimiting = async(req: Request<any, any, any, any>, res: Response, next: NextFunction) =>{
