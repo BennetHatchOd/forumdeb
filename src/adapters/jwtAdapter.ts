@@ -1,8 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { SECRET_KEY, TIME_LIFE_ACCESS_TOKEN } from '../setting'
-import { tokenPayload } from '../types/interfaces'
-import { getTime } from 'date-fns'
-import { deviceService } from '../variety/devices/deviceService'
+import { tokenPayload } from '../types/types'
 
 export const jwtAdapter ={
 
