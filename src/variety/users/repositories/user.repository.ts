@@ -64,9 +64,9 @@ export class UserRepository {
     }
 
     async create(createdUser: UserType): Promise <StatusResult<string|undefined>>{  
-        const user = new UserModel(createdUser)
+        //const user = new UserModel(createdUser)
 
-        const savedUser =await user.save()
+        const savedUser =await UserModel.create(createdUser)
         return {codResult: CodStatus.Created, data: savedUser._id.toString()}
     }
     
