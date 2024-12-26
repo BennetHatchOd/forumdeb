@@ -2,7 +2,7 @@ import { UserDBType } from "../../../db/db.types";
 import { DeleteResult, ObjectId, WithId } from "mongodb";
 import { CodStatus, StatusResult } from "../../../types/types";
 import { AboutUser } from "../../auth/types";
-import { UserDocument, UserModel } from "../domain/user.entity";
+import { UserDocument, UserModel, UserType } from "../domain/user.entity";
 
 export class UserRepository {
 
@@ -63,8 +63,10 @@ export class UserRepository {
             }
     }
 
-    async save(createdUser: UserDocument): Promise <StatusResult<string|undefined>>{  
-        const savedUser =await createdUser.save()
+    async create(createdUser: UserType): Promise <StatusResult<string|undefined>>{  
+        const user = new UserModel(createdUser)
+
+        const savedUser =await user.save()
         return {codResult: CodStatus.Created, data: savedUser._id.toString()}
     }
     

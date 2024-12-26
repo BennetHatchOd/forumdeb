@@ -4,6 +4,7 @@ import { APIErrorResult, CodStatus, FieldError, StatusResult} from "../../../typ
 import { UserRepository } from "../repositories/user.repository"; 
 import { UserInputType } from "../types";
 import { UserModel, UserType } from "../domain/user.entity";
+import { AuthRepository } from "../../auth/repositories/auth.repository";
 
 export class UserService {
    
@@ -26,8 +27,7 @@ export class UserService {
                                 password: hash, 
                                 createdAt: new Date(),
                             }
-        const user = new UserModel(newUser)
-        return await this.userRepository.save(user) as StatusResult<string>
+        return await this.userRepository.create(newUser) as StatusResult<string>
  
     }
     
