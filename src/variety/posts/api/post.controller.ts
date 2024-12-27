@@ -4,11 +4,15 @@ import { PostInputType, PostViewType } from "../types";
 import { paginator } from "../../../utility/paginator";
 import { postQueryRepository } from "../repositories/post.query.repository";
 import { HTTP_STATUSES } from "../../../setting";
-import { postService } from "../application/post.service";
+import { PostService, postService } from "../application/post.service";
 
-export const postControllers = {   
+export class PostControllers {   
     
-    async getPost(req: Request<{},{},{},QueryType>, res: Response<PaginatorType<PostViewType>>) {
+    constructor (private postService: PostService, 
+                private postQueryRepository: postQueryRepository){
+    }
+
+    async get(req: Request<{},{},{},QueryType>, res: Response<PaginatorType<PostViewType>>) {
 
         const queryPaginator:  QueryType = paginator(req.query)
         try{
@@ -19,7 +23,7 @@ export const postControllers = {
             console.log(err)
             res.sendStatus(HTTP_STATUSES.ERROR_500);
         }
-    },
+    }
 
     async getPostById(req: Request<{id: string}>, res: Response<PostViewType>){
         try{    
@@ -36,35 +40,35 @@ export const postControllers = {
             console.log(err)
             res.sendStatus(HTTP_STATUSES.ERROR_500);
         }
-    },
+    }
     
-    async postPost(req: Request<{},{},PostInputType>, res: Response){
+    async post(req: Request<{},{},PostInputType>, res: Response){
         try{
-            const answer: StatusResult<string | undefined>  = await postService.create(req.body); 
+            const answer: StatusResult<string | APIErrorResult>  = await this.postService.create(req.body); 
             if(answer.codResult == CodStatus.Created){ 
-                const blog: PostViewType | null = await postQueryRepository.findById(answer.data as string)
+                const blog: PostViewType | null = await this.postQueryRepository.findById(answer.data as string)
+                if(!blog) throw "can't find blog"
                 res.status(HTTP_STATUSES.CREATED_201).json(blog)
                 return;
             }
-            res.status(HTTP_STATUSES.ERROR_500).json({})
+            res.status(HTTP_STATUSES.BAD_REQUEST_400).json(answer.data)
         }
         catch(err){
             console.log(err)
             res.status(HTTP_STATUSES.ERROR_500).json({})
         }
-    },
+    }
 
-
-    async putPost(req: Request<{id: string},{},PostInputType>, res: Response<APIErrorResult|{}>){
+    async put(req: Request<{id: string},{},PostInputType>, res: Response<APIErrorResult|{}>){
         try{     
             const answer: StatusResult  = await postService.edit(req.params.id, req.body)  
-            res.sendStatus(answer.codResult);
+            res.status(answer.codResult).send(answer.data)
         }
         catch(err){
             console.log(err)
             res.status(HTTP_STATUSES.ERROR_500).json({})
         }
-    },
+    }
 
     async deletePostById(req: Request<{id: string}>, res: Response) {
         try{
@@ -75,7 +79,7 @@ export const postControllers = {
             console.log(err)
             res.sendStatus(HTTP_STATUSES.ERROR_500).json({})
         }    
-    },
+    }
 
 
 }

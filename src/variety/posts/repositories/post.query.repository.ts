@@ -1,41 +1,40 @@
 import { QueryType, PaginatorType} from "../../../types/types";
-import { postCollection } from "../../../db/db";
-import { PostDBType } from "../../../db/db.types";
-import { ObjectId, WithId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { emptyPaginator } from "../../../utility/paginator";
 import { PostViewType } from "../types";
+import { PostDocument, PostModel } from "../domain/post.entity";
 
-export const postQueryRepository = {
+export class PostQueryRepository {
 
  
     async findById(id: string): Promise < PostViewType | null > {      
         
         if(!ObjectId.isValid(id))
             return null;
-        const searchItem: WithId<PostDBType> | null = 
-            await postCollection.findOne({_id: new ObjectId(id)})
+        const searchItem: PostDocument | null = 
+            await PostModel.findOne({_id: new ObjectId(id)})
         
         return searchItem 
             ? this.mapDbToOutput(searchItem) 
             : null;
-    },
+    }
 
     async find(queryReq:  QueryType): Promise < PaginatorType<PostViewType> > { 
         
         const bloqIdSearch = queryReq.blogId ? {blogId: queryReq.blogId} : {}   
         const queryFilter = {...bloqIdSearch}
         
-        const totalCount: number= await postCollection.countDocuments(queryFilter)   
+        const totalCount: number= await PostModel.countDocuments(queryFilter)   
         
         if (totalCount == 0)
             return emptyPaginator;
-                
-        const searchItem: Array<WithId<PostDBType>> = 
-            await postCollection.find(queryFilter)
+        
+        const query = PostModel.find(queryFilter)
                                 .limit(queryReq.pageSize)
                                 .skip((queryReq.pageNumber - 1) * queryReq.pageSize)
-                                .sort(queryReq.sortBy, queryReq.sortDirection)
-                                .toArray()
+                                .sort({[queryReq.sortBy]: queryReq.sortDirection})
+
+        const searchItem = await query.exec() 
 
         const pagesCount =  Math.ceil(totalCount / queryReq.pageSize) 
         return {
@@ -47,9 +46,9 @@ export const postQueryRepository = {
             } 
  
 
-    },
+    }
 
-    mapDbToOutput(item: WithId<PostDBType>): PostViewType {
+    mapDbToOutput(item: PostDocument): PostViewType {
         
         return { 
             id: item._id.toString(),
