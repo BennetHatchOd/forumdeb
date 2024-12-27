@@ -9,9 +9,9 @@ export const POST_COLLECTION_NAME = 'posts'
 export const USER_COLLECTION_NAME = 'users' 
 export const COMMENT_COLLECTION_NAME = 'comments' 
 export const TOKEN_COLLECTION_NAME = 'tokens'
-export const REQUEST_COLLECTION_NAME = 'requestAPI'
+export const REQUEST_COLLECTION_NAME = 'requests'
 export const SESSION_COLLECTION_NAME = 'sessions'
-export const USER_UNCONFIRMED_COLLECTION_NAME = 'unconfirmedUsers' 
+export const USER_UNCONFIRMED_COLLECTION_NAME = 'unconfirmedusers' 
 
 export const PORT = process.env.PORT || 3014
 export const SECRET_KEY = process.env.SECRET_KEY || '114' 

@@ -7,6 +7,8 @@ import cookieParser from 'cookie-parser'
 import { commentsRouter } from './variety/comments/api/comments.router';
 import { deleteAllController } from './delete.all.controller';
 import { deviceRouter } from './variety/devices/api/device.router';
+import { postsRouter } from './variety/posts/api/post.router';
+import { authRouter } from './variety/auth/api/auth.router';
 
 
 

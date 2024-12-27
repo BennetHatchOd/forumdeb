@@ -1,4 +1,8 @@
 import { AuthRepository } from "./variety/auth/repositories/auth.repository"
+import { PostControllers } from "./variety/posts/api/post.controller"
+import { PostService } from "./variety/posts/application/post.service"
+import { PostQueryRepository } from "./variety/posts/repositories/post.query.repository"
+import { PostRepository } from "./variety/posts/repositories/post.repository"
 import { UserControllers } from "./variety/users/api/user.controllers"
 import { UserService } from "./variety/users/application/user.service"
 import { UserQueryRepository } from "./variety/users/repositories/user.query.repository"
@@ -23,7 +27,7 @@ export const authService = new AuthService(authRepository)
 export const blogService = new BlogService(blogRepository)
 export const commentService = new CommentService(commentRepository)
 export const deviceService = new DeviceService(deviceRepository)
-export const postService = new PostService(postRepository)
+export const postService = new PostService(postRepository, blogRepository)
 
 
 export const userControllers = new UserControllers(userService, userQueryRepository)
