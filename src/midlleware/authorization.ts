@@ -1,9 +1,9 @@
 import { Response, Request, NextFunction } from "express";
 import { HTTP_STATUSES, PASSCODE_ADMIN, SECRET_KEY } from "../setting";
-import { jwtAdapter } from "../adapters/jwt.adapter";
-import { IdType } from "../types/types";
+import { CodStatus, IdType } from "../types/types";
+import { authService, deviceQueryRepository, jwtAdapter } from "../instances";
 
-export const authorizatorAdmin = (req: Request<any, any, any, any>, res: Response, next: NextFunction) =>{
+export const authAdminByPassword = (req: Request<any, any, any, any>, res: Response, next: NextFunction) =>{
 
     const authheader = req.headers.authorization;
 
@@ -21,7 +21,7 @@ export const authorizatorAdmin = (req: Request<any, any, any, any>, res: Respons
     res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401);
 }
 
-export const authorizatorUser = (req: Request<any, any, any, any>, res: Response, next: NextFunction) =>{
+export const authUserByAccessT = (req: Request<any, any, any, any>, res: Response, next: NextFunction) =>{
 
     const authheader = req.headers.authorization
     if(authheader && authheader.split(' ')[0] == 'Bearer'){
@@ -35,3 +35,18 @@ export const authorizatorUser = (req: Request<any, any, any, any>, res: Response
     }
     res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401);
 }
+
+export const authUserByRefreshT = async(req: Request<any, any, any, any>, res: Response, next: NextFunction) =>{
+
+    const refreshToken= req.cookies.refreshToken
+    const checkToken = await authService.checkRefreshtoken(refreshToken)
+    if(checkToken.codResult == CodStatus.NotAuth){
+        res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401)
+        return;
+    }
+    req.payload = {payload: checkToken.data};
+    next();
+    return
+}
+
+
