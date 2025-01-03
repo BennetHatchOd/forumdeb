@@ -1,4 +1,6 @@
 import { JwtAdapter } from "./adapters/jwt.adapter"
+import { MailAdapter } from "./adapters/mail.adapter"
+import { MailManager } from "./utility/mail.manager"
 import { AuthControllers } from "./variety/auth/api/auth.controller"
 import { AuthService } from "./variety/auth/application/auth.service"
 import { AuthRepository } from "./variety/auth/repositories/auth.repository"
@@ -23,6 +25,10 @@ import { UserService } from "./variety/users/application/user.service"
 import { UserQueryRepository } from "./variety/users/repositories/user.query.repository"
 import { UserRepository } from "./variety/users/repositories/user.repository"
 
+export const jwtAdapter = new JwtAdapter()
+export const mailAdapter = new MailAdapter()
+export const mailManager = new MailManager(mailAdapter)
+
 export const userRepository = new UserRepository()
 export const authRepository = new AuthRepository()
 export const blogRepository = new BlogRepository()
@@ -38,10 +44,11 @@ export const deviceQueryRepository = new DeviceQueryRepository()
 export const postQueryRepository = new PostQueryRepository()
 
 export const userService = new UserService(userRepository, authRepository)
-export const authService = new AuthService(authRepository)
+export const deviceService = new DeviceService(deviceRepository)
+export const authService = new AuthService(userRepository, deviceService, authRepository, 
+                                           jwtAdapter, userService, deviceRepository, mailManager)
 export const blogService = new BlogService(blogRepository)
 export const commentService = new CommentService(commentRepository)
-export const deviceService = new DeviceService(deviceRepository)
 export const postService = new PostService(postRepository, blogRepository)
 
 
@@ -49,9 +56,8 @@ export const userControllers = new UserControllers(userService, userQueryReposit
 export const authControllers = new AuthControllers(authService, authQueryRepository)
 export const blogControllers = new BlogControllers(blogService, blogQueryRepository)
 export const commentControllers = new CommentControllers(commentService, commentQueryRepository)
-export const deviceControllers = new DeviceControllers(deviceService, deviceQueryRepository)
+export const deviceControllers = new DeviceControllers(authService, deviceQueryRepository, deviceService)
 export const postControllers = new PostControllers(postService, postQueryRepository)
 
-export const jwtAdapter = new JwtAdapter()
 
 

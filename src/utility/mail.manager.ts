@@ -1,16 +1,8 @@
-import { mailAdapter } from "../adapters/mail.adapter"
+import { MailAdapter } from "../adapters/mail.adapter"
 
-const mailOptions = {
-  from: 'vng114.work@gmail.com',
-  to: 'vng114@ukr.net',
-  subject: 'Hello World!',
-  html: `
-    <h1>Hello?</h1>
-    <p>How are you?</p>
-  `
-}
+export class MailManager { 
 
-export const mailManager = { 
+    constructor(private mailAdapter: MailAdapter){}
 
     async createConfirmEmail(mail: string, code: string){
         const message = 
@@ -19,17 +11,6 @@ export const mailManager = {
               <a href='https://somesite.com/confirm-email?code=${code}'>complete registration</a>
           </p>`
 
-        await mailAdapter.createEmail(mail, 'registration confirmation', message)
+        await this.mailAdapter.createEmail(mail, 'registration confirmation', message)
     }
- //   createEmail(){
-    //     return new Promise((resolve, reject) => {
-    //         transporter.sendMail(mailOptions, (error, info) => {
-    //             if (error) {
-    //                 reject(error)
-    //             }
-    //             resolve(info)})
-    //         })
-    // }
-
-
 }
