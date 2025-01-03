@@ -2,18 +2,18 @@ import jwt from 'jsonwebtoken'
 import { SECRET_KEY, TIME_LIFE_ACCESS_TOKEN } from '../setting'
 import { tokenPayload } from '../types/types'
 
-export const jwtAdapter ={
+export class JwtAdapter{
 
     createAccessToken(payload: tokenPayload):string{
         const token = jwt.sign({...payload, exp: payload.iat + TIME_LIFE_ACCESS_TOKEN}, SECRET_KEY) 
 
         return token
-    },
+    }
 
     createRefrashToken(payload: tokenPayload):string{
         const token = jwt.sign(payload, SECRET_KEY)
         return token
-    },
+    }
 
     calcPayloadAT(token: string): string|null{
         try{
@@ -23,7 +23,7 @@ export const jwtAdapter ={
         catch(err){
             return null
         }
-    },
+    }
 
 
     calcPayloadRT(token: string): tokenPayload|null{
