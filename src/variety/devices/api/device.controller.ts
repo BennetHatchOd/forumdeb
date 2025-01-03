@@ -11,7 +11,6 @@ export class DeviceControllers {
     constructor(private authService: AuthService,
                 private deviceQueryRepository: DeviceQueryRepository, 
                 private deviceService: DeviceService){
-
     }
     
     async getDevices(req: Request, res: Response<Array<DeviceViewType>>) {
