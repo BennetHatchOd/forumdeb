@@ -1,9 +1,10 @@
 import {Router} from 'express';
-import { deviceControllers } from './device.controller';
+import { deviceControllers } from '../../../instances';
+import { authUserByRefreshT } from '../../../midlleware/authorization';
 
 export const deviceRouter = Router({});
 
-deviceRouter.get('/',  deviceControllers.getDevices);
-deviceRouter.delete('/', deviceControllers.closeManySessions);
-deviceRouter.delete('/:deviceId', deviceControllers.closeOneSession);
+deviceRouter.get('/', authUserByRefreshT, deviceControllers.getDevices);
+deviceRouter.delete('/', authUserByRefreshT, deviceControllers.closeManySessions);
+deviceRouter.delete('/:deviceId', authUserByRefreshT, deviceControllers.closeOneSession);
 
