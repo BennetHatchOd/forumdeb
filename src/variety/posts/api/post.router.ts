@@ -8,8 +8,8 @@ import { commentValidator } from '../../comments/api/middleware/comment.validato
 export const postsRouter = Router({});
 
 postsRouter.get('/',  postControllers.get);
-postsRouter.get('/:id', postControllers.getPostById);
-postsRouter.delete('/:id', authAdminByPassword,  postControllers.deletePostById);
+postsRouter.get('/:id', postControllers.getById);
+postsRouter.delete('/:id', authAdminByPassword,  postControllers.deleteById);
 postsRouter.put('/:id', authAdminByPassword,  postValidator, checkInputValidation, postControllers.put);
 postsRouter.post('/', authAdminByPassword,  postValidator, checkInputValidation, postControllers.post);
 
