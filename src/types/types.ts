@@ -1,4 +1,3 @@
-import { JwtPayload } from "jsonwebtoken"
 import { SortDirection } from "mongodb"
 
  export type FieldError = {
