@@ -1,71 +1,68 @@
-import { commentCollection } from "../../../db/db";
 import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "mongodb";
-import { CodStatus, StatusResult} from "../../../types/interfaces";
 import { CommentFullType, CommentInputType, CommentViewType } from "../types";
-import { CommentDBType } from "../../../db/db.types";
+import { CodStatus, StatusResult } from "../../../types/types";
+import { CommentDocument, CommentModel } from "../domain/comment.entity";
 
-export const commentRepository = {
+export class CommentRepository {
+
+    constructor(){
+    }
 
     async isExist(id: string): Promise < StatusResult > {     
         
         if(!ObjectId.isValid(id))    
             return {codResult : CodStatus.NotFound};
 
-        const exist: number = await commentCollection.countDocuments({_id: new ObjectId(id)})           
+        const exist: number = await CommentModel.countDocuments({_id: new ObjectId(id)})           
         
-        return exist > 0  
+        return exist == 0  
                 ? {codResult: CodStatus.Ok} 
                 : {codResult: CodStatus.NotFound};
-    },
+    }
  
-    async findById(id: string): Promise < StatusResult<CommentFullType|undefined> > {     
-        
+    async findById(id: string): Promise < StatusResult<CommentFullType|undefined> > {           
          
         if(!ObjectId.isValid(id))
             return {codResult: CodStatus.NotFound};
-        const searchItem: WithId<CommentDBType> | null = await commentCollection.findOne({_id: new ObjectId(id)})           
+        const searchItem: CommentDocument | null = await CommentModel.findOne({_id: new ObjectId(id)})           
         return searchItem  
             ? {codResult: CodStatus.Ok, data: this.mapDbToFull(searchItem)} 
             : {codResult: CodStatus.NotFound};
-    },
+    }
 
-    async create(createItem: CommentDBType): Promise <StatusResult<string|undefined>>{      
-        const answerInsert: InsertOneResult = await commentCollection.insertOne(createItem)
-        return answerInsert.acknowledged  
-            ? {codResult: CodStatus.Created, data: answerInsert.insertedId.toString()}  
-            : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
-    },
+    async create(createItem: Omit<CommentFullType, 'id'>): Promise <StatusResult<string|undefined>>{      
+        const answerInsert: CommentDocument = await CommentModel.create(createItem)
+        return {codResult: CodStatus.Created, data: answerInsert._id.toString()}  
+    }
 
-    
     async edit(id: string, editDate: CommentInputType): Promise <StatusResult>{    
-        const answerUpdate: UpdateResult = await commentCollection.updateOne({_id: new ObjectId(id)}, {$set: editDate});
+        const answerUpdate: UpdateResult = await CommentModel.updateOne({_id: new ObjectId(id)}, {$set: editDate});
         if(!answerUpdate.acknowledged)
-            return {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
+            throw 'the server didn\'t confirm the operation'
         
         return answerUpdate.matchedCount != 0 
                 ? {codResult: CodStatus.NoContent} 
                 : {codResult: CodStatus.NotFound}; 
-    },
+    }
 
     async delete(id: string): Promise <StatusResult> {         
-        const answerDelete: DeleteResult = await commentCollection.deleteOne({_id: new ObjectId(id)})
+        const answerDelete: DeleteResult = await CommentModel.deleteOne({_id: new ObjectId(id)})
 
         return answerDelete.deletedCount == 1 
                ? {codResult: CodStatus.NoContent}  
                : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
-    },
-
+    }
 
     async clear(): Promise <StatusResult> { 
-        await commentCollection.deleteMany()
+        await CommentModel.deleteMany()
 
-        return await commentCollection.countDocuments({}) == 0 
-           ? {codResult: CodStatus.NoContent }  
-           : {codResult: CodStatus.Error};
+        if (await CommentModel.countDocuments({}) == 0) 
+           return {codResult: CodStatus.NoContent }  
+        
+        throw "error of deleting collection";
     
-    },
-
-    mapDbToFull(item: WithId<CommentDBType>): CommentFullType {
+    }
+    mapDbToFull(item:CommentDocument): CommentFullType {
         
         return {
             id: item._id.toString(),

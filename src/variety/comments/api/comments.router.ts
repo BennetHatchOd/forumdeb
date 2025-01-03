@@ -1,13 +1,13 @@
 import {Router} from 'express';
-import { commentControllers } from './comment.controller';
 import { commentValidator } from './middleware/comment.validator';
-import { authorizatorUser } from '../../../midlleware/authorization';
+import { authUserByAccessT } from '../../../midlleware/authorization';
 import {checkInputValidation} from '../../../midlleware/check.input.validators'
+import { commentControllers } from '../../../instances';
 
 export const commentsRouter = Router({});
 
-commentsRouter.get('/:id',                                                                 commentControllers.getCommentById);
-commentsRouter.delete('/:id',  authorizatorUser,                                               commentControllers.deleteComment);
-commentsRouter.put('/:id',     authorizatorUser, commentValidator, checkInputValidation,       commentControllers.putComment);
+commentsRouter.get('/:id', commentControllers.getCommentById);
+commentsRouter.delete('/:id', authUserByAccessT, commentControllers.deleteComment);
+commentsRouter.put('/:id', authUserByAccessT, commentValidator, checkInputValidation, commentControllers.putComment);
 
   
