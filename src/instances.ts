@@ -48,14 +48,14 @@ export const deviceService = new DeviceService(deviceRepository)
 export const authService = new AuthService(userRepository, deviceService, authRepository, 
                                            jwtAdapter, userService, deviceRepository, mailManager)
 export const blogService = new BlogService(blogRepository)
-export const commentService = new CommentService(commentRepository)
+export const commentService = new CommentService(postRepository, userQueryRepository, commentRepository)
 export const postService = new PostService(postRepository, blogRepository)
 
 
 export const userControllers = new UserControllers(userService, userQueryRepository)
-export const authControllers = new AuthControllers(authService, authQueryRepository)
+export const authControllers = new AuthControllers(authService)
 export const blogControllers = new BlogControllers(blogService, blogQueryRepository)
-export const commentControllers = new CommentControllers(commentService, commentQueryRepository)
+export const commentControllers = new CommentControllers(commentQueryRepository, commentService)
 export const deviceControllers = new DeviceControllers(authService, deviceQueryRepository, deviceService)
 export const postControllers = new PostControllers(postService, postQueryRepository)
 
