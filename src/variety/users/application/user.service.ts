@@ -37,14 +37,14 @@ export class UserService {
         const authResult = await this.authRepository.checkUniq(login, email)
         
         if (userResult.data || authResult.data){
-            const checkResult: string[] = userResult.data
+            const checkResult: string[]|undefined = userResult.data
                             ? userResult.data
                             : authResult.data
             let errorsMessages: Array<FieldError> = checkResult!.map(s => {
-                return {
-                    message: `${s} should be unique`,
-                    field: s}
-                })
+                                                                    return {
+                                                                        message: `${s} should be unique`,
+                                                                        field: s}
+                                                                    })
             return{  
                 codResult: CodStatus.BadRequest,
                 data: {
