@@ -1,39 +1,42 @@
-import { BlogDBType } from "../../../db/db.types";
-import { blogRepository } from "../repositories/blog.repository"; 
+import { CodStatus, StatusResult } from "../../../types/types";
+import { BlogType } from "../domain/blog.entity";
+import { BlogRepository } from "../repositories/blog.repository";
 import { BlogInputType, BlogViewType } from "../types";
 
-export const blogService = {
+export class BlogService {
+
+    constructor(private blogRepository: BlogRepository){}
 
     async create(createItem: BlogInputType): Promise < StatusResult<string|undefined>>{ 
 
-        const newBlog: BlogDBType = {
+        const newBlog: BlogType = {
                                 ...createItem, 
                                 createdAt: new Date(),
                                 isMembership: false,                                   
                             }
-        return await blogRepository.create(newBlog)
+        return await this.blogRepository.create(newBlog)
 
-    },
+    }
  
     async edit(id: string, editData: BlogInputType): Promise < StatusResult >{    
-        const existResult: StatusResult = await blogRepository.isExist(id)
+        const existResult: StatusResult = await this.blogRepository.isExist(id)
         
         if (existResult.codResult != CodStatus.Ok )
             return existResult;
 
-        return await blogRepository.edit(id, editData);         
-    },
+        return await this.blogRepository.edit(id, editData);         
+    }
 
    async delete(id: string): Promise < StatusResult > {     
-        const existResult: StatusResult = await blogRepository.isExist(id)
+        const existResult: StatusResult = await this.blogRepository.isExist(id)
 
         if (existResult.codResult != CodStatus.Ok )
             return existResult;
 
-        return await blogRepository.delete(id);
-    },
+        return await this.blogRepository.delete(id);
+    }
 
     async clear(): Promise < StatusResult > {
-        return await blogRepository.clear()
-    },
+        return await this.blogRepository.clear()
+    }
 }

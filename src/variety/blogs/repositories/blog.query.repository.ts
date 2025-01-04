@@ -1,39 +1,37 @@
 import { PaginatorType, QueryType} from "../../../types/types";
-import { blogCollection } from "../../../db/db";
-import { BlogDBType } from "../../../db/db.types";
 import { ObjectId, WithId } from "mongodb";
 import { emptyPaginator } from "../../../utility/paginator";
 import { BlogViewType } from "../types";
+import { BlogDocument, BlogModel } from "../domain/blog.entity";
 
-export const blogQueryRepository = {
-
+export class BlogQueryRepository {
  
     async findById(id: string): Promise <BlogViewType | null > {      
         
         if(!ObjectId.isValid(id))
             return null;                   
-            const searchItem: WithId<BlogDBType> | null = await blogCollection.findOne({_id: new ObjectId(id)})           
+            const searchItem: BlogDocument | null = await BlogModel.findOne({_id: new ObjectId(id)})           
             return searchItem 
                  ? this.mapDbToView(searchItem) 
                  : null 
-    },
+    }
   
     async find(queryReq:  QueryType): Promise < PaginatorType<BlogViewType> > {      
         
         const nameSearch = queryReq.searchNameTerm ? {name: {$regex: queryReq.searchNameTerm, $options: 'i'}} : {}    
         const queryFilter = {...nameSearch}
-        const totalCount: number= await blogCollection.countDocuments(queryFilter) 
+        const totalCount: number= await BlogModel.countDocuments(queryFilter) 
         const pagesCount =  Math.ceil(totalCount / queryReq.pageSize)
    
         if (totalCount == 0)
             return emptyPaginator;  
         
-        const searchItem: Array<WithId<BlogDBType>>  = 
-            await blogCollection.find(queryFilter)
+        const searchItem: Array<BlogDocument>  = 
+            await BlogModel.find(queryFilter)
                                 .limit(queryReq.pageSize)
                                 .skip((queryReq.pageNumber - 1) * queryReq.pageSize)
-                                .sort(queryReq.sortBy, queryReq.sortDirection)
-                                .toArray();
+                                .sort({[queryReq.sortBy]: queryReq.sortDirection})
+
         return {
                 pagesCount: pagesCount,
                 page: queryReq.pageNumber > pagesCount ? pagesCount : queryReq.pageNumber,
@@ -41,9 +39,9 @@ export const blogQueryRepository = {
                 totalCount: totalCount,
                 items: searchItem.map(s => this.mapDbToView(s))
         }
-    },
+    }
 
-    mapDbToView(item: WithId<BlogDBType>): BlogViewType {
+    mapDbToView(item: BlogDocument): BlogViewType {
         
         return {
             id: item._id.toString(),
