@@ -1,4 +1,3 @@
-import { UserDBType } from "../../../db/db.types";
 import { DeleteResult, ObjectId, WithId } from "mongodb";
 import { CodStatus, StatusResult } from "../../../types/types";
 import { AboutUser } from "../../auth/types";
@@ -50,7 +49,7 @@ export class UserRepository {
 
     async findForOwnerById(id: string): Promise < StatusResult<AboutUser|undefined> > {     
              
-        const searchItem: WithId<UserDBType> | null = await UserModel.findOne({_id: new ObjectId(id)})  
+        const searchItem: UserDocument | null = await UserModel.findOne({_id: new ObjectId(id)})  
         if(!searchItem)
             return {codResult: CodStatus.NotFound}
 

@@ -1,39 +1,39 @@
 import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "mongodb";
-import { authUserCollection, requestCollection } from "../../db/db";
-import { UserDBType, UserUnconfirmedDBType } from "../../db/dbTypes";
-import { CodStatus, StatusResult } from "../../types/interfaces";
-import { ConfirmEmailType, UserPasswordType, UserUnconfirmedType } from "../users/types";
+import { CodStatus, StatusResult } from "../../../types/types";
+import { AuthDocument, AuthModel, AuthUserType } from "../domain/auth.entity";
+import { ConfirmEmailType, UserPasswordType, UserUnconfirmedType } from "../../users/types";
+import { UserDocument } from "../../users/domain/user.entity";
+import { RequestModel } from "../domain/request.entity";
 
 export class AuthRepository {
   
-    async createUnconfirmUser(createItem: UserUnconfirmedDBType): Promise <StatusResult>{  
+    async createUnconfirmUser(createItem: AuthUserType): Promise <StatusResult>{  
         
 
-        const answerInsert: InsertOneResult = await authUserCollection.insertOne(createItem);
+        await AuthModel.create(createItem);
   
-        return answerInsert.acknowledged  
-            ? {codResult: CodStatus.NoContent}  
-            : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
+        return {codResult: CodStatus.NoContent}  
+        //    : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
     }
 
     async findByConfirmCode(code: string): Promise < StatusResult<UserUnconfirmedType|undefined> > {     
              
-        const searchItem: WithId<UserUnconfirmedDBType> | null = 
-            await authUserCollection.findOne({'confirmEmail.code': code})  
+        const searchItem: AuthDocument | null = await AuthModel.findOne({'confirmEmail.code': code})  
         
         if(!searchItem)
             return {codResult: CodStatus.NotFound}
 
         return {
             codResult: CodStatus.Ok, 
-            data: this.mapAuthDBToFull(searchItem) 
+            data: this.mapAuthToFull(searchItem) 
             }
     }
 
     async checkUniq(loginCheck: string, emailCheck: string): Promise<StatusResult<string[]|undefined>> {
-        
-        const existEmail = await authUserCollection.countDocuments({ "user.email": emailCheck })
-        const existLogin = await authUserCollection.countDocuments({ "user.login": loginCheck })
+    // checking for unverified users
+
+        const existEmail = await AuthModel.countDocuments({ "user.email": emailCheck })
+        const existLogin = await AuthModel.countDocuments({ "user.login": loginCheck })
 
         let arrayErrors: Array<string> = [] 
         if(existEmail > 0) 
@@ -47,8 +47,9 @@ export class AuthRepository {
     }
 
     async checkNotVerifEmail(mail: string):  Promise <number>{      
-        const searchItem: WithId<UserUnconfirmedDBType> | null  
-            = await authUserCollection.findOne({'user.email': mail})
+        const searchItem: AuthDocument | null  
+            = await AuthModel.findOne({'user.email': mail})
+
         return searchItem 
             ? searchItem.confirmEmail.countSendingCode  
             : -1
@@ -56,24 +57,24 @@ export class AuthRepository {
     
     async updateCode(mail: string, confirmEmail: ConfirmEmailType):  Promise <StatusResult>{    
     
-        const update: UpdateResult 
-        = await authUserCollection.updateOne(
-                {'user.email': mail},
-                {$set: {confirmEmail: confirmEmail}})
-    
-        return update.modifiedCount == 1
-            ? {codResult: CodStatus.NoContent}
-            : {codResult: CodStatus.Error}        
+        const update: AuthDocument | null = await AuthModel.findOne({'user.email': mail})
+        
+        if(!update) throw "user not found"
+        
+        update.confirmEmail = confirmEmail
+        await update.save()
+       
+        return {codResult: CodStatus.NoContent}   
     }
 
     async setRequestAPI(ip:string, url:string, date: Date){
-        await requestCollection.insertOne({ip:   ip,
-                                           url:  url,
-                                           date: date})
+        await RequestModel.create({ip:   ip,
+                                  url:  url,
+                                 date: date})
     }
 
     async getNumberRequestAPI(ip:string, url:string, dateFrom: Date){
-        return await requestCollection.countDocuments({ip: ip, url: url, date: {$gte: dateFrom}})
+        return await RequestModel.countDocuments({ip: ip, url: url, date: {$gte: dateFrom}})
     }
 
 
@@ -95,10 +96,10 @@ export class AuthRepository {
     // },
 
     async clear(): Promise <StatusResult> {
-        await authUserCollection.deleteMany()
-        return await authUserCollection.countDocuments({}) == 0 
-            ? {codResult: CodStatus.NoContent }  
-            : {codResult: CodStatus.Error, message: 'Collection isn\'t empty'};
+        await AuthModel.deleteMany()
+        if(await AuthModel.countDocuments({}) == 0) 
+            return {codResult: CodStatus.NoContent }  
+        throw 'Collection isn\'t empty'
     }
 
     async isExist(id: string): Promise<StatusResult>{     
@@ -106,32 +107,22 @@ export class AuthRepository {
         if(!ObjectId.isValid(id))    
             return {codResult : CodStatus.NotFound};
 
-        const exist: number = await authUserCollection.countDocuments({_id: new ObjectId(id)})           
+        const exist: number = await AuthModel.countDocuments({_id: new ObjectId(id)})           
         
-        return exist > 0  
+        return exist == 1  
                 ? {codResult: CodStatus.Ok} 
                 : {codResult: CodStatus.NotFound};
     }
  
     async delete(id: string):  Promise <StatusResult>{      
-        const answerDelete: DeleteResult = await authUserCollection.deleteOne({_id: new ObjectId(id)})
+        const answerDelete: DeleteResult = await AuthModel.deleteOne({_id: new ObjectId(id)})
 
-        return answerDelete.deletedCount == 1 
-            ? {codResult: CodStatus.NoContent}  
-            : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
+        if(answerDelete.deletedCount == 1) 
+            return {codResult: CodStatus.NoContent}  
+        throw 'the server didn\'t confirm the delete operation';
     }
 
-    mapViewToDB(user: UserPasswordType): WithId<UserDBType> {
-        return{
-            _id:	new ObjectId(user.id),
-            login:	user.login,
-            email:	user.email,
-            createdAt:	user.createdAt,
-            password: user.password,
-        }
-    }
-
-    mapUserDBToFull(user: WithId<UserDBType>): UserPasswordType {
+    mapUserToFull(user: UserDocument): UserPasswordType {
         return { 
             id:         user._id.toString(),
             email:      user.email,      
@@ -141,7 +132,7 @@ export class AuthRepository {
             }
     }
 
-    mapAuthDBToFull(user: WithId<UserUnconfirmedDBType >): UserUnconfirmedType  {
+    mapAuthToFull(user: AuthDocument): UserUnconfirmedType  {
         return { 
             id:         user._id.toString(),
             user:{

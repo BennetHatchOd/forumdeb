@@ -18,4 +18,4 @@ const requestSchema = new mongoose.Schema<RequestAPIType>({
     date:	{ type: Date, required: true }
   });
   
-  export const RequestModel = model<RequestAPIType, RequestDocument>(SETTING.REQUEST_COLLECTION_NAME, requestSchema);
+  export const RequestModel = model<RequestAPIType, RequestModel>(SETTING.REQUEST_COLLECTION_NAME, requestSchema);

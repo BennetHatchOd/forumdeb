@@ -8,7 +8,7 @@ type confirmEmailType = {
     countSendingCode: number
 }
 
-export type UserUnconfirmedType = {
+export type AuthUserType = {
     user: UserType,
     confirmEmail: confirmEmailType
 }
@@ -19,12 +19,12 @@ const confirmEmailSchema = new mongoose.Schema<confirmEmailType>( {
 })
 
 
-type AuthModel = Model<UserUnconfirmedType>
-export type AuthDocument = HydratedDocument<UserUnconfirmedType>
+type AuthModel = Model<AuthUserType>
+export type AuthDocument = HydratedDocument<AuthUserType>
 
-const authSchema = new mongoose.Schema<UserUnconfirmedType>({
+const authSchema = new mongoose.Schema<AuthUserType>({
     user:	        { type: userSchema, required: true },
     confirmEmail:	{ type: confirmEmailSchema, required: true },
  });
   
-  export const AuthModel = model<UserUnconfirmedType, AuthModel>(SETTING.USER_UNCONFIRMED_COLLECTION_NAME, authSchema);
+  export const AuthModel = model<AuthUserType, AuthModel>(SETTING.USER_UNCONFIRMED_COLLECTION_NAME, authSchema);

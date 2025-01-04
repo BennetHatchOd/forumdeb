@@ -21,6 +21,9 @@ export const PASSWORD_MAIL = process.env.PASSWORD_MAIL
 export const TIME_LIFE_ACCESS_TOKEN = 10
 export const TIME_LIFE_REFRESH_TOKEN = 20
 
+export const TIME_RATE_LIMITED = 10
+export const COUNT_RATE_LIMITED = 5
+
 export const LENGTH_VERSION_ID = 7
 
 export const HTTP_STATUSES = {
