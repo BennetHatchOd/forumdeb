@@ -3,8 +3,8 @@ import { app } from "../../src/app";
 import {MongoMemoryServer} from 'mongodb-memory-server'
 import {MongoClient} from 'mongodb'
 import { BlogEndPoint } from "./classes/blogClass";
-import { initialize } from "./common/initialize";
 import { PostEndPoint } from "./classes/postClass";
+import { initialize } from "./common/initialize";
 
 
 

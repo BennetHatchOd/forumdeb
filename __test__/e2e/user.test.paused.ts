@@ -2,14 +2,10 @@ import request from "supertest";
 import { app } from "../../src/app";
 import {MongoMemoryServer} from 'mongodb-memory-server'
 import {MongoClient} from 'mongodb'
-import { mailManager } from "../../src/utility/mailManager";
 import { testSeeder } from "./common/test.seeder";
 import { UserInputType } from "../../src/variety/users/types";
-import { AUTH_PATH, HTTP_STATUSES, TIME_LIFE_ACCESS_TOKEN, URL_PATH } from "../../src/setting";
+import { HTTP_STATUSES, URL_PATH } from "../../src/setting";
 import { AuthPassword } from "./common/test.setting";
-import { authRepository } from "../../src/variety/auth/authRepository";
-import { CodStatus } from "../../src/types/interfaces";
-import { userRepository } from "../../src/variety/users/repositories/userRepository";
 
 describe('/auth', () => {
     

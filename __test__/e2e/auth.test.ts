@@ -1,43 +1,42 @@
 import request from "supertest";
+import mongoose from 'mongoose'
 import { app } from "../../src/app";
 import {MongoMemoryServer} from 'mongodb-memory-server'
 import {MongoClient} from 'mongodb'
-import { mailManager } from "../../src/utility/mailManager";
 import { testSeeder } from "./common/test.seeder";
 import { UserInputType } from "../../src/variety/users/types";
-import { AUTH_PATH, HTTP_STATUSES, TIME_LIFE_ACCESS_TOKEN, URL_PATH } from "../../src/setting";
+import { AUTH_PATH, HTTP_STATUSES, mongoURI, TIME_LIFE_ACCESS_TOKEN, URL_PATH } from "../../src/setting";
 import { AuthPassword } from "./common/test.setting";
-import { authRepository } from "../../src/variety/auth/authRepository";
-import { CodStatus } from "../../src/types/interfaces";
-import { userRepository } from "../../src/variety/users/repositories/userRepository";
 import { register } from "module";
+import { authRepository, mailManager, userRepository } from "../../src/instances";
+import { CodStatus } from "../../src/types/types";
 
 describe('/auth', () => {
     
-    let server:  MongoMemoryServer
-    let uri : string
-    let client: MongoClient
+    // let server:  MongoMemoryServer
+    // let uri : string
+    // let client: MongoClient
 
     jest.setTimeout(35000)
 
     beforeAll(async() =>{  // clear db-array
         
-        server = await MongoMemoryServer.create({
-            binary: {
-                version: '4.4.0', 
-            },
-        })
+        // server = await MongoMemoryServer.create({
+        //     binary: {
+        //         version: '4.4.0', 
+        //     },
+        // })
         
-        uri = server.getUri()
-        client = new MongoClient(uri)
-        await client.connect()
+        // uri = server.getUri()
+        // client = new MongoClient(uri)
+        await mongoose.connect(mongoURI)
         await request(app).delete('/testing/all-data')
 
 
     })
 
     afterAll(async() =>{
-        await server.stop()
+        await mongoose.connection.close()
     })
 
     let code: string

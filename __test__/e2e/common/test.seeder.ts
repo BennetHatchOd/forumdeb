@@ -1,4 +1,3 @@
-import { authUserCollection } from "../../../src/db/db"
 import { UserInputType } from "../../../src/variety/users/types"
 
 export const testSeeder = {

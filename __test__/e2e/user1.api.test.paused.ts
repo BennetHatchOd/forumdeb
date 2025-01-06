@@ -3,7 +3,6 @@ import { app } from "../../src/app";
 import {MongoMemoryServer} from 'mongodb-memory-server'
 import {MongoClient} from 'mongodb'
 import { UserEndPoint } from './classes/userClass'
-import { initialize } from "./common/initialize"
 
 
 describe('/users', () => {
