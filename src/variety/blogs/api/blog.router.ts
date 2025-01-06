@@ -7,12 +7,12 @@ import { postForBlogValidator } from '../../posts/api/middleware/post.validator'
 
 export const blogsRouter = Router({});
 
-blogsRouter.get('/', blogControllers.get);
-blogsRouter.get('/:id', blogControllers.getById);
-blogsRouter.delete('/:id', authAdminByPassword, blogControllers.deleteById);
-blogsRouter.put('/:id', authAdminByPassword, blogValidator, checkInputValidation, blogControllers.put);
-blogsRouter.post('/', authAdminByPassword, blogValidator, checkInputValidation, blogControllers.post);
+blogsRouter.get('/', blogControllers.get.bind(blogControllers));
+blogsRouter.get('/:id', blogControllers.getById.bind(blogControllers));
+blogsRouter.delete('/:id', authAdminByPassword, blogControllers.deleteById.bind(blogControllers));
+blogsRouter.put('/:id', authAdminByPassword, blogValidator, checkInputValidation, blogControllers.put.bind(blogControllers));
+blogsRouter.post('/', authAdminByPassword, blogValidator, checkInputValidation, blogControllers.post.bind(blogControllers));
 
-blogsRouter.get('/:id/posts', postControllers.getByBlog);
-blogsRouter.post('/:id/posts', authAdminByPassword, postForBlogValidator, checkInputValidation, postControllers.postByBlog);
+blogsRouter.get('/:id/posts', postControllers.getByBlog.bind(blogControllers));
+blogsRouter.post('/:id/posts', authAdminByPassword, postForBlogValidator, checkInputValidation, postControllers.postByBlog.bind(blogControllers));
   

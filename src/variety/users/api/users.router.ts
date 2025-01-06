@@ -6,8 +6,8 @@ import { userControllers } from '../../../instances';
 
 export const usersRouter = Router({});
 
-usersRouter.get('/', authAdminByPassword,  userControllers.getUser);
-usersRouter.delete('/:id', authAdminByPassword, userControllers.deleteUserById);
-usersRouter.post('/', authAdminByPassword, userValidator, checkInputValidation, userControllers.postUser);
+usersRouter.get('/', authAdminByPassword,  userControllers.getUser.bind(userControllers));
+usersRouter.delete('/:id', authAdminByPassword, userControllers.deleteUserById.bind(userControllers));
+usersRouter.post('/', authAdminByPassword, userValidator, checkInputValidation, userControllers.postUser.bind(userControllers));
 
   

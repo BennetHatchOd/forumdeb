@@ -7,11 +7,11 @@ import { commentValidator } from '../../comments/api/middleware/comment.validato
 
 export const postsRouter = Router({});
 
-postsRouter.get('/',  postControllers.get);
-postsRouter.get('/:id', postControllers.getById);
-postsRouter.delete('/:id', authAdminByPassword,  postControllers.deleteById);
-postsRouter.put('/:id', authAdminByPassword,  postValidator, checkInputValidation, postControllers.put);
-postsRouter.post('/', authAdminByPassword,  postValidator, checkInputValidation, postControllers.post);
+postsRouter.get('/',  postControllers.get.bind(postControllers));
+postsRouter.get('/:id', postControllers.getById.bind(postControllers));
+postsRouter.delete('/:id', authAdminByPassword,  postControllers.deleteById.bind(postControllers));
+postsRouter.put('/:id', authAdminByPassword,  postValidator, checkInputValidation, postControllers.put.bind(postControllers));
+postsRouter.post('/', authAdminByPassword,  postValidator, checkInputValidation, postControllers.post.bind(postControllers));
 
-postsRouter.get('/:id/comments', commentControllers.getCommentToPost);
-postsRouter.post('/:id/comments', authUserByAccessT,  commentValidator, checkInputValidation, commentControllers.postCommentToPost);
+postsRouter.get('/:id/comments', commentControllers.getCommentToPost.bind(postControllers));
+postsRouter.post('/:id/comments', authUserByAccessT,  commentValidator, checkInputValidation, commentControllers.postCommentToPost.bind(postControllers));
