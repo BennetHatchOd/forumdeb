@@ -4,33 +4,37 @@ import {MongoMemoryServer} from 'mongodb-memory-server'
 import {MongoClient} from 'mongodb'
 import { PostEndPoint } from "./classes/postClass";
 import { initialize } from "./common/initialize";
+import mongoose from "mongoose";
+import { mongoURI } from "../../src/setting";
 
 
 describe('/posts', () => {
     
-    let server:  MongoMemoryServer
-    let uri : string
-    let client: MongoClient
+    // let server:  MongoMemoryServer
+    // let uri : string
+    // let client: MongoClient
     let postTest: PostEndPoint
     
     
     beforeAll(async() =>{  // clear db-array
         
-        server = await MongoMemoryServer.create({
-            binary: {
-                version: '4.4.0', 
-            },
-        })
+        // server = await MongoMemoryServer.create({
+        //     binary: {
+        //         version: '4.4.0', 
+        //     },
+        // })
         
-        uri = server.getUri()
-        client = new MongoClient(uri)
-        await client.connect()
+        // uri = server.getUri()
+        // client = new MongoClient(uri)
+        // await client.connect()
+        await mongoose.connect(mongoURI)
         await request(app).delete('/testing/all-data')
         postTest = (await initialize()).post
     })
 
     afterAll(async() =>{
-        await server.stop()
+    //    await server.stop()
+        await mongoose.connection.close()
     })
 
     

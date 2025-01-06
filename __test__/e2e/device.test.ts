@@ -4,21 +4,22 @@ import {MongoMemoryServer} from 'mongodb-memory-server'
 import {MongoClient} from 'mongodb'
 import { testSeeder } from "./common/test.seeder";
 import { UserInputType } from "../../src/variety/users/types";
-import { AUTH_PATH, HTTP_STATUSES, URL_PATH } from "../../src/setting";
+import { AUTH_PATH, HTTP_STATUSES, mongoURI, URL_PATH } from "../../src/setting";
 import { AuthPassword } from "./common/test.setting";
 import { compareArr } from "./common/helper";
+import mongoose from "mongoose";
 
 describe('/device', () => {
     
-    let server:  MongoMemoryServer
-    let uri : string
-    let client: MongoClient
+    // let server:  MongoMemoryServer
+    // let uri : string
+    // let client: MongoClient
 
-    jest.setTimeout(20000)
+     jest.setTimeout(20000)
 
     let deviceId: string
     let accessToken: string
-    let refreshToken: string
+    let refreshToken: string            // refreshToken of user2
     let user: UserInputType = testSeeder.createGoodUser()
     let user2: UserInputType = testSeeder.createGoodUser('ff') 
     let devices = testSeeder.createTitleDevices()
@@ -27,22 +28,24 @@ describe('/device', () => {
     
     beforeAll(async() =>{  // clear db-array
         
-        server = await MongoMemoryServer.create({
-            binary: {
-                version: '4.4.0', 
-            },
-        })
+        // server = await MongoMemoryServer.create({
+        //     binary: {
+        //         version: '4.4.0', 
+        //     },
+        // })
         
-        uri = server.getUri()
-        client = new MongoClient(uri)
-        await client.connect()
+        // uri = server.getUri()
+        // client = new MongoClient(uri)
+        // await client.connect()
+        await mongoose.connect(mongoURI)
         await request(app).delete('/testing/all-data')
 
 
     })
 
     afterAll(async() =>{
-        await server.stop()
+    //    await server.stop()
+        await mongoose.connection.close()
     })
  
     it('Create 2 users', async() => {
@@ -86,8 +89,8 @@ describe('/device', () => {
                         .expect(HTTP_STATUSES.OK_200);
             accessToken = loginData.body.accessToken
             const cookies = loginData.headers['set-cookie'][0].split('')
-            refreshToken = cookies.slice(cookies.indexOf('=') + 1,cookies.indexOf(';')).join('')
-            RFtokens.push(refreshToken)
+            let refresh = cookies.slice(cookies.indexOf('=') + 1,cookies.indexOf(';')).join('')
+            RFtokens.push(refresh)
         }
    })
 
@@ -115,6 +118,7 @@ describe('/device', () => {
         expect(sessions.body.length).toBe(1)
         expect(sessions.body[0].title).toBe('Poco')
         deviceId = sessions.body[0].deviceId
+
     })
 
     it("user can't terminate device session of user2", async() => {
@@ -125,11 +129,11 @@ describe('/device', () => {
     })
 
     it("user2 terminate device session of user2", async() => {
-    
+        console.log("deviceId in test", deviceId, `${URL_PATH.devices}/${deviceId}`)
         await request(app).delete(`${URL_PATH.devices}/${deviceId}`)
                     .set("Cookie", 'refreshToken='+ refreshToken) 
                     .expect(HTTP_STATUSES.NO_CONTENT_204);
-        const sessions = await request(app).get(`${URL_PATH.devices}`)
+        await request(app).get(`${URL_PATH.devices}`)
                     .set("Cookie", 'refreshToken='+ refreshToken) 
                     .expect(HTTP_STATUSES.NO_AUTHOR_401);
     })

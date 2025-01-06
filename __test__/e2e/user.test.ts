@@ -1,38 +1,38 @@
 import request from "supertest";
 import { app } from "../../src/app";
-import {MongoMemoryServer} from 'mongodb-memory-server'
-import {MongoClient} from 'mongodb'
 import { testSeeder } from "./common/test.seeder";
 import { UserInputType } from "../../src/variety/users/types";
-import { HTTP_STATUSES, URL_PATH } from "../../src/setting";
+import { HTTP_STATUSES, mongoURI, URL_PATH } from "../../src/setting";
 import { AuthPassword } from "./common/test.setting";
+import mongoose from "mongoose";
 
-describe('/auth', () => {
+describe('/user', () => {
     
-    let server:  MongoMemoryServer
-    let uri : string
-    let client: MongoClient
+    // let server:  MongoMemoryServer
+    // let uri : string
+    // let client: MongoClient
 
-    jest.setTimeout(30000)
+    //jest.setTimeout(35000)
 
     beforeAll(async() =>{  // clear db-array
         
-        server = await MongoMemoryServer.create({
-            binary: {
-                version: '4.4.0', 
-            },
-        })
+        // server = await MongoMemoryServer.create({
+        //     binary: {
+        //         version: '4.4.0', 
+        //     },
+        // })
         
-        uri = server.getUri()
-        client = new MongoClient(uri)
-        await client.connect()
+        // uri = server.getUri()
+        // client = new MongoClient(uri)
+        await mongoose.connect(mongoURI)
         await request(app).delete('/testing/all-data')
 
 
     })
 
     afterAll(async() =>{
-        await server.stop()
+    //    await server.stop()
+        await mongoose.connection.close()
     })
 
 

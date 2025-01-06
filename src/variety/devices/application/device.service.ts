@@ -58,6 +58,7 @@ export class DeviceService {
     }
 
     async deleteSession(userId: string, deviceId: string): Promise <StatusResult>{
+
         const userDevice: string| null = await this.deviceRepository.findByDeviceID(deviceId)
         if(!userDevice)
             return {codResult: CodStatus.NotFound}

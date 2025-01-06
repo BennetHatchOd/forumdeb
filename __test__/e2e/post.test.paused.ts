@@ -1,10 +1,11 @@
 import request from "supertest";
-import {HTTP_STATUSES, URL_PATH} from '../../src/setting'
+import {HTTP_STATUSES, mongoURI, URL_PATH} from '../../src/setting'
 import { app } from "../../src/app";
 import {MongoMemoryServer} from 'mongodb-memory-server'
 import {MongoClient} from 'mongodb'
 import { PostInputType, PostViewType } from "../../src/variety/posts/types";
 import { BlogInputType } from "../../src/variety/blogs/types";
+import mongoose from "mongoose";
 
 
 
@@ -13,29 +14,32 @@ const Authorization = {
       value: "Basic YWRtaW46cXdlcnR5",
       false: "Df fef"
 };
-let server:  MongoMemoryServer
-let uri : string
-let client: MongoClient
+// let server:  MongoMemoryServer
+// let uri : string
+// let client: MongoClient
+
 describe('/posts', () => {
 
     beforeAll(async() =>{  // clear db-array
-        server = await MongoMemoryServer.create({
-            binary: {
-              version: '4.4.0', 
-            },
-          })
+        // server = await MongoMemoryServer.create({
+        //     binary: {
+        //       version: '4.4.0', 
+        //     },
+        //   })
          
-        uri = server.getUri()
-        client = new MongoClient(uri)
-        await client.connect();
-        // await request(app).delete('/testing/all-data');
+        // uri = server.getUri()
+        // client = new MongoClient(uri)
+        // await client.connect();
+        await mongoose.connect(mongoURI)
+        await request(app).delete('/testing/all-data');
 
 
 
     })
 
     afterAll(async() =>{
-        await server.stop()
+    //    await server.stop()
+        await mongoose.connection.close()
     })
     
     let createdItem1: PostViewType;  

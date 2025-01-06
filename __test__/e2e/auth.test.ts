@@ -1,13 +1,9 @@
 import request from "supertest";
 import mongoose from 'mongoose'
 import { app } from "../../src/app";
-import {MongoMemoryServer} from 'mongodb-memory-server'
-import {MongoClient} from 'mongodb'
 import { testSeeder } from "./common/test.seeder";
 import { UserInputType } from "../../src/variety/users/types";
 import { AUTH_PATH, HTTP_STATUSES, mongoURI, TIME_LIFE_ACCESS_TOKEN, URL_PATH } from "../../src/setting";
-import { AuthPassword } from "./common/test.setting";
-import { register } from "module";
 import { authRepository, mailManager, userRepository } from "../../src/instances";
 import { CodStatus } from "../../src/types/types";
 
@@ -36,6 +32,7 @@ describe('/auth', () => {
     })
 
     afterAll(async() =>{
+    //    await server.stop()
         await mongoose.connection.close()
     })
 
@@ -149,7 +146,7 @@ describe('/auth', () => {
 
     it('User asking about him with an expired accessToken', async() => {
         await new Promise((resolve) => {
-            setTimeout(resolve, 10500)})
+            setTimeout(resolve, TIME_LIFE_ACCESS_TOKEN * 1000 + 30)})
 
         await request(app).get(`${URL_PATH.auth}${AUTH_PATH.me}`)
                     .set("Authorization", 'Bearer ' + accessToken)

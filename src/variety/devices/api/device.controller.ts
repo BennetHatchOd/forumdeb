@@ -15,7 +15,7 @@ export class DeviceControllers {
     
     async getDevices(req: Request, res: Response<Array<DeviceViewType>>) {
         try{
-            const devices = await this.deviceQueryRepository.findManyByUserId(req.payload!.id)
+            const devices = await this.deviceQueryRepository.findManyByUserId(req.payload!.userId)
             res.status(HTTP_STATUSES.OK_200).send(devices) 
         }
         catch(err){
@@ -37,7 +37,7 @@ export class DeviceControllers {
 
     async closeOneSession(req: Request<{deviceId: string},{},{},{}>, res: Response) {
         try{
-            const deleteAnswer = await this.deviceService.deleteSession(req.payload!.id, req.params.deviceId)
+            const deleteAnswer = await this.deviceService.deleteSession(req.payload!.userId, req.params.deviceId)
             res.status(deleteAnswer.codResult).send({})
         }
         catch(err){

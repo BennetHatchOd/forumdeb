@@ -1,46 +1,45 @@
 import request from "supertest";
 import { app } from "../../src/app";
-import {MongoMemoryServer} from 'mongodb-memory-server'
-import {MongoClient} from 'mongodb'
 import { BlogEndPoint } from "./classes/blogClass";
 import { PostEndPoint } from "./classes/postClass";
 import { initialize } from "./common/initialize";
-
-
-
-
+import mongoose from "mongoose";
+import { mongoURI } from "../../src/setting";
 
 describe('/blogs', () => {
     
-    let server:  MongoMemoryServer
-    let uri : string
-    let client: MongoClient
+    // let server:  MongoMemoryServer
+    // let uri : string
+    // let client: MongoClient
+    
+    //jest.setTimeout(35000)
     let blogTest: BlogEndPoint
     let postTest: PostEndPoint
 
     beforeAll(async() =>{  // clear db-array
         
-        server = await MongoMemoryServer.create({
-            binary: {
-                version: '4.4.0', 
-            },
-        })
+        // server = await MongoMemoryServer.create({
+        //     binary: {
+        //         version: '4.4.0', 
+        //     },
+        // })
         
-        uri = server.getUri()
-        client = new MongoClient(uri)
-        await client.connect()
+        // uri = server.getUri()
+        // client = new MongoClient(uri)
+        await mongoose.connect(mongoURI)
         await request(app).delete('/testing/all-data')
         const tests = await initialize()
         blogTest = tests.blog 
         postTest = tests.post
 
+
     })
 
     afterAll(async() =>{
-        await server.stop()
+    //    await server.stop()
+        await mongoose.connection.close()
     })
-
-    
+  
     it('b0.should return 200 and empty array', async () => { // watch all blogs [get.blog]
         await blogTest.getBlogs()    
     })
