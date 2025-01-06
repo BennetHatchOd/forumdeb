@@ -22,13 +22,14 @@ export class DeviceService {
                                 expiresAt:  add(new Date(), { seconds: TIME_LIFE_REFRESH_TOKEN})
                                 } 
         const insertSessions = await this.deviceRepository.create(session)
-        if (insertSessions.codResult == CodStatus.Ok)
+        if (insertSessions.codResult == CodStatus.Created)
             return {codResult: CodStatus.Ok, data: this.mapTokenFromSession(session)}
 
         return insertSessions
     }
 
     async updateSession(payload: tokenPayload): Promise <StatusResult<tokenPayload|undefined>>{
+
         const uid = new ShortUniqueId({ length: LENGTH_VERSION_ID });
         const session: updateSessionType = {
                                 userId:     payload.userId,
@@ -37,7 +38,7 @@ export class DeviceService {
                                 createdAt:  new Date(),
                                 expiresAt:  add(new Date(), { seconds: TIME_LIFE_REFRESH_TOKEN})
                                 }         
-        
+
         const updateSessions = await this.deviceRepository.update(session)
         if (updateSessions.codResult == CodStatus.Ok)
             return {codResult: CodStatus.Ok, data: this.mapTokenFromSession(session)}

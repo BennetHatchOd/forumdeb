@@ -44,7 +44,7 @@ export const authUserByRefreshT = async(req: Request<any, any, any, any>, res: R
         res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401)
         return;
     }
-    req.payload = {payload: checkToken.data};
+    req.payload = checkToken.data;
     next();
     return
 }
