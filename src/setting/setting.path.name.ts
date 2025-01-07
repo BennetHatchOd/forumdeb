@@ -10,21 +10,9 @@ export const USER_COLLECTION_NAME = 'users'
 export const COMMENT_COLLECTION_NAME = 'comments' 
 export const TOKEN_COLLECTION_NAME = 'tokens'
 export const REQUEST_COLLECTION_NAME = 'requests'
+export const NEWPASSWORD_COLLECTION_NAME = 'askpasswords'
 export const SESSION_COLLECTION_NAME = 'sessions'
 export const USER_UNCONFIRMED_COLLECTION_NAME = 'unconfirmedusers' 
-
-export const PORT = process.env.PORT || 3014
-export const SECRET_KEY = process.env.SECRET_KEY || '114' 
-export const PASSCODE_ADMIN = process.env.PASSCODE_ADMIN || 'admin:qwerty' 
-export const PASSWORD_MAIL = process.env.PASSWORD_MAIL  
-
-export const TIME_LIFE_ACCESS_TOKEN = 10
-export const TIME_LIFE_REFRESH_TOKEN = 20
-
-export const TIME_RATE_LIMITED = 10
-export const COUNT_RATE_LIMITED = 5
-
-export const LENGTH_VERSION_ID = 7
 
 export const HTTP_STATUSES = {
     OK_200:                 200,
@@ -49,10 +37,12 @@ export const URL_PATH = {
 }
 export const AUTH_PATH = {
     login:           '/login',
-    confirm:         '/registration-confirmation',
-    registration:    '/registration',
-    resent:          '/registration-email-resending',
-    refresh:         '/refresh-token',
     logout:          '/logout',
+    registration:    '/registration',
+    confirm:         '/registration-confirmation',
+    resent:          '/registration-email-resending',
+    askNewPassword:     '/password-recovery',    
+    resentPassword:  '/new-password',
+    refresh:         '/refresh-token',
     me:              '/me'
-}
+} 
