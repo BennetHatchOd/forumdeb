@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer'
-import { PASSWORD_MAIL } from '../setting'
+import { PASSWORD_MAIL } from '../setting/setting'
 
 export class MailAdapter { 
     

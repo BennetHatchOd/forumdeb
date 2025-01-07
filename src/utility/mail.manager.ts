@@ -13,4 +13,15 @@ export class MailManager {
 
         await this.mailAdapter.createEmail(mail, 'registration confirmation', message)
     }
+
+    async createPasswordRecovery(mail: string, code: string){
+        const message = 
+        `<h1>Password recovery</h1>
+        <p>To finish password recovery please follow the link below:
+          <a href='https://somesite.com/password-recovery?recoveryCode=${code}'>recovery password</a>
+        </p>`
+    
+      await this.mailAdapter.createEmail(mail, 'password-recovery', message)
+    }
+
 }
