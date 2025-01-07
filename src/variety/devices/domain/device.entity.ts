@@ -1,5 +1,5 @@
 import mongoose, { HydratedDocument, Model, model } from "mongoose";
-import * as SETTING from "../../../setting"
+import { SESSION_COLLECTION_NAME } from "../../../setting/setting.path.name";
 
 
 export type DeviceType = {
@@ -25,4 +25,4 @@ const deviceSchema = new mongoose.Schema<DeviceType>({
     expiresAt:  { type: Date, required: true },
   });
   
-  export const DeviceModel = model<DeviceType, DeviceModel>(SETTING.SESSION_COLLECTION_NAME, deviceSchema);
+  export const DeviceModel = model<DeviceType, DeviceModel>(SESSION_COLLECTION_NAME, deviceSchema);

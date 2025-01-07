@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { SECRET_KEY, TIME_LIFE_ACCESS_TOKEN } from '../setting'
+import { SECRET_KEY, TIME_LIFE_ACCESS_TOKEN } from '../setting/setting'
 import { tokenPayload } from '../types/types'
 
 export class JwtAdapter{

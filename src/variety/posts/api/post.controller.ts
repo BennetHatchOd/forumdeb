@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { APIErrorResult, CodStatus, PaginatorType, QueryType, StatusResult } from "../../../types/types";
 import { BlogPostInputType, PostInputType, PostViewType } from "../types";
 import { paginator } from "../../../utility/paginator";
-import { HTTP_STATUSES } from "../../../setting";
+import { HTTP_STATUSES } from "../../../setting/setting.path.name";
 import { PostService} from "../application/post.service";
 import { PostQueryRepository } from "../repositories/post.query.repository";
 

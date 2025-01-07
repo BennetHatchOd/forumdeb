@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors'
 import { blogsRouter } from './variety/blogs/api/blog.router';
 import { usersRouter } from './variety/users/api/users.router';
-import { URL_PATH } from './setting'
+import { URL_PATH } from './setting/setting.path.name'
 import cookieParser from 'cookie-parser'
 import { commentsRouter } from './variety/comments/api/comments.router';
 import { deleteAllController } from './delete.all.controller';

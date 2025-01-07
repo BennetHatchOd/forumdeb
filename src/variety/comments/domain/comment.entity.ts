@@ -1,5 +1,5 @@
 import mongoose, { HydratedDocument, Model, model } from "mongoose";
-import * as SETTING from "../../../setting"
+import { COMMENT_COLLECTION_NAME } from "../../../setting/setting.path.name";
 
 export type CommentatorInfoType ={
     userId:	    string,
@@ -28,4 +28,4 @@ const commentSchema = new mongoose.Schema<CommentType>({
     createdAt:	{ type: Date, required: true },
   });
   
-  export const CommentModel = model<CommentType, CommentModel>(SETTING.COMMENT_COLLECTION_NAME, commentSchema);
+  export const CommentModel = model<CommentType, CommentModel>(COMMENT_COLLECTION_NAME, commentSchema);

@@ -1,6 +1,6 @@
 import ShortUniqueId from 'short-unique-id';
 import {add, getTime} from 'date-fns'
-import { LENGTH_VERSION_ID, TIME_LIFE_REFRESH_TOKEN } from "../../../setting";
+import { LENGTH_VERSION_ID, TIME_LIFE_REFRESH_TOKEN } from "../../../setting/setting";
 import { updateSessionType } from "../types";
 import { CodStatus, StatusResult, tokenPayload } from "../../../types/types";
 import { DeviceRepository } from '../repositories/device.repository';

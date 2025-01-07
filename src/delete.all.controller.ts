@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { HTTP_STATUSES } from "./setting";
+import { HTTP_STATUSES } from "./setting/setting.path.name";
 import { authService, blogService, commentService, deviceService, postService, userService } from "./instances";
 
 

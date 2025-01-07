@@ -1,4 +1,4 @@
-import { HTTP_STATUSES } from "../../../setting";
+import { HTTP_STATUSES } from "../../../setting/setting.path.name";
 import { CodStatus} from "../../../types/types";
 import { Request, Response } from "express";
 import { DeviceViewType } from "../types";

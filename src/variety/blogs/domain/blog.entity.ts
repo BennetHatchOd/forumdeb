@@ -1,6 +1,5 @@
 import mongoose, { HydratedDocument, Model, model } from "mongoose";
-import * as SETTING from "../../../setting"
-
+import { BLOG_COLLECTION_NAME } from "../../../setting/setting.path.name";
 
 export type BlogType = {
     name:   string,
@@ -21,4 +20,4 @@ const blogSchema = new mongoose.Schema<BlogType>({
     isMembership:	{ type: Boolean, required: true },
   });
   
-  export const BlogModel = model<BlogType, BlogModel>(SETTING.BLOG_COLLECTION_NAME, blogSchema);
+  export const BlogModel = model<BlogType, BlogModel>(BLOG_COLLECTION_NAME, blogSchema);

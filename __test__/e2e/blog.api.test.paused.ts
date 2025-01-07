@@ -4,7 +4,7 @@ import { BlogEndPoint } from "./classes/blogClass";
 import { PostEndPoint } from "./classes/postClass";
 import { initialize } from "./common/initialize";
 import mongoose from "mongoose";
-import { mongoURI } from "../../src/setting";
+import { mongoURI } from "../../src/setting/setting";
 
 describe('/blogs', () => {
     

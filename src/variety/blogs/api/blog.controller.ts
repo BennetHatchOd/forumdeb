@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import {HTTP_STATUSES} from '../../../setting';
+import {HTTP_STATUSES} from '../../../setting/setting.path.name';
 import { paginator } from "../../../utility/paginator"; 
 import { CodStatus, PaginatorType, QueryType, StatusResult } from "../../../types/types";
 import { BlogInputType, BlogViewType } from "../types";

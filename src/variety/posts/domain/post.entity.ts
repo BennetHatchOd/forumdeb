@@ -1,5 +1,5 @@
 import mongoose, { HydratedDocument, Model, model } from "mongoose";
-import * as SETTING from "../../../setting"
+import { POST_COLLECTION_NAME } from "../../../setting/setting.path.name";
 
 export type PostType = {
   title:	string,
@@ -24,4 +24,4 @@ const postSchema = new mongoose.Schema<PostType>({
 
 
 
-  export const PostModel = model<PostType, PostModel>(SETTING.POST_COLLECTION_NAME, postSchema);
+  export const PostModel = model<PostType, PostModel>(POST_COLLECTION_NAME, postSchema);

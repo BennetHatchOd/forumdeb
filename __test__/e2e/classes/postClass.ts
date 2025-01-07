@@ -1,4 +1,4 @@
-import {HTTP_STATUSES, URL_PATH} from '../../../src/setting'
+import {HTTP_STATUSES, URL_PATH} from '../../../src/setting/setting'
 import { app } from "../../../src/app";
 import request from "supertest";
 import { SortDirection } from 'mongodb';
