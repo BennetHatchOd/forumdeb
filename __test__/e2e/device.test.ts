@@ -4,10 +4,10 @@ import {MongoMemoryServer} from 'mongodb-memory-server'
 import {MongoClient} from 'mongodb'
 import { testSeeder } from "./common/test.seeder";
 import { UserInputType } from "../../src/variety/users/types";
-import { AUTH_PATH, HTTP_STATUSES, mongoURI, URL_PATH } from "../../src/setting";
 import { AuthPassword } from "./common/test.setting";
 import { compareArr } from "./common/helper";
 import mongoose from "mongoose";
+import { AUTH_PATH, HTTP_STATUSES, mongoURI, URL_PATH } from "../../src/setting/setting.path.name";
 
 describe('/device', () => {
     
@@ -129,7 +129,6 @@ describe('/device', () => {
     })
 
     it("user2 terminate device session of user2", async() => {
-        console.log("deviceId in test", deviceId, `${URL_PATH.devices}/${deviceId}`)
         await request(app).delete(`${URL_PATH.devices}/${deviceId}`)
                     .set("Cookie", 'refreshToken='+ refreshToken) 
                     .expect(HTTP_STATUSES.NO_CONTENT_204);

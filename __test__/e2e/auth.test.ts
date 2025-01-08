@@ -3,9 +3,10 @@ import mongoose from 'mongoose'
 import { app } from "../../src/app";
 import { testSeeder } from "./common/test.seeder";
 import { UserInputType } from "../../src/variety/users/types";
-import { AUTH_PATH, HTTP_STATUSES, mongoURI, TIME_LIFE_ACCESS_TOKEN, URL_PATH } from "../../src/setting";
 import { authRepository, mailManager, userRepository } from "../../src/instances";
 import { CodStatus } from "../../src/types/types";
+import { AUTH_PATH, HTTP_STATUSES, mongoURI, URL_PATH } from "../../src/setting/setting.path.name";
+import { TIME_LIFE_ACCESS_TOKEN } from "../../src/setting/setting";
 
 describe('/auth', () => {
     

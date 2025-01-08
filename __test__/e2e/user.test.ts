@@ -2,9 +2,9 @@ import request from "supertest";
 import { app } from "../../src/app";
 import { testSeeder } from "./common/test.seeder";
 import { UserInputType } from "../../src/variety/users/types";
-import { HTTP_STATUSES, mongoURI, URL_PATH } from "../../src/setting";
 import { AuthPassword } from "./common/test.setting";
 import mongoose from "mongoose";
+import { HTTP_STATUSES, mongoURI, URL_PATH } from "../../src/setting/setting.path.name";
 
 describe('/user', () => {
     
