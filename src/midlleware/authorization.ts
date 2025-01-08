@@ -1,7 +1,8 @@
 import { Response, Request, NextFunction } from "express";
-import { HTTP_STATUSES, PASSCODE_ADMIN, SECRET_KEY } from "../setting";
+import { HTTP_STATUSES} from "../setting/setting.path.name";
+import { PASSCODE_ADMIN} from "../setting/setting";
 import { CodStatus, IdType } from "../types/types";
-import { authService, deviceQueryRepository, jwtAdapter } from "../instances";
+import { authService, jwtAdapter } from "../instances";
 
 export const authAdminByPassword = (req: Request<any, any, any, any>, res: Response, next: NextFunction) =>{
 

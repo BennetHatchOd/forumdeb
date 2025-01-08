@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from "express";
-import { HTTP_STATUSES } from "../setting";
+import { HTTP_STATUSES } from "../setting/setting.path.name";
 import { authService } from "../instances";
 
 export const rateLimiting = async(req: Request<any, any, any, any>, res: Response, next: NextFunction) =>{

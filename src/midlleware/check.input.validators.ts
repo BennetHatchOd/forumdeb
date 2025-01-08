@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from "express";
 import {FieldValidationError, validationResult} from 'express-validator';
-import { HTTP_STATUSES } from "../setting";
+import { HTTP_STATUSES } from "../setting/setting.path.name";
 
 export const checkInputValidation = (req: Request<any, any, any, any>, res: Response, next: NextFunction) =>{
      
