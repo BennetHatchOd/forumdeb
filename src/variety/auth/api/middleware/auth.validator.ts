@@ -25,17 +25,46 @@ export const emailValidator = body('email').custom(async(value) => {
     }
 })
 
-export const codeValidator = body('code').custom(async(value) => {
+// export const codeValidator = body('code').custom(async(value) => {
+//     if(!codeTemplate.test(value)){
+//         throw('code has incorrect values')
+//     }
+// })
+
+// export const recoveryCodeValidator = body('recoveryCode').custom(async(value) => {
+//     if(!codeTemplate.test(value)){
+//         throw('code has incorrect values')
+//     }
+// })
+export const codeFieldValidator = (field: string)=>{return body(field).custom((value) => {
     if(!codeTemplate.test(value)){
-        throw('code has incorrect values')
+        throw new Error(`${field} has incorrect values`)
     }
-})
+return true})
+}
 
-export const passwordValidator = body('password').trim() 
-                                                       .isLength({min: 6, max: 20})
-                                                       .withMessage("password has incorrect length")
+export const codeValidator = codeFieldValidator('code')
 
+export const recoveryCodeValidator = codeFieldValidator('recoveryCode')
 
+export const passwordFieldValidator = (field: string)=>{return body(field).trim() 
+                                                        .isLength({min: 6, max: 20})
+                                                        .withMessage(`${field} has incorrect length`)
+                                                    }
+
+export const passwordValidator = passwordFieldValidator('password')
+
+export const newPasswordValidator = passwordFieldValidator('newPassword')
+
+// export const passwordValidator = body('password').trim() 
+//                                                         .isLength({min: 6, max: 20})
+//                                                         .withMessage("password has incorrect length")
+ 
+//  export const newPasswordValidator = body('newPassword').trim() 
+//                                                          .isLength({min: 6, max: 20})
+//                                                          .withMessage("password has incorrect length")
+                                                     
+                                                    
 export const authValidator = [
         loginValidator,
         emailValidator,
@@ -45,4 +74,9 @@ export const authValidator = [
 export const authSplitValidator = [
     loginEmailValidator,
     passwordValidator,
+]
+
+export const newPassValidator = [
+    recoveryCodeValidator,
+    newPasswordValidator,
 ]

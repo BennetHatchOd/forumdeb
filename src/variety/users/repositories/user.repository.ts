@@ -21,6 +21,16 @@ export class UserRepository {
                 : {codResult: CodStatus.NotFound};
     }
  
+    async findIdByEmail(email: string): Promise<StatusResult<string|undefined>>{     
+
+        const user: UserDocument|null = await UserModel.findOne({email: email})           
+        
+        if(user)
+            return {codResult: CodStatus.Ok, data: user._id.toString()} 
+        
+        return {codResult: CodStatus.NotFound};
+    }
+
     async checkUniq(loginCheck: string, emailCheck: string): Promise<StatusResult<string[]|undefined>> {
         
         const existEmail = await UserModel.countDocuments({ email: emailCheck })
@@ -69,6 +79,18 @@ export class UserRepository {
         return {codResult: CodStatus.Created, data: savedUser._id.toString()}
     }
     
+    async editPassword(userId: string, hash: string): Promise <StatusResult>{  
+        
+        const user = await UserModel.findOne({_id: new ObjectId(userId)})
+
+        if(!user)
+            throw 'user not found'
+
+        user.password = hash
+        await user.save()
+        return {codResult: CodStatus.Ok}
+    }
+
     async delete(id: string):  Promise <StatusResult>{      
         const answerDelete: DeleteResult = await UserModel.deleteOne({_id: new ObjectId(id)})
 

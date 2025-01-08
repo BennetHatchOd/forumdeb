@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AboutUser, AuthorizationType, LoginInputType, Tokens } from "../types";
 import { APIErrorResult, CodStatus, StatusResult } from "../../../types/types";
-import { HTTP_STATUSES } from "../../../setting";
+import { HTTP_STATUSES } from "../../../setting/setting.path.name";
 import { UserInputType } from "../../users/types";
 import { AuthService } from "../application/auth.service";
 
@@ -35,6 +35,18 @@ export class AuthControllers{
             res.sendStatus(HTTP_STATUSES.ERROR_500)
         }
     }
+    
+    async logOut(req: Request, res:Response){
+        try{  
+ 
+            const answerLogOut = await this.authService.logOut(req.payload!)
+            res.status(answerLogOut.codResult).send({})
+        }          
+        catch(err){
+            console.log(err)
+            res.sendStatus(HTTP_STATUSES.ERROR_500)
+        }
+    }
 
     async updateRefrashToken(req: Request, res:Response){
         try{    
@@ -52,19 +64,23 @@ export class AuthControllers{
             res.sendStatus(HTTP_STATUSES.ERROR_500)
         }       
     }
-
-    async logOut(req: Request, res:Response){
-        try{  
- 
-            const answerLogOut = await this.authService.logOut(req.payload!)
-            res.status(answerLogOut.codResult).send({})
-        }          
+    
+    async registration(req: Request<{},{},UserInputType>, res: Response){
+        try{
+            const inputUserData: UserInputType ={
+                login: req.body.login,
+                email: req.body.email,
+                password: req.body.password
+           }             
+           const registrAnswer: StatusResult<undefined|APIErrorResult> = await this.authService.registrationUser(inputUserData)
+           res.status(registrAnswer.codResult).json(registrAnswer.data)
+        }
         catch(err){
             console.log(err)
             res.sendStatus(HTTP_STATUSES.ERROR_500)
         }
     }
-
+    
     async confirmation(req: Request<{},{code:string}>, res: Response){
         try{
             const answer: StatusResult<APIErrorResult|undefined> = await this.authService.confirmationUser(req.body.code)
@@ -73,22 +89,6 @@ export class AuthControllers{
                 return;
             }          
             res.status(answer.codResult).json(answer.data) 
-        }
-        catch(err){
-            console.log(err)
-            res.sendStatus(HTTP_STATUSES.ERROR_500)
-        }
-    }
-
-    async registration(req: Request<{},{},UserInputType>, res: Response){
-        try{
-           const inputUserData: UserInputType ={
-             login: req.body.login,
-             email: req.body.email,
-             password: req.body.password
-           }             
-           const registrAnswer: StatusResult<undefined|APIErrorResult> = await this.authService.registrationUser(inputUserData)
-           res.status(registrAnswer.codResult).json(registrAnswer.data)
         }
         catch(err){
             console.log(err)
@@ -106,6 +106,28 @@ export class AuthControllers{
             res.sendStatus(HTTP_STATUSES.ERROR_500)
         }
     }
+
+    async askNewPassword(req: Request<{},{email:string}>, res: Response){
+        try{
+            await this.authService.askNewPassword(req.body.email)
+            res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+        }catch(err){
+            console.log(err)
+            res.sendStatus(HTTP_STATUSES.ERROR_500)
+        }
+
+    }
+    async resentPassword(req: Request<{},{newPassword: string, recoveryCode: string}>, res: Response){
+        try{
+            const newPassResult: StatusResult = await this.authService.setNewPassword(req.body.newPassword, req.body.recoveryCode)
+            res.sendStatus(newPassResult.codResult)
+        }catch(err){
+            console.log(err)
+            res.sendStatus(HTTP_STATUSES.ERROR_500)
+        }
+
+    }
+
 
     async getMe(req: Request, res: Response){
         try{

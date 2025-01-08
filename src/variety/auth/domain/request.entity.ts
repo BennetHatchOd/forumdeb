@@ -1,7 +1,5 @@
 import mongoose, { HydratedDocument, Model, model } from "mongoose";
-import * as SETTING from "../../../setting"
-
-
+import { REQUEST_COLLECTION_NAME } from "../../../setting/setting.path.name";
 
 export type RequestAPIType = {
     ip:     string, 
@@ -18,4 +16,4 @@ const requestSchema = new mongoose.Schema<RequestAPIType>({
     date:	{ type: Date, required: true }
   });
   
-  export const RequestModel = model<RequestAPIType, RequestModel>(SETTING.REQUEST_COLLECTION_NAME, requestSchema);
+  export const RequestModel = model<RequestAPIType, RequestModel>(REQUEST_COLLECTION_NAME, requestSchema);

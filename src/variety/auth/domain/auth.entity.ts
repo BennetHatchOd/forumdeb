@@ -1,6 +1,6 @@
 import mongoose, { HydratedDocument, Model, model } from "mongoose";
-import * as SETTING from "../../../setting"
 import { userSchema, UserType } from "../../users/domain/user.entity";
+import { USER_UNCONFIRMED_COLLECTION_NAME } from "../../../setting/setting.path.name";
 
 type confirmEmailType = {
     code: string,
@@ -27,4 +27,4 @@ const authSchema = new mongoose.Schema<AuthUserType>({
     confirmEmail:	{ type: confirmEmailSchema, required: true },
  });
   
-  export const AuthModel = model<AuthUserType, AuthModel>(SETTING.USER_UNCONFIRMED_COLLECTION_NAME, authSchema);
+export const AuthModel = model<AuthUserType, AuthModel>(USER_UNCONFIRMED_COLLECTION_NAME, authSchema);

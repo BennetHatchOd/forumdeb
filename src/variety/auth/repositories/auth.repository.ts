@@ -4,6 +4,7 @@ import { AuthDocument, AuthModel, AuthUserType } from "../domain/auth.entity";
 import { ConfirmEmailType, UserPasswordType, UserUnconfirmedType } from "../../users/types";
 import { UserDocument } from "../../users/domain/user.entity";
 import { RequestModel } from "../domain/request.entity";
+import { NewPasswordDocument, NewPasswordModel, newPasswordType } from "../domain/newPassword.entity";
 
 export class AuthRepository {
   
@@ -55,7 +56,7 @@ export class AuthRepository {
             : -1
     }
     
-    async updateCode(mail: string, confirmEmail: ConfirmEmailType):  Promise <StatusResult>{    
+    async updateEmailCode(mail: string, confirmEmail: ConfirmEmailType):  Promise <StatusResult>{    
     
         const update: AuthDocument | null = await AuthModel.findOne({'user.email': mail})
         
@@ -77,23 +78,31 @@ export class AuthRepository {
         return await RequestModel.countDocuments({ip: ip, url: url, date: {$gte: dateFrom}})
     }
 
+    async createPasswordCode(passwordCode: newPasswordType): Promise<StatusResult> {      
 
-    // async checkUserByLoginEmail(login: string, email: string): Promise<StatusResult<UserPasswordType|UserUnconfirmedType|undefined>> {      
+        let user: NewPasswordDocument|null = await NewPasswordModel.findOne({userId: passwordCode.userId})
+        if(!user)
+            user = new NewPasswordModel(passwordCode)
+        else{
+            user.code = passwordCode.code
+            user.expirationTime = passwordCode.expirationTime
+        }
+        await user.save()
 
-    //     const checkUser: WithId<UserDBType>|null 
-    //         = await userCollection.findOne({$or: [{login: login},{email: email}]})           
-    //     const checkUncorfirmUser: WithId<UserUnconfirmedDBType>|null 
-    //         = await authUserCollection.findOne({$or: [{'user.login': login},{'user.email': email}]})           
-        
-    //     if (!checkUser) 
-    //         if (!checkUncorfirmUser)
-    //             return {codResult: CodStatus.NotFound}
-    //         else{
-    //             return {codResult: CodStatus.Ok, message: 'auth', data: this.mapAuthDBToFull(checkUncorfirmUser)}
-    //         }
-        
-    //         return {codResult: CodStatus.Ok, message: 'user', data: this.mapUserDBToFull(checkUser)}    
-    // },
+        return {codResult: CodStatus.Ok}    
+    }
+
+    async findPasswordRecovery(recoveryCode: string): Promise<StatusResult<{userId: string, expirationTime: Date}|undefined>>{
+        const user: NewPasswordDocument|null = await NewPasswordModel.findOne({code: recoveryCode})
+        if(user)
+            return{codResult: CodStatus.Ok ,data: {userId: user.userId, expirationTime: user.expirationTime}}
+
+        return {codResult: CodStatus.NotFound}
+    }
+
+    async deletePasswordRecovery(userId: string){
+        await NewPasswordModel.deleteOne({userId: userId})
+    }
 
     async clear(): Promise <StatusResult> {
         await AuthModel.deleteMany()

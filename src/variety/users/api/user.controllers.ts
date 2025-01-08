@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { paginator } from "../../../utility/paginator"
-import { HTTP_STATUSES } from "../../../setting"
+import { HTTP_STATUSES } from "../../../setting/setting.path.name"
 import { APIErrorResult, CodStatus, PaginatorType, QueryType, StatusResult} from "../../../types/types"
 import { UserQueryRepository} from "../repositories/user.query.repository"
 import { UserService } from "../application/user.service"

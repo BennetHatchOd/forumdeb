@@ -1,16 +1,17 @@
 //import { CodStatus, StatusResult } from "../../../types/interfaces";
-import { passwordHashAdapter } from "../../../adapters/password.hash.adapter";
 import { APIErrorResult, CodStatus, FieldError, StatusResult} from "../../../types/types";
 import { UserRepository } from "../repositories/user.repository"; 
 import { UserInputType } from "../types";
 import { UserModel, UserType } from "../domain/user.entity";
 import { AuthRepository } from "../../auth/repositories/auth.repository";
+import { PasswordHashAdapter } from "../../../adapters/password.hash.adapter";
 
 export class UserService {
    
     constructor(private userRepository: UserRepository,
-                private authRepository: AuthRepository){ 
-    }
+                private authRepository: AuthRepository, 
+                private passwordHashAdapter: PasswordHashAdapter){ 
+            }
 
     async create(createItem: UserInputType): Promise<StatusResult<string|APIErrorResult>>{     
         //  returns CodResult with: id-string of the created object, 
@@ -20,7 +21,7 @@ export class UserService {
         if(isUniq.codResult == CodStatus.BadRequest)
             return isUniq as StatusResult<APIErrorResult>;
         
-        const hash: string = await passwordHashAdapter.createHash(createItem.password)
+        const hash: string = await this.passwordHashAdapter.createHash(createItem.password)
         const newUser: UserType = {
                                 login: createItem.login,
                                 email: createItem.email,

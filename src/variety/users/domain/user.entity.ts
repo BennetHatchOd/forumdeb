@@ -1,5 +1,5 @@
 import mongoose, { HydratedDocument, Model, model } from "mongoose";
-import * as SETTING from "../../../setting"
+import { USER_COLLECTION_NAME } from "../../../setting/setting.path.name";
 
 export type UserType = {
     login:	string,
@@ -18,4 +18,4 @@ export const userSchema = new mongoose.Schema<UserType>({
     createdAt:	{ type: Date, required: true },
   });
   
-  export const UserModel = model<UserType, UserModel>(SETTING.USER_COLLECTION_NAME, userSchema);
+  export const UserModel = model<UserType, UserModel>(USER_COLLECTION_NAME, userSchema);
