@@ -41,7 +41,7 @@ export const AUTH_PATH = {
     registration:    '/registration',
     confirm:         '/registration-confirmation',
     resent:          '/registration-email-resending',
-    askNewPassword:     '/password-recovery',    
+    askNewPassword:   '/password-recovery',    
     resentPassword:  '/new-password',
     refresh:         '/refresh-token',
     me:              '/me'

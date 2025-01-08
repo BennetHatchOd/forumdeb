@@ -1,5 +1,6 @@
 import { JwtAdapter } from "./adapters/jwt.adapter"
 import { MailAdapter } from "./adapters/mail.adapter"
+import { PasswordHashAdapter } from "./adapters/password.hash.adapter"
 import { MailManager } from "./utility/mail.manager"
 import { AuthControllers } from "./variety/auth/api/auth.controller"
 import { AuthService } from "./variety/auth/application/auth.service"
@@ -25,6 +26,7 @@ import { UserService } from "./variety/users/application/user.service"
 import { UserQueryRepository } from "./variety/users/repositories/user.query.repository"
 import { UserRepository } from "./variety/users/repositories/user.repository"
 
+export const passwordHashAdapter= new PasswordHashAdapter()
 export const jwtAdapter = new JwtAdapter()
 export const mailAdapter = new MailAdapter()
 export const mailManager = new MailManager(mailAdapter)
@@ -43,10 +45,11 @@ export const commentQueryRepository = new CommentQueryRepository()
 export const deviceQueryRepository = new DeviceQueryRepository()
 export const postQueryRepository = new PostQueryRepository()
 
-export const userService = new UserService(userRepository, authRepository)
+export const userService = new UserService(userRepository, authRepository, passwordHashAdapter)
 export const deviceService = new DeviceService(deviceRepository)
 export const authService = new AuthService(userRepository, deviceService, authRepository, 
-                                           jwtAdapter, userService, deviceRepository, mailManager)
+                                           jwtAdapter, userService, deviceRepository, mailManager,
+                                           passwordHashAdapter)
 export const blogService = new BlogService(blogRepository)
 export const commentService = new CommentService(postRepository, userQueryRepository, commentRepository)
 export const postService = new PostService(postRepository, blogRepository)
