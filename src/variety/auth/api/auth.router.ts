@@ -15,9 +15,8 @@ authRouter.post(AUTH_PATH.registration, rateLimiting, authValidator, checkInputV
 authRouter.post(AUTH_PATH.confirm, rateLimiting, codeValidator, checkInputValidation, authControllers.confirmation.bind(authControllers))
 authRouter.post(AUTH_PATH.resent, rateLimiting, emailValidator, checkInputValidation, authControllers.reSendMail.bind(authControllers))
 
-//authRouter.post(AUTH_PATH.askNewPassword, authControllers.askNewPassword.bind(authControllers))
- authRouter.post(AUTH_PATH.askNewPassword, rateLimiting, emailValidator, checkInputValidation, authControllers.askNewPassword.bind(authControllers))
-authRouter.post(AUTH_PATH.resentPassword, rateLimiting, codeValidator, newPassValidator, checkInputValidation, authControllers.resentPassword.bind(authControllers))
+authRouter.post(AUTH_PATH.askNewPassword, rateLimiting, emailValidator, checkInputValidation, authControllers.askNewPassword.bind(authControllers))
+authRouter.post(AUTH_PATH.resentPassword, rateLimiting, newPassValidator, checkInputValidation, authControllers.resentPassword.bind(authControllers))
 
 authRouter.post(AUTH_PATH.refresh, authUserByRefreshT, authControllers.updateRefrashToken.bind(authControllers))
 authRouter.get(AUTH_PATH.me, authUserByAccessT, authControllers.getMe.bind(authControllers))

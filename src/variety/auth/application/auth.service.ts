@@ -179,10 +179,12 @@ export class AuthService {
     }  
 
     async askNewPassword(mail: string): Promise<StatusResult>{
+
         let existEmail: StatusResult<string|undefined> = await this.userRepository.findIdByEmail(mail)
         if(existEmail.codResult == CodStatus.NotFound)
             return {codResult: CodStatus.NoContent}
         
+
         const passwordCode: newPasswordType = {
             code: uuidv4(),
             expirationTime: add(new Date(), { hours: TIME_LIFE_PASSWORD_CODE}),

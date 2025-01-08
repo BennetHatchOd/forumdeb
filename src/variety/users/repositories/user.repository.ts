@@ -22,7 +22,7 @@ export class UserRepository {
     }
  
     async findIdByEmail(email: string): Promise<StatusResult<string|undefined>>{     
-
+    // sent CodStatus.Ok | CodStatus.NotFound    
         const user: UserDocument|null = await UserModel.findOne({email: email})           
         
         if(user)
