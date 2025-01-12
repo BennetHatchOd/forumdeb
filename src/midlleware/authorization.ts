@@ -24,17 +24,36 @@ export const authAdminByPassword = (req: Request<any, any, any, any>, res: Respo
 
 export const authUserByAccessT = (req: Request<any, any, any, any>, res: Response, next: NextFunction) =>{
 
-    const authheader = req.headers.authorization
+    const userId = findUserByAccessT(req.headers.authorization)
+    
+    if(userId){
+        req.user = userId;
+        next();
+        return
+        }
+    res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401);
+}
+
+export const throughAccessToken = (req: Request<any, any, any, any>, res: Response, next: NextFunction) =>{
+
+    const userId = findUserByAccessT(req.headers.authorization)
+    
+    if(userId)
+        req.user = userId;
+    next();
+}
+
+
+const findUserByAccessT = (authheader: string|undefined): IdType|null =>{
+
     if(authheader && authheader.split(' ')[0] == 'Bearer'){
         const token = authheader.split(' ')[1]
         const userId = jwtAdapter.calcPayloadAT(token)
         if(userId){
-            req.user = {id: userId} as IdType;
-            next();
-            return
+            return {id: userId} as IdType;
         }
     }
-    res.sendStatus(HTTP_STATUSES.NO_AUTHOR_401);
+    return null
 }
 
 export const authUserByRefreshT = async(req: Request<any, any, any, any>, res: Response, next: NextFunction) =>{
