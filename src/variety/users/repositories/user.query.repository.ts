@@ -67,14 +67,14 @@ export class UserQueryRepository {
         // const searchItem: UserDocument[]   
         //     = await UserModel.aggregate(findPipeline) 
 
-        let queryFilter = {$match: {}}
+        let queryFilter = {}
         if(queryReq.searchLoginTerm || queryReq.searchEmailTerm){
-            queryFilter = {$match:{
+            queryFilter = {
                 $or: [
                     ...(queryReq.searchLoginTerm ? [{ login: { $regex: queryReq.searchLoginTerm, $options: 'i' } }] : []),
                     ...(queryReq.searchEmailTerm ? [{ email: { $regex: queryReq.searchEmailTerm, $options: 'i' } }] : [])
                 ]
-            }}        
+            }
         }
         const totalCount: number= await UserModel.countDocuments(queryFilter) 
 
