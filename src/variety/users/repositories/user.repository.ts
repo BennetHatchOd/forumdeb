@@ -37,6 +37,7 @@ export class UserRepository {
         const existEmail = await UserModel.countDocuments({ email: emailCheck })
         const existLogin = await UserModel.countDocuments({ login: loginCheck })
 
+
         let arrayErrors: Array<string> = [] 
         if(existEmail > 0) 
             arrayErrors.push('email') 

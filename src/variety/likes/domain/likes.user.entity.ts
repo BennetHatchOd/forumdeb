@@ -15,8 +15,8 @@ export type MyCommentRatingType = {
   }
 
 export const myCommentRatingSchema = new mongoose.Schema<MyCommentRatingType>({
-    likes:      {type: [likesSchema], default: []},
-    dislikes:   {type: [likesSchema], default: []}
+    likes:      {type: [likesSchema], required: true},
+    dislikes:   {type: [likesSchema], required: true}
 })
 
 myCommentRatingSchema.methods.hasLikes = function(comment: ObjectId): boolean{

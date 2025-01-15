@@ -23,7 +23,7 @@ export const userSchema = new mongoose.Schema<UserType>({
     createdAt:	{ type: Date, required: true },
     isConfirmEmail:  {type: Boolean, default: false},
     confirmEmail:  {type: confirmEmailSchema, required: true},
-    myCommentRating: {type: myCommentRatingSchema, required: true}
+    myCommentRating: {type: myCommentRatingSchema, default: () => ({ likes: [], dislikes: [] }) }
   });
   
   export const UserModel = model<UserType, UserModel>(USER_COLLECTION_NAME, userSchema);
