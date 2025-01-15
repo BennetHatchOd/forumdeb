@@ -29,7 +29,7 @@ export class UserService {
                                 createdAt: new Date(),
                                 isConfirmEmail: true,
                                 confirmEmail: {
-                                    code: "",
+                                    code: "0",
                                     expirationTime: new Date(),
                                     countSendingCode: 0
                                 }

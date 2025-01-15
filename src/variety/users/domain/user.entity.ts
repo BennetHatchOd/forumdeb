@@ -22,7 +22,7 @@ export const userSchema = new mongoose.Schema<UserType>({
     password:   { type: String, required: true },
     createdAt:	{ type: Date, required: true },
     isConfirmEmail:  {type: Boolean, default: false},
-    confirmEmail:  {type: confirmEmailSchema, required: true},
+    confirmEmail:  {type: confirmEmailSchema},
     myCommentRating: {type: myCommentRatingSchema, default: () => ({ likes: [], dislikes: [] }) }
   });
   
