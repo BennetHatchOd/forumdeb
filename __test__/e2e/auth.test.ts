@@ -97,110 +97,110 @@ describe('/auth', () => {
 
     })
     
-//     it('User login with a bad password', async() => {
+    it('User login with a bad password', async() => {
         
-//         const loginData = await request(app).post(`${URL_PATH.auth}${AUTH_PATH.login}`)
-//                     .send({
-//                           "loginOrEmail": user.email,
-//                           "password": 'hgthjkg9'
-//                         })
-//                     .expect(HTTP_STATUSES.NO_AUTHOR_401);
-//         expect(loginData.body.accessToken).toBeUndefined
-//         expect(loginData.headers['set-cookie']).toBeUndefined
+        const loginData = await request(app).post(`${URL_PATH.auth}${AUTH_PATH.login}`)
+                    .send({
+                          "loginOrEmail": user.email,
+                          "password": 'hgthjkg9'
+                        })
+                    .expect(HTTP_STATUSES.NO_AUTHOR_401);
+        expect(loginData.body.accessToken).toBeUndefined
+        expect(loginData.headers['set-cookie']).toBeUndefined
     
-//     })
+    })
 
-//     it('User login', async() => {
+    it('User login', async() => {
         
-//         const loginData = await request(app).post(`${URL_PATH.auth}${AUTH_PATH.login}`)
-//  //                   .set("Authorization", AuthPassword)
-//                     .send({
-//                           "loginOrEmail": user.email,
-//                           "password": user.password
-//                         })
-//                     .expect(HTTP_STATUSES.OK_200);
-//         accessToken = loginData.body.accessToken
-//         const cookies = loginData.headers['set-cookie'][0].split('')
-//         refreshToken = cookies.slice(cookies.indexOf('=') + 1,cookies.indexOf(';')).join('')
-// //        console.log('aT = ', accessToken, '\n rt = ', refreshToken)
-//     })
+        const loginData = await request(app).post(`${URL_PATH.auth}${AUTH_PATH.login}`)
+ //                   .set("Authorization", AuthPassword)
+                    .send({
+                          "loginOrEmail": user.email,
+                          "password": user.password
+                        })
+                    .expect(HTTP_STATUSES.OK_200);
+        accessToken = loginData.body.accessToken
+        const cookies = loginData.headers['set-cookie'][0].split('')
+        refreshToken = cookies.slice(cookies.indexOf('=') + 1,cookies.indexOf(';')).join('')
+//        console.log('aT = ', accessToken, '\n rt = ', refreshToken)
+    })
 
-//     it('User asking about him with a wrong accessToken', async() => {
+    it('User asking about him with a wrong accessToken', async() => {
         
-//         const loginData = await request(app).get(`${URL_PATH.auth}${AUTH_PATH.me}`)
-//                     .set("Authorization", 'Bearer ' + 'gfd54')
-//                     .expect(HTTP_STATUSES.NO_AUTHOR_401);
+        const loginData = await request(app).get(`${URL_PATH.auth}${AUTH_PATH.me}`)
+                    .set("Authorization", 'Bearer ' + 'gfd54')
+                    .expect(HTTP_STATUSES.NO_AUTHOR_401);
 
-//     })
+    })
 
-//     it('User asking about him', async() => {
+    it('User asking about him', async() => {
         
-//         const loginData = await request(app).get(`${URL_PATH.auth}${AUTH_PATH.me}`)
-//                     .set("Authorization", 'Bearer ' + accessToken)
-//                     .expect(HTTP_STATUSES.OK_200);
-//         expect(loginData.body).toEqual(
-//             {
-//               "email": user.email,
-//               "login": user.login,
-//               "userId": expect.any(String)
-//             })
-//     })
+        const loginData = await request(app).get(`${URL_PATH.auth}${AUTH_PATH.me}`)
+                    .set("Authorization", 'Bearer ' + accessToken)
+                    .expect(HTTP_STATUSES.OK_200);
+        expect(loginData.body).toEqual(
+            {
+              "email": user.email,
+              "login": user.login,
+              "userId": expect.any(String)
+            })
+    })
 
-//     it('User asking about him with an expired accessToken', async() => {
-//         await new Promise((resolve) => {
-//             setTimeout(resolve, TIME_LIFE_ACCESS_TOKEN * 1000 + 30)})
+    it('User asking about him with an expired accessToken', async() => {
+        await new Promise((resolve) => {
+            setTimeout(resolve, TIME_LIFE_ACCESS_TOKEN * 1000 + 30)})
 
-//         await request(app).get(`${URL_PATH.auth}${AUTH_PATH.me}`)
-//                     .set("Authorization", 'Bearer ' + accessToken)
-//                     .expect(HTTP_STATUSES.NO_AUTHOR_401);
-//     })
+        await request(app).get(`${URL_PATH.auth}${AUTH_PATH.me}`)
+                    .set("Authorization", 'Bearer ' + accessToken)
+                    .expect(HTTP_STATUSES.NO_AUTHOR_401);
+    })
 
-//     it('update refrashToken', async() => {
+    it('update refrashToken', async() => {
         
-//         const loginData = await request(app).post(`${URL_PATH.auth}${AUTH_PATH.refresh}`)
-//                     .set("Cookie", 'refreshToken='+ refreshToken)
-//                     .expect(HTTP_STATUSES.OK_200);
-//         accessToken = loginData.body.accessToken
-//         const cookies = loginData.headers['set-cookie'][0].split('')
-//         refreshToken = cookies.slice(cookies.indexOf('=') + 1,cookies.indexOf(';')).join('')
-//     })
+        const loginData = await request(app).post(`${URL_PATH.auth}${AUTH_PATH.refresh}`)
+                    .set("Cookie", 'refreshToken='+ refreshToken)
+                    .expect(HTTP_STATUSES.OK_200);
+        accessToken = loginData.body.accessToken
+        const cookies = loginData.headers['set-cookie'][0].split('')
+        refreshToken = cookies.slice(cookies.indexOf('=') + 1,cookies.indexOf(';')).join('')
+    })
 
-//     it('logout', async() => {
+    it('logout', async() => {
         
-//         const loginData = await request(app).post(`${URL_PATH.auth}${AUTH_PATH.logout}`)
-//                     .set("Cookie", 'refreshToken='+ refreshToken)
-//                     .expect(HTTP_STATUSES.NO_CONTENT_204);
-//         expect(loginData.body.accessToken).toBeUndefined
-//         expect(loginData.headers['set-cookie']).toBeUndefined
-//     })
+        const loginData = await request(app).post(`${URL_PATH.auth}${AUTH_PATH.logout}`)
+                    .set("Cookie", 'refreshToken='+ refreshToken)
+                    .expect(HTTP_STATUSES.NO_CONTENT_204);
+        expect(loginData.body.accessToken).toBeUndefined
+        expect(loginData.headers['set-cookie']).toBeUndefined
+    })
     
-//     it('update refrashToken after logout', async() => {
+    it('update refrashToken after logout', async() => {
         
-//         const loginData = await request(app).post(`${URL_PATH.auth}${AUTH_PATH.refresh}`)
-//                     .set("Cookie", 'refreshToken='+ refreshToken)
-//                     .expect(HTTP_STATUSES.NO_AUTHOR_401);
-//         expect(loginData.body.accessToken).toBeUndefined
-//         expect(loginData.headers['set-cookie']).toBeUndefined
-//     })
+        const loginData = await request(app).post(`${URL_PATH.auth}${AUTH_PATH.refresh}`)
+                    .set("Cookie", 'refreshToken='+ refreshToken)
+                    .expect(HTTP_STATUSES.NO_AUTHOR_401);
+        expect(loginData.body.accessToken).toBeUndefined
+        expect(loginData.headers['set-cookie']).toBeUndefined
+    })
 
-//     it('User registration with burst attack', async() => {
+    it('User registration with burst attack', async() => {
             
-//         const users = testSeeder.createManyGoodUsers(6)
+        const users = testSeeder.createManyGoodUsers(6)
         
-//         await new Promise((resolve) => {
-//             setTimeout(resolve, 10500)})
+        await new Promise((resolve) => {
+            setTimeout(resolve, 10500)})
 
-//         for(let i = 0; i <= 4; i++ ){
-//             await request(app).post(`${URL_PATH.auth}${AUTH_PATH.registration}`)
-//                             .send(users[i])
-//                             .expect(HTTP_STATUSES.NO_CONTENT_204);
+        for(let i = 0; i <= 4; i++ ){
+            await request(app).post(`${URL_PATH.auth}${AUTH_PATH.registration}`)
+                            .send(users[i])
+                            .expect(HTTP_STATUSES.NO_CONTENT_204);
 
-//         }
+        }
                       
-//         await request(app).post(`${URL_PATH.auth}${AUTH_PATH.registration}`)
-//                         .send(users[5])
-//                         .expect(HTTP_STATUSES.TOO_MANY_REQUESTS_429);
+        await request(app).post(`${URL_PATH.auth}${AUTH_PATH.registration}`)
+                        .send(users[5])
+                        .expect(HTTP_STATUSES.TOO_MANY_REQUESTS_429);
                         
-//   })
+  })
 
 })
