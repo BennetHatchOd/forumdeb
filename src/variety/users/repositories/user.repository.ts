@@ -23,7 +23,8 @@ export class UserRepository {
  
     async findIdByEmail(email: string): Promise<StatusResult<string|undefined>>{     
     // sent CodStatus.Ok | CodStatus.NotFound    
-        const user: UserDocument|null = await UserModel.findOne({email: email})           
+        const user: UserDocument|null = await UserModel.findOne({email:         email, 
+                                                                isConfirmEmail: true })           
         
         if(user)
             return {codResult: CodStatus.Ok, data: user._id.toString()} 
@@ -49,7 +50,12 @@ export class UserRepository {
    
     async getPartUserByLoginEmail(loginOrEmail: string): Promise<StatusResult<{id:string, passHash:string}|undefined>> {      
 
-        const checkedUser: UserDocument|null = await UserModel.findOne({$or: [{login: loginOrEmail},{email: loginOrEmail}]})           
+        const checkedUser: UserDocument|null = await UserModel.findOne({$and:[
+                                                                            {isConfirmEmail: true},
+                                                                            {$or: [
+                                                                                {login: loginOrEmail},
+                                                                                {email: loginOrEmail}]
+                                                                            }]})           
         
         return checkedUser === null 
             ? {codResult: CodStatus.NotFound} 

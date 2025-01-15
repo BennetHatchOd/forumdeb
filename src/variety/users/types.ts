@@ -1,3 +1,6 @@
+import { ConfirmEmailType } from "../auth/domain/auth.entity"
+import { MyCommentRatingType } from "../likes/domain/likes.user.entity"
+
 export type UserInputType = {
     login:	string,         // unique, length 3-10, ^[a-zA-Z0-9_-]*$
     password:	string,     // length: 6-20
@@ -11,31 +14,22 @@ export type UserViewType = {
     createdAt:	string
 }
 
-export type UserPasswordType = {
-    id:	string,
-    login:	string,
-    email:	string,
-    createdAt:	Date,
-    password: string,
-}
+// export type UserPasswordType = {
+//     id:	string,
+//     login:	string,
+//     email:	string,
+//     createdAt:	Date,
+//     password: string,
+// }
 
-export type UserUnconfirmedType = {
+export type UserIdType = {
     id:     string,
-    user:{
-        login:	string,
-        email:	string,
-        password: string,
-        createdAt:	Date
-    }
-    confirmEmail: {
-        code: string,
-        expirationTime: Date,
-        countSendingCode: number
-    }
+    login:	        string,
+    email:	        string,
+    password:       string,
+    createdAt:	    Date, 
+    isConfirmEmail: boolean,
+    confirmEmail:   ConfirmEmailType,
+    myCommentRating: MyCommentRatingType   
 }
 
-export type ConfirmEmailType = {
-    code: string,
-    expirationTime: Date,
-    countSendingCode: number
-}

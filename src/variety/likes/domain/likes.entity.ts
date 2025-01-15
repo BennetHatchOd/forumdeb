@@ -1,33 +1,20 @@
-import mongoose, { HydratedDocument, Model, model } from "mongoose";
+import { ObjectId } from "mongodb";
+import mongoose, {Schema } from "mongoose";
 
-export type LikesCommentType = {
-    likes: number,
-    dislikes: number
+export type LikesType = {
+    active: boolean;
+    createdat: Date;
+    targetId: ObjectId
 }
 
-export const likesCommentSchema = new mongoose.Schema<LikesCommentType>({
-      likes: { type:      Number, 
-               min: 0,
-               default: 0,
-               validate: {
-                  validator: Number.isInteger, 
-                  message: "Value should be integer",}
-              },
-      dislikes: { type:   Number, 
-                min:      0,
-                default: 0,
-                validate: {
-                  validator: Number.isInteger, 
-                  message: "Value should be integer",}
-              },
-})
-
-export type MyCommentRatingType = {
-    likes:      Array<string>,
-    dislikes:   Array<string>
-}
-
-export const myCommentRatingSchema = new mongoose.Schema<MyCommentRatingType>({
-    likes:      {type: [String], default: []},
-    dislikes:   {type: [String], default: []}
-})
+export const likesSchema = new mongoose.Schema<LikesType>({
+    active: { 
+            type:       Boolean, 
+            default:    true },
+    createdat: { 
+            type:       Date, 
+            required:   true },
+    targetId: {
+            type:       Schema.Types.ObjectId,
+            required:   true },
+    })

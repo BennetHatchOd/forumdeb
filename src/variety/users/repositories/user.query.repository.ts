@@ -3,7 +3,6 @@ import { ObjectId} from "mongodb";
 import { emptyPaginator } from "../../../utility/paginator";
 import { UserViewType } from "../types";
 import { UserDocument, UserModel } from "../domain/user.entity";
-import { PipelineStage } from "mongoose";
 
 export class UserQueryRepository {
 
@@ -18,57 +17,76 @@ export class UserQueryRepository {
     async find(queryReq:  QueryType): Promise < PaginatorType<UserViewType> > {      // searches for users by filter, returns  paginator or null
         
         
-        let queryUserFilter: PipelineStage.Match = {$match: {}}
-        let queryAuthFilter: PipelineStage.Match = {$match: {}}
-        let directSort = ([1, 'asc', 'ascending'].includes(queryReq.sortDirection as string|number) ? 1 : -1) as -1|1
+        // let queryUserFilter: PipelineStage.Match = {$match: {}}
+        // let queryAuthFilter: PipelineStage.Match = {$match: {}}
+        // let directSort = ([1, 'asc', 'ascending'].includes(queryReq.sortDirection as string|number) ? 1 : -1) as -1|1
+        // if(queryReq.searchLoginTerm || queryReq.searchEmailTerm){
+        //     queryUserFilter = {$match:{
+        //         $or: [
+        //         ...(queryReq.searchLoginTerm ? [{ login: { $regex: queryReq.searchLoginTerm, $options: 'i' } }] : []),
+        //         ...(queryReq.searchEmailTerm ? [{ email: { $regex: queryReq.searchEmailTerm, $options: 'i' } }] : [])
+        //         ]
+        //     }}
+        //     queryAuthFilter = {$match:{
+        //         $or: [
+        //         ...(queryReq.searchLoginTerm ? [{ 'user.login': { $regex: queryReq.searchLoginTerm, $options: 'i' } }] : []),
+        //         ...(queryReq.searchEmailTerm ? [{ 'user.email': { $regex: queryReq.searchEmailTerm, $options: 'i' } }] : [])
+        //         ]
+        //     }}        
+        // }
+
+        // const pipeline: PipelineStage[] = [
+        //     queryUserFilter, 
+        //     {$project: {_id: 1, login: 1, email: 1, createdAt: 1, password: 1}},
+        //     {$unionWith: {
+        //             coll: "unconfirmedusers", 
+        //             pipeline: [
+        //                 queryAuthFilter,
+        //                 {$project: {_id: 1, 
+        //                             login: "$user.login", 
+        //                             password: "$user.pasword", 
+        //                             email: "$user.email", 
+        //                             createdAt: "$user.createdAt"}}]
+        //         }
+        //     },
+        // ];
+
+        // const countPipeline: PipelineStage[]  = [...pipeline, { $count: "totalCount" }]
+        // const findPipeline: PipelineStage[] = [
+        //          ...pipeline,             
+        //         { $sort: {[queryReq.sortBy]: directSort} },
+        //         { $skip: (queryReq.pageNumber - 1) * queryReq.pageSize }, 
+        //         { $limit: queryReq.pageSize }]
+
+        // const countArray= await UserModel.aggregate(countPipeline)
+        // // console.log(countArray)
+        // if (countArray.length == 0)
+        //     return emptyPaginator;
+        // const totalCount: number= countArray[0].totalCount
+         
+        // const searchItem: UserDocument[]   
+        //     = await UserModel.aggregate(findPipeline) 
+
+        let queryFilter = {$match: {}}
         if(queryReq.searchLoginTerm || queryReq.searchEmailTerm){
-            queryUserFilter = {$match:{
+            queryFilter = {$match:{
                 $or: [
-                ...(queryReq.searchLoginTerm ? [{ login: { $regex: queryReq.searchLoginTerm, $options: 'i' } }] : []),
-                ...(queryReq.searchEmailTerm ? [{ email: { $regex: queryReq.searchEmailTerm, $options: 'i' } }] : [])
-                ]
-            }}
-            queryAuthFilter = {$match:{
-                $or: [
-                ...(queryReq.searchLoginTerm ? [{ 'user.login': { $regex: queryReq.searchLoginTerm, $options: 'i' } }] : []),
-                ...(queryReq.searchEmailTerm ? [{ 'user.email': { $regex: queryReq.searchEmailTerm, $options: 'i' } }] : [])
+                    ...(queryReq.searchLoginTerm ? [{ login: { $regex: queryReq.searchLoginTerm, $options: 'i' } }] : []),
+                    ...(queryReq.searchEmailTerm ? [{ email: { $regex: queryReq.searchEmailTerm, $options: 'i' } }] : [])
                 ]
             }}        
         }
+        const totalCount: number= await UserModel.countDocuments(queryFilter) 
 
-        const pipeline: PipelineStage[] = [
-            queryUserFilter, 
-            {$project: {_id: 1, login: 1, email: 1, createdAt: 1, password: 1}},
-            {$unionWith: {
-                    coll: "unconfirmedusers", 
-                    pipeline: [
-                        queryAuthFilter,
-                        {$project: {_id: 1, 
-                                    login: "$user.login", 
-                                    password: "$user.pasword", 
-                                    email: "$user.email", 
-                                    createdAt: "$user.createdAt"}}]
-                }
-            },
-        ];
+        if (totalCount == 0)
+             return emptyPaginator;
+        
+        const query = UserModel.find(queryFilter)
+                                .limit(queryReq.pageSize)
+                                .skip((queryReq.pageNumber - 1) * queryReq.pageSize)
+                                .sort({[queryReq.sortBy]: queryReq.sortDirection})
 
-        const countPipeline: PipelineStage[]  = [...pipeline, { $count: "totalCount" }]
-        const findPipeline: PipelineStage[] = [
-                 ...pipeline,             
-                { $sort: {[queryReq.sortBy]: directSort} },
-                { $skip: (queryReq.pageNumber - 1) * queryReq.pageSize }, 
-                { $limit: queryReq.pageSize }]
-
-
-
-        const countArray= await UserModel.aggregate(countPipeline)
-        // console.log(countArray)
-        if (countArray.length == 0)
-            return emptyPaginator;
-        const totalCount: number= countArray[0].totalCount
-         
-        const searchItem: UserDocument[]   
-            = await UserModel.aggregate(findPipeline) 
+        const searchItem = await query.exec() 
 
         const pagesCount =  Math.ceil(totalCount / queryReq.pageSize) 
         return {

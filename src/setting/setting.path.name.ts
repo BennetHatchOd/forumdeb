@@ -12,7 +12,6 @@ export const TOKEN_COLLECTION_NAME = 'tokens'
 export const REQUEST_COLLECTION_NAME = 'requests'
 export const NEWPASSWORD_COLLECTION_NAME = 'askpasswords'
 export const SESSION_COLLECTION_NAME = 'sessions'
-export const USER_UNCONFIRMED_COLLECTION_NAME = 'unconfirmedusers' 
 
 export const HTTP_STATUSES = {
     OK_200:                 200,

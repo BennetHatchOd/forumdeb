@@ -12,9 +12,10 @@ export class CommentControllers {
                 private commentService: CommentService){
     }
 
-    async getCommentById(req: Request<{id: string}>, res: Response<CommentViewType>){
+    async getById(req: Request<{id: string}>, res: Response<CommentViewType>){
         try{
-            const foundItem: CommentViewType|null = await this.commentQueryRepository.findById(req.params.id);
+            const userId: string|undefined = req.user?.id
+            const foundItem: CommentViewType|null = await this.commentQueryRepository.findById(req.params.id, userId);
             if(foundItem){
                 res.status(HTTP_STATUSES.OK_200).json(foundItem);
                 return;
@@ -27,7 +28,7 @@ export class CommentControllers {
         }
     }
     
-    async putComment(req: Request<{id: string},{},CommentInputType>, res: Response){
+    async put(req: Request<{id: string},{},CommentInputType>, res: Response){
         try{
             const answer: StatusResult  = await this.commentService.edit(req.params.id, req.user!.id, req.body)  
             res.sendStatus(answer.codResult);
@@ -38,7 +39,7 @@ export class CommentControllers {
         }
     }    
     
-    async deleteComment(req: Request<{id: string}>, res: Response){
+    async delete(req: Request<{id: string}>, res: Response){
         try{
             const answer: StatusResult = (await this.commentService.delete(req.params.id, req.user!.id))
             res.sendStatus(answer.codResult);
@@ -49,11 +50,11 @@ export class CommentControllers {
         }
     }
     
-    async getCommentToPost(req: Request<{id: string},{},{},QueryType>, res: Response <PaginatorType<CommentViewType>|{}> ){
+    async getForPost(req: Request<{id: string},{},{},QueryType>, res: Response <PaginatorType<CommentViewType>|{}> ){
         
         const queryPaginator: QueryType = paginator(req.query)
         try{
-            const commentPaginator: PaginatorType<CommentViewType> = await this.commentQueryRepository.find(req.params.id, queryPaginator)
+            const commentPaginator: PaginatorType<CommentViewType> = await this.commentQueryRepository.find(req.params.id, queryPaginator, req.user?.id)
             
             const status = commentPaginator.totalCount == 0 
             ?   HTTP_STATUSES.NOT_FOUND_404  
@@ -68,13 +69,13 @@ export class CommentControllers {
         }
     }
 
-    async postCommentToPost(req: Request<{id: string},{},CommentInputType>, res: Response){
+    async postForPost(req: Request<{id: string},{},CommentInputType>, res: Response){
 
         try{
             const answerCreate: StatusResult<string|undefined>  =  await this.commentService.create(req.params.id, req.user!.id, req.body)
   
             if(answerCreate.codResult == CodStatus.Created){ 
-                const commentOut: CommentViewType | null = await this.commentQueryRepository.findById(answerCreate.data!)
+                const commentOut: CommentViewType | null = await this.commentQueryRepository.findById(answerCreate.data!, req.user!.id)
                 if(!commentOut) throw 'commentQueryRepository didn\'t find comment'
                 res.status(HTTP_STATUSES.CREATED_201).json(commentOut) 
                 return;

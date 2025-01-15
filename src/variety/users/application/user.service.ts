@@ -27,20 +27,23 @@ export class UserService {
                                 email: createItem.email,
                                 password: hash, 
                                 createdAt: new Date(),
+                                isConfirmEmail: true,
+                                confirmEmail: {
+                                    code: "",
+                                    expirationTime: new Date(),
+                                    countSendingCode: 0
+                                }
                             }
+
         return await this.userRepository.create(newUser) as StatusResult<string>
- 
     }
     
     async checkUniq(login: string, email: string): Promise<StatusResult<APIErrorResult| undefined>> { 
         
         const userResult = await this.userRepository.checkUniq(login, email)
-        const authResult = await this.authRepository.checkUniq(login, email)
         
-        if (userResult.data || authResult.data){
+        if (userResult.data){
             const checkResult: string[]|undefined = userResult.data
-                            ? userResult.data
-                            : authResult.data
             let errorsMessages: Array<FieldError> = checkResult!.map(s => {
                                                                     return {
                                                                         message: `${s} should be unique`,
@@ -59,11 +62,8 @@ export class UserService {
         let isExistUser = await this.userRepository.isExist(id);
         if (isExistUser.codResult == CodStatus.Ok)
             return await this.userRepository.delete(id);
-        isExistUser = await this.authRepository.isExist(id);
-        if (isExistUser.codResult == CodStatus.Ok)
-            return await this.authRepository.delete(id);
-        return {codResult : CodStatus.NotFound}
-        
+
+        return {codResult : CodStatus.NotFound}        
     }
     
     async clear(): Promise < StatusResult > {

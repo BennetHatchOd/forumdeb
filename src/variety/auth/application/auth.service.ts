@@ -4,7 +4,7 @@ import { APIErrorResult, CodStatus, StatusResult, tokenPayload } from "../../../
 import {v4 as uuidv4} from 'uuid'
 import {add, isBefore, subSeconds} from 'date-fns'
 import { AboutUser, AuthorizationType, Tokens } from "../types";
-import { ConfirmEmailType, UserInputType, UserPasswordType, UserUnconfirmedType } from "../../users/types";
+import { UserIdType, UserInputType} from "../../users/types";
 import { MailManager} from "../../../utility/mail.manager";
 import { UserRepository } from "../../users/repositories/user.repository";
 import { COUNT_RATE_LIMITED, TIME_LIFE_EMAIL_CODE, TIME_LIFE_PASSWORD_CODE, TIME_LIFE_REFRESH_TOKEN, TIME_RATE_LIMITED } from "../../../setting/setting";
@@ -14,6 +14,7 @@ import { UserService } from "../../users/application/user.service";
 import { DeviceRepository } from "../../devices/repositories/device.repository";
 import { UserType } from "../../users/domain/user.entity";
 import { newPasswordType } from "../domain/newPassword.entity";
+import { ConfirmEmailType } from "../domain/auth.entity";
 
 export class AuthService {
 
@@ -72,25 +73,28 @@ export class AuthService {
             return isUniq;
         
         const passHash = await this.passwordHashAdapter.createHash(newUser.password)
-        
-        const createUser: UserType = {...newUser, password: passHash, createdAt: new Date()}
 
         const confirmEmail: ConfirmEmailType = {
             code: uuidv4(),
             expirationTime: add(new Date(), { hours: TIME_LIFE_EMAIL_CODE}),
             countSendingCode: 1
         }
-        
-        const createAnswer: StatusResult = await this.authRepository.createUnconfirmUser({user: createUser, confirmEmail: confirmEmail})
+
+        const createUser: UserType = {...newUser, 
+                                        password: passHash, 
+                                        createdAt: new Date(),
+                                        confirmEmail: confirmEmail,
+                                    }
+   
+        const createAnswer: StatusResult = await this.authRepository.createUser(createUser)
         if(createAnswer.codResult == CodStatus.NoContent)
             this.mailManager.createConfirmEmail(newUser.email, confirmEmail.code)
         return createAnswer
 
-
     }
 
     async confirmationUser(code: string): Promise<StatusResult<APIErrorResult|undefined>>{
-        const foundUser: StatusResult<UserUnconfirmedType|undefined> = await this.authRepository.findByConfirmCode(code)
+        const foundUser: StatusResult<UserIdType|undefined> = await this.authRepository.findByConfirmCode(code)
 
         if (foundUser.codResult == CodStatus.NotFound)
             return {codResult: CodStatus.BadRequest, 
@@ -109,11 +113,9 @@ export class AuthService {
                         }
                     }
 
-        const {user} = foundUser.data!
-        await this.userRepository.create(user)
-        
-        const deletingUser: StatusResult = await this.authRepository.delete(foundUser.data!.id)
 
+        await this.authRepository.confirm(foundUser.data!.id)
+        
         return {codResult: CodStatus.NoContent}
     }
 
@@ -179,6 +181,7 @@ export class AuthService {
     }  
 
     async askNewPassword(mail: string): Promise<StatusResult>{
+        // only for verifing users
 
         let existEmail: StatusResult<string|undefined> = await this.userRepository.findIdByEmail(mail)
         if(existEmail.codResult == CodStatus.NotFound)
@@ -215,9 +218,9 @@ export class AuthService {
         return {codResult: CodStatus.NoContent}
     }
 
-    async clear(): Promise < StatusResult > {
-        return await this.authRepository.clear()
-    }  
+    // async clear(): Promise < StatusResult > {
+    //     return await this.authRepository.clear()
+    // }  
 }
 
 

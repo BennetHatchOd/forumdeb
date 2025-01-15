@@ -1,55 +1,64 @@
 import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "mongodb";
 import { CodStatus, StatusResult } from "../../../types/types";
-import { AuthDocument, AuthModel, AuthUserType } from "../domain/auth.entity";
-import { ConfirmEmailType, UserPasswordType, UserUnconfirmedType } from "../../users/types";
-import { UserDocument } from "../../users/domain/user.entity";
+import { UserDocument, UserModel, UserType } from "../../users/domain/user.entity";
 import { RequestModel } from "../domain/request.entity";
 import { NewPasswordDocument, NewPasswordModel, newPasswordType } from "../domain/newPassword.entity";
+import { UserIdType } from "../../users/types";
+import { ConfirmEmailType } from "../domain/auth.entity";
 
 export class AuthRepository {
   
-    async createUnconfirmUser(createItem: AuthUserType): Promise <StatusResult>{  
-        
+    async createUser(createItem: UserType): Promise <StatusResult>{   
 
-        await AuthModel.create(createItem);
+        await UserModel.create(createItem);
   
         return {codResult: CodStatus.NoContent}  
-        //    : {codResult: CodStatus.Error, message: 'the server didn\'t confirm the operation'};
     }
 
-    async findByConfirmCode(code: string): Promise < StatusResult<UserUnconfirmedType|undefined> > {     
+    async findByConfirmCode(code: string): Promise < StatusResult<UserIdType|undefined> > {     
              
-        const searchItem: AuthDocument | null = await AuthModel.findOne({'confirmEmail.code': code})  
+        const searchItem: UserDocument | null = await UserModel.findOne({'confirmEmail.code': code, isConfirmEmail: false})  
         
         if(!searchItem)
             return {codResult: CodStatus.NotFound}
 
         return {
             codResult: CodStatus.Ok, 
-            data: this.mapAuthToFull(searchItem) 
+            data: this.mapUserToFull(searchItem) 
             }
     }
 
-    async checkUniq(loginCheck: string, emailCheck: string): Promise<StatusResult<string[]|undefined>> {
-    // checking for unverified users
-
-        const existEmail = await AuthModel.countDocuments({ "user.email": emailCheck })
-        const existLogin = await AuthModel.countDocuments({ "user.login": loginCheck })
-
-        let arrayErrors: Array<string> = [] 
-        if(existEmail > 0) 
-            arrayErrors.push('email') 
-        if(existLogin > 0) 
-            arrayErrors.push('login')
-
-        return arrayErrors.length == 0
-            ?  {codResult: CodStatus.Ok}
-            :  {codResult: CodStatus.BadRequest, data: arrayErrors};
+    async confirm(userId: string): Promise <void> {     
+             
+        const searchItem: UserDocument | null = await UserModel.findOne({_id: userId.toString(), isConfirmEmail: false})  
+        
+        if(!searchItem)
+            throw "user not found"
+        
+        searchItem.isConfirmEmail = true
+        await searchItem.save()
     }
 
+    // async checkUniq(loginCheck: string, emailCheck: string): Promise<StatusResult<string[]|undefined>> {
+    // // checking for unverified users
+
+    //     const existEmail = await AuthModel.countDocuments({ "user.email": emailCheck })
+    //     const existLogin = await AuthModel.countDocuments({ "user.login": loginCheck })
+
+    //     let arrayErrors: Array<string> = [] 
+    //     if(existEmail > 0) 
+    //         arrayErrors.push('email') 
+    //     if(existLogin > 0) 
+    //         arrayErrors.push('login')
+
+    //     return arrayErrors.length == 0
+    //         ?  {codResult: CodStatus.Ok}
+    //         :  {codResult: CodStatus.BadRequest, data: arrayErrors};
+    // }
+
     async checkNotVerifEmail(mail: string):  Promise <number>{      
-        const searchItem: AuthDocument | null  
-            = await AuthModel.findOne({'user.email': mail})
+        const searchItem: UserDocument | null  
+            = await UserModel.findOne({email: mail, isConfirmEmail: false})
 
         return searchItem 
             ? searchItem.confirmEmail.countSendingCode  
@@ -58,7 +67,7 @@ export class AuthRepository {
     
     async updateEmailCode(mail: string, confirmEmail: ConfirmEmailType):  Promise <StatusResult>{    
     
-        const update: AuthDocument | null = await AuthModel.findOne({'user.email': mail})
+        const update: UserDocument | null = await UserModel.findOne({email: mail, isConfirmEmail: false})
         
         if(!update) throw "user not found"
         
@@ -104,56 +113,46 @@ export class AuthRepository {
         await NewPasswordModel.deleteOne({userId: userId})
     }
 
-    async clear(): Promise <StatusResult> {
-        await AuthModel.deleteMany()
-        if(await AuthModel.countDocuments({}) == 0) 
-            return {codResult: CodStatus.NoContent }  
-        throw 'Collection isn\'t empty'
-    }
-
-    async isExist(id: string): Promise<StatusResult>{     
+    // async isExist(id: string): Promise<StatusResult>{     
         
-        if(!ObjectId.isValid(id))    
-            return {codResult : CodStatus.NotFound};
+    //     if(!ObjectId.isValid(id))    
+    //         return {codResult : CodStatus.NotFound};
 
-        const exist: number = await AuthModel.countDocuments({_id: new ObjectId(id)})           
+    //     const exist: number = await UserModel.countDocuments({_id: new ObjectId(id)})           
         
-        return exist == 1  
-                ? {codResult: CodStatus.Ok} 
-                : {codResult: CodStatus.NotFound};
-    }
+    //     return exist == 1  
+    //             ? {codResult: CodStatus.Ok} 
+    //             : {codResult: CodStatus.NotFound};
+    // }
  
     async delete(id: string):  Promise <StatusResult>{      
-        const answerDelete: DeleteResult = await AuthModel.deleteOne({_id: new ObjectId(id)})
+        const answerDelete: DeleteResult = await UserModel.deleteOne({_id: new ObjectId(id)})
 
         if(answerDelete.deletedCount == 1) 
             return {codResult: CodStatus.NoContent}  
         throw 'the server didn\'t confirm the delete operation';
     }
 
-    mapUserToFull(user: UserDocument): UserPasswordType {
+    // mapUserToFull(user: UserDocument): UserPasswordType {
+    //     return { 
+    //         id:         user._id.toString(),
+    //         email:      user.email,      
+    //         login:      user.login,
+    //         password:   user.password,
+    //         createdAt:	user.createdAt
+    //         }
+    // }
+
+    mapUserToFull(user: UserDocument): UserIdType  {
         return { 
             id:         user._id.toString(),
             email:      user.email,      
             login:      user.login,
             password:   user.password,
-            createdAt:	user.createdAt
-            }
-    }
-
-    mapAuthToFull(user: AuthDocument): UserUnconfirmedType  {
-        return { 
-            id:         user._id.toString(),
-            user:{
-                email:      user.user.email,      
-                login:      user.user.login,
-                password:   user.user.password,
-                createdAt:	user.user.createdAt
-            },
-            confirmEmail: {
-                code: user.confirmEmail.code,
-                expirationTime: user.confirmEmail.expirationTime,
-                countSendingCode: user.confirmEmail.countSendingCode
-            }}
+            createdAt:	user.createdAt,
+            isConfirmEmail: user.isConfirmEmail!,
+            myCommentRating: user.myCommentRating!,
+            confirmEmail: user.confirmEmail
+        }
     }
 }

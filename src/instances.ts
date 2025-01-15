@@ -17,6 +17,9 @@ import { DeviceControllers } from "./variety/devices/api/device.controller"
 import { DeviceService } from "./variety/devices/application/device.service"
 import { DeviceQueryRepository } from "./variety/devices/repositories/device.query.repository"
 import { DeviceRepository } from "./variety/devices/repositories/device.repository"
+import { LikeControllers } from "./variety/likes/api/like.controller"
+import { LikeService } from "./variety/likes/application/like.service"
+import { LikeRepository } from "./variety/likes/repositories/like.repository"
 import { PostControllers } from "./variety/posts/api/post.controller"
 import { PostService } from "./variety/posts/application/post.service"
 import { PostQueryRepository } from "./variety/posts/repositories/post.query.repository"
@@ -31,6 +34,8 @@ export const jwtAdapter = new JwtAdapter()
 export const mailAdapter = new MailAdapter()
 export const mailManager = new MailManager(mailAdapter)
 
+
+export const likeRepository = new LikeRepository()
 export const userRepository = new UserRepository()
 export const authRepository = new AuthRepository()
 export const blogRepository = new BlogRepository()
@@ -38,10 +43,12 @@ export const commentRepository = new CommentRepository()
 export const deviceRepository = new DeviceRepository()
 export const postRepository = new PostRepository()
 
+export const likeService = new LikeService(likeRepository)
+
 export const userQueryRepository = new UserQueryRepository()
 export const authQueryRepository = new AuthRepository()
 export const blogQueryRepository = new BlogQueryRepository()
-export const commentQueryRepository = new CommentQueryRepository()
+export const commentQueryRepository = new CommentQueryRepository(likeService)
 export const deviceQueryRepository = new DeviceQueryRepository()
 export const postQueryRepository = new PostQueryRepository()
 
@@ -61,6 +68,6 @@ export const blogControllers = new BlogControllers(blogService, blogQueryReposit
 export const commentControllers = new CommentControllers(commentQueryRepository, commentService)
 export const deviceControllers = new DeviceControllers(authService, deviceQueryRepository, deviceService)
 export const postControllers = new PostControllers(postService, postQueryRepository)
-
+export const likeControllers = new LikeControllers(likeService)
 
 

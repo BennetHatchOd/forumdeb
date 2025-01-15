@@ -3,20 +3,29 @@ import { ObjectId, WithId } from "mongodb";
 import { emptyPaginator } from "../../../utility/paginator";
 import { CommentViewType } from "../types";
 import { CommentDocument, CommentModel } from "../domain/comment.entity";
+import { LikeService } from "../../likes/application/like.service";
+import { Rating } from "../../likes/types";
 
 export class CommentQueryRepository {
 
-    async findById(id: string): Promise <CommentViewType | null > {      
+    constructor(private likeService: LikeService){}
+    
+    async findById(commentId: string, userId: string|undefined): Promise <CommentViewType | null > {      
         
-        if(!ObjectId.isValid(id))
+        if(!ObjectId.isValid(commentId))
             return null;                   
-        const searchItem: CommentDocument | null = await CommentModel.findOne({_id: new ObjectId(id)})           
+        const searchItem: CommentDocument | null = await CommentModel.findOne({_id: new ObjectId(commentId)})           
+
+        let likeStatus: Rating = Rating.None
+        if(userId)
+            likeStatus = await this.likeService.userRatingForComment(commentId, userId)
+        
         return searchItem 
-                ? this.mapDbToView(searchItem) 
+                ? this.mapDbToView(searchItem, likeStatus) 
                 : null 
     }
   
-    async find(postId: string, queryReq:  QueryType): Promise < PaginatorType<CommentViewType> > {      
+    async find(postId: string, queryReq:  QueryType, userId: string|undefined): Promise < PaginatorType<CommentViewType> > {      
         
         const totalCount: number= await CommentModel.countDocuments({parentPostId: postId}) 
         const pagesCount =  Math.ceil(totalCount / queryReq.pageSize)
@@ -29,16 +38,22 @@ export class CommentQueryRepository {
                                 .limit(queryReq.pageSize)
                                 .skip((queryReq.pageNumber - 1) * queryReq.pageSize)
                                 .sort({[queryReq.sortBy]: queryReq.sortDirection})
+        
+        const items = await Promise.all(searchItem.map(async s => { let statusLike: Rating = userId 
+                                                                                            ? await this.likeService.userRatingForComment(s._id.toString(), userId)
+                                                                                            : Rating.None
+                                                                    return this.mapDbToView(s, statusLike)}))
+
         return {
                 pagesCount: pagesCount,
                 page: queryReq.pageNumber > pagesCount ? pagesCount : queryReq.pageNumber,
                 pageSize: queryReq.pageSize,
                 totalCount: totalCount,
-                items: searchItem.map(s => this.mapDbToView(s))
+                items
         }
     }
 
-    mapDbToView(item: CommentDocument): CommentViewType {
+    mapDbToView(item: CommentDocument, myStatus: Rating): CommentViewType {
         
         return {
             id: item._id.toString(),
@@ -48,6 +63,11 @@ export class CommentQueryRepository {
                 userLogin: item.commentatorInfo.userLogin	
             },
             createdAt:	item.createdAt.toISOString(),
+            likesInfo:{
+                likes:      item.likesInfo.likes,
+                dislikes:   item.likesInfo.dislikes,
+                myStatus:   myStatus
+            }
         }       
     }
 }

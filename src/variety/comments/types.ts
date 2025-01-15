@@ -1,13 +1,22 @@
+import { Rating } from "../likes/types"
+
 export type CommentatorInfo ={
     userId:	    string,
     userLogin:  string	
+}
+
+export type LikesCommentViewType = {
+    likes:      number,
+    dislikes:   number,
+    myStatus:   Rating
 }
 
 export type CommentViewType ={
     id:                 string,
     content:	        string
     commentatorInfo:	CommentatorInfo,
-    createdAt:	        string
+    createdAt:	        string,
+    likesInfo:          LikesCommentViewType
 }
 
 export type CommentFullType ={

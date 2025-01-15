@@ -8,7 +8,6 @@ export const deleteAllController = async (req: Request, res: Response) =>{
     await blogService.clear()
     await postService.clear()
     await userService.clear()
-    await authService.clear()
     await commentService.clear()
     await deviceService.clear()
     

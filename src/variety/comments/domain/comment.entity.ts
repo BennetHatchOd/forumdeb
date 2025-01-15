@@ -1,6 +1,6 @@
 import mongoose, { HydratedDocument, Model, model } from "mongoose";
 import { COMMENT_COLLECTION_NAME } from "../../../setting/setting.path.name";
-import { likesCommentSchema, LikesCommentType } from "../../likes/domain/likes.entity";
+import { likesCommentSchema, LikesCommentType } from "../../likes/domain/likes.comment.entity";
 
 export type CommentatorInfoType ={
     userId:	    string,
@@ -12,7 +12,7 @@ export type CommentType = {
         content:	        string,
         commentatorInfo:	CommentatorInfoType,
         createdAt:	      Date,
-        likesInfo:     LikesCommentType
+        likesInfo:        LikesCommentType
     }
 
 type CommentModel = Model<CommentType>
