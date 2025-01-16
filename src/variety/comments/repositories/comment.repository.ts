@@ -70,7 +70,12 @@ export class CommentRepository {
             createdAt: item.createdAt,
             commentatorInfo: {  userId: item.commentatorInfo.userId,
                                 userLogin: item.commentatorInfo.userLogin},
-            parentPostId: item.parentPostId
+            parentPostId: item.parentPostId,
+            likesInfo:{
+                likes: item.likesInfo.likes,
+                dislikes: item.likesInfo.dislikes,
+                myStatus:  item.likesInfo.myStatus
+            }
         }       
     }
 

@@ -1,6 +1,8 @@
 import { CodStatus, StatusResult } from "../../../types/types";
+import { Rating } from "../../likes/types";
 import { PostRepository } from "../../posts/repositories/post.repository";
 import { UserQueryRepository } from "../../users/repositories/user.query.repository";
+import { CommentType } from "../domain/comment.entity";
 import { CommentRepository } from "../repositories/comment.repository";
 import { CommentFullType, CommentInputType} from "../types";
 
@@ -17,7 +19,7 @@ export class CommentService {
         if(checkPost.codResult == CodStatus.NotFound){
             return checkPost;
         }
-
+        
         const userLogin: string = (await this.userQueryRepository.findById(userId))!.login
         const newComment: Omit<CommentFullType, 'id'> = {
                                 content: createItem.content,
@@ -25,6 +27,11 @@ export class CommentService {
                                 commentatorInfo: { userId: userId,
                                                    userLogin: userLogin},
                                 createdAt: new Date(),
+                                likesInfo:{
+                                    likes: 0,
+                                    dislikes: 0,
+                                    myStatus: Rating.None
+                                }
                             }
         return await this.commentRepository.create(newComment)
 

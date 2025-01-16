@@ -1,9 +1,11 @@
 import { ObjectId } from "mongodb";
 import mongoose, { HydratedDocument, Model, model } from "mongoose";
+import { Rating } from "../types";
 
 export type LikesCommentType = {
     likes: number;
     dislikes: number;
+    myStatus:   Rating;
     incLikes():Promise<void>;
     incDislikes():Promise<void>;
     decLikes():Promise<void>;
@@ -25,6 +27,9 @@ export const likesCommentSchema = new mongoose.Schema<LikesCommentType>({
                   validator: Number.isInteger, 
                   message: "Value should be integer",}
               },
+       myStatus: { type: String,
+                    item: Rating,
+                    required: true}
 })
 
 likesCommentSchema.methods.incLikes = async function(): Promise<void>{

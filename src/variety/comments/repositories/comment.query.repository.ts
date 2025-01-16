@@ -64,9 +64,9 @@ export class CommentQueryRepository {
             },
             createdAt:	item.createdAt.toISOString(),
             likesInfo:{
-                likes:      item.likesInfo.likes,
-                dislikes:   item.likesInfo.dislikes,
-                myStatus:   myStatus
+                likesCount: item.likesInfo.likes,
+                dislikesCount: item.likesInfo.dislikes,
+                myStatus:  item.likesInfo.myStatus
             }
         }       
     }
