@@ -1,14 +1,19 @@
+import { commentQueryRepository } from "../../../instances";
 import { CodStatus, StatusResult } from "../../../types/types";
+import { CommentRepository } from "../../comments/repositories/comment.repository";
 import { LikeRepository } from "../repositories/like.repository";
 import { Rating } from "../types";
 
 export class LikeService{
 
-    constructor(private likeRepository: LikeRepository){}
+    constructor(private likeRepository: LikeRepository,
+                private commentRepository: CommentRepository
+    ){}
 
     async userRatingForComment(commentId: string, userId: string): Promise<Rating>{
         const isLike = await this.likeRepository.hasCommentLike(commentId, userId)
         const isDislike = await this.likeRepository.hasCommentDislike(commentId, userId)
+
 
         if(isLike)
             return Rating.Like
@@ -19,10 +24,16 @@ export class LikeService{
 
     async setRangeComment(commentId: string, likeStatus: Rating, userId: string): Promise<StatusResult>{
         
+        const existAnswer = await this.commentRepository.isExist(commentId)
+
+        if(existAnswer.codResult == CodStatus.NotFound)
+            return existAnswer
+        
         const isLike =await this.likeRepository.hasCommentLike(commentId, userId)
         const isDislike =await this.likeRepository.hasCommentDislike(commentId, userId)
-        const isNone = !isLike && !isDislike
 
+        const isNone = !isLike && !isDislike
+        
         if(likeStatus == Rating.Like){
             if(isNone){
                 await this.addLike(commentId, userId)

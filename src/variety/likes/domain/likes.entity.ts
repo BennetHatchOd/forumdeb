@@ -3,7 +3,7 @@ import mongoose, {Schema } from "mongoose";
 
 export type LikesType = {
     active: boolean;
-    createdat: Date;
+    createdAt: Date;
     targetId: ObjectId
 }
 
@@ -11,7 +11,7 @@ export const likesSchema = new mongoose.Schema<LikesType>({
     active: { 
             type:       Boolean, 
             default:    true },
-    createdat: { 
+    createdAt: { 
             type:       Date, 
             required:   true },
     targetId: {

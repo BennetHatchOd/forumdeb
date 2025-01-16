@@ -34,21 +34,18 @@ export const likesCommentSchema = new mongoose.Schema<LikesCommentType>({
 
 likesCommentSchema.methods.incLikes = async function(): Promise<void>{
     this.likes++
-    await this.save()
 }
 likesCommentSchema.methods.incDislikes = async function(): Promise<void>{
-    this.likes++
-    await this.save()
+    this.dislikes++
 }
 likesCommentSchema.methods.decLikes = async function(): Promise<void>{
     if(this.likes == 0)
         throw "likes shouldn't be negative"
     this.likes--
-    await this.save()
+
 }
 likesCommentSchema.methods.decDislikes = async function(): Promise<void>{
     if(this.dislikes == 0)
         throw "likes shouldn't be negative"
     this.dislikes--
-    await this.save()
 }
