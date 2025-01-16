@@ -12,7 +12,7 @@ export class PostRepository {
 
         const exist: number = await PostModel.countDocuments({_id: new ObjectId(id)})           
         
-        return exist > 0  
+        return exist != 0  
                 ? {codResult: CodStatus.Ok} 
                 : {codResult: CodStatus.NotFound};
 

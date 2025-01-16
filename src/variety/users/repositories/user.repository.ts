@@ -16,7 +16,7 @@ export class UserRepository {
 
         const exist: number = await UserModel.countDocuments({_id: new ObjectId(id)})           
         
-        return exist > 0  
+        return exist != 0  
                 ? {codResult: CodStatus.Ok} 
                 : {codResult: CodStatus.NotFound};
     }

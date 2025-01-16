@@ -15,7 +15,7 @@ export class CommentRepository {
 
         const exist: number = await CommentModel.countDocuments({_id: new ObjectId(id)})           
         
-        return exist == 0  
+        return exist != 0  
                 ? {codResult: CodStatus.Ok} 
                 : {codResult: CodStatus.NotFound};
     }
