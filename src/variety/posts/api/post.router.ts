@@ -13,5 +13,5 @@ postsRouter.delete('/:id', authAdminByPassword,  postControllers.deleteById.bind
 postsRouter.put('/:id', authAdminByPassword,  postValidator, checkInputValidation, postControllers.put.bind(postControllers));
 postsRouter.post('/', authAdminByPassword,  postValidator, checkInputValidation, postControllers.post.bind(postControllers));
 
-postsRouter.get('/:id/comments', commentControllers.getForPost.bind(postControllers));
-postsRouter.post('/:id/comments', authUserByAccessT,  commentValidator, checkInputValidation, commentControllers.postForPost.bind(postControllers));
+postsRouter.get('/:id/comments', commentControllers.getForPost.bind(commentControllers));
+postsRouter.post('/:id/comments', authUserByAccessT,  commentValidator, checkInputValidation, commentControllers.postForPost.bind(commentControllers));
