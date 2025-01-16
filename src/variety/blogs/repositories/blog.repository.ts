@@ -12,7 +12,7 @@ export class BlogRepository {
 
         const exist: number = await BlogModel.countDocuments({_id: new ObjectId(id)})           
         
-        return exist == 0  
+        return exist != 0  
                 ? {codResult: CodStatus.Ok} 
                 : {codResult: CodStatus.NotFound};
     }
