@@ -25,8 +25,6 @@ export class LikeRepository{
         if(!comment)
             throw "Comment not found"
         await comment.likesInfo.decLikes()
-        await comment.save()
-
     }
     
     async decCommentDislike(commentId: string){
@@ -34,8 +32,6 @@ export class LikeRepository{
         if(!comment)
             throw "Comment not found"
         await comment.likesInfo.decDislikes()
-        await comment.save()
-
     }   
     
     async incCommentLike(commentId: string){
@@ -43,8 +39,6 @@ export class LikeRepository{
         if(!comment)
             throw "Comment not found"
         await comment.likesInfo.incLikes()
-        await comment.save()
-
     }   
     
     async incCommentDisLike(commentId: string){
@@ -52,8 +46,6 @@ export class LikeRepository{
         if(!comment)
             throw "Comment not found"
         await comment.likesInfo.incDislikes()
-        await comment.save()
-
     }
 
     async deleteUserLike(commentId: string, userId: string){
@@ -61,8 +53,6 @@ export class LikeRepository{
         if(!user)
             throw "User not found"
         await user.myCommentRating!.stopLikes(new ObjectId(commentId))
-        await user.save()
-
     }
     
     async deleteUserDislike(commentId: string, userId: string){
@@ -70,8 +60,6 @@ export class LikeRepository{
         if(!user)
             throw "User not found"
         await user.myCommentRating!.stopDislikes(new ObjectId(commentId))
-        await user.save()
-
     }
     
     async addUserDislike(commentId: string, userId: string){
@@ -79,8 +67,6 @@ export class LikeRepository{
         if(!user)
             throw "User not found"
         await user.myCommentRating!.addDislikes(new ObjectId(commentId))
-        await user.save()
-
     }
 
     async addUserLike(commentId: string, userId: string){
@@ -88,7 +74,5 @@ export class LikeRepository{
         if(!user)
             throw "User not found"
         await user.myCommentRating!.addLikes(new ObjectId(commentId))
-        await user.save()
-
     }
 }

@@ -35,6 +35,7 @@ myCommentRatingSchema.methods.addLikes = async function(comment: ObjectId){
         this.likes.push({active:    true,
                         createdAt:  new Date(),
                         targetId:   comment})
+    await this.ownerDocument().save()
 }
 
 myCommentRatingSchema.methods.addDislikes = async function(comment: ObjectId){
@@ -45,12 +46,15 @@ myCommentRatingSchema.methods.addDislikes = async function(comment: ObjectId){
         this.dislikes.push({active:    true,
                         createdAt:  new Date(),
                         targetId:   comment})
+    await this.ownerDocument().save()
+
 }
 
 myCommentRatingSchema.methods.stopLikes = async function(comment: ObjectId){
     const index = this.likes.findIndex((s: LikesType) => s.targetId.equals(comment))
     if(index !== -1){
         this.likes[index].active = false
+        await this.ownerDocument().save()
     }else
         throw 'like not found'
     
@@ -60,6 +64,7 @@ myCommentRatingSchema.methods.stopDislikes = async function(comment: ObjectId){
     const index = this.dislikes.findIndex((s: LikesType) => s.targetId.equals(comment))
     if(index !== -1){
         this.dislikes[index].active = false
+        await this.ownerDocument().save()
     }else
         throw 'dislike not found'
     
