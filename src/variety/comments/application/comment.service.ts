@@ -30,7 +30,7 @@ export class CommentService {
                                 likesInfo:{
                                     likes: 0,
                                     dislikes: 0,
-                                    myStatus: Rating.None
+    //                                myStatus: Rating.None
                                 }
                             }
         return await this.commentRepository.create(newComment)

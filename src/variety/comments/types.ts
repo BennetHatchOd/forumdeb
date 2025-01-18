@@ -8,7 +8,6 @@ export type CommentatorInfo ={
 export type LikesCommentViewType = {
     likesCount:      number,
     dislikesCount:   number,
-    myStatus:   Rating
 }
 
 export type CommentViewType ={
@@ -16,7 +15,8 @@ export type CommentViewType ={
     content:	        string
     commentatorInfo:	CommentatorInfo,
     createdAt:	        string,
-    likesInfo:          LikesCommentViewType
+    likesInfo:          LikesCommentViewType,
+    myStatus:   Rating
 }
 
 export type CommentFullType ={
@@ -25,13 +25,14 @@ export type CommentFullType ={
     commentatorInfo:	CommentatorInfo,
     createdAt:	        Date,
     parentPostId:       string,
-    likesInfo:          LikesCommentType
+    likesInfo:          LikesCommentType,
+//    myStatus:           Rating
 }
 
 export type LikesCommentType = {
     likes: number;
     dislikes: number;
-    myStatus:   Rating;
+//    myStatus:   Rating;
 }
 
 export type CommentInputType = {

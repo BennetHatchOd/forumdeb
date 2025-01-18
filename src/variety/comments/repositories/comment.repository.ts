@@ -74,7 +74,7 @@ export class CommentRepository {
             likesInfo:{
                 likes: item.likesInfo.likes,
                 dislikes: item.likesInfo.dislikes,
-                myStatus:  item.likesInfo.myStatus
+//                myStatus:  item.likesInfo.myStatus
             }
         }       
     }

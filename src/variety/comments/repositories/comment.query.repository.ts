@@ -38,7 +38,8 @@ export class CommentQueryRepository {
                                 .limit(queryReq.pageSize)
                                 .skip((queryReq.pageNumber - 1) * queryReq.pageSize)
                                 .sort({[queryReq.sortBy]: queryReq.sortDirection})
-        const items = await Promise.all(searchItem.map(async s => { let statusLike: Rating = userId 
+        const items = await Promise.all(searchItem.map(async s => { 
+                                                                                    let statusLike: Rating = userId 
                                                                                             ? await this.likeService.userRatingForComment(s._id.toString(), userId)
                                                                                             : Rating.None
                                                                     return this.mapDbToView(s, statusLike)}))
@@ -65,8 +66,8 @@ export class CommentQueryRepository {
             likesInfo:{
                 likesCount: item.likesInfo.likes,
                 dislikesCount: item.likesInfo.dislikes,
-                myStatus:  myStatus
-            }
+            },
+            myStatus:  myStatus
         }       
     }
 }

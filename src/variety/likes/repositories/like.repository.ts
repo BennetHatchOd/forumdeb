@@ -20,6 +20,8 @@ export class LikeRepository{
         return user.myCommentRating!.hasDislikes(new ObjectId(commentId))
     }
  
+    // Comment likes and dilikes
+
     async decCommentLike(commentId: string){
         const comment: CommentDocument|null = await CommentModel.findOne({_id: new ObjectId(commentId)})
         if(!comment)
@@ -47,6 +49,8 @@ export class LikeRepository{
             throw "Comment not found"
         await comment.likesInfo.incDislikes()
     }
+
+    // User likes and dislikes
 
     async deleteUserLike(commentId: string, userId: string){
         const user: UserDocument|null = await UserModel.findOne({_id: new ObjectId(userId)})
