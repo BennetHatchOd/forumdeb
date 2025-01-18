@@ -13,7 +13,8 @@ export async function fillSystem(blogs: BlogInputType[],
                            users: UserInputType[],
                         comments: CommentInputType[],
                      accessToken: string[],
-                      commentsId: Array<string>){
+                      commentsId: Array<string>,
+                          postId: Array<string>){
 
     // creating blog                    
        
@@ -29,10 +30,10 @@ export async function fillSystem(blogs: BlogInputType[],
                                     .set("Authorization", AuthPassword)
                                     .send(posts[0]) 
                                     .expect(HTTP_STATUSES.CREATED_201)
-
+    postId.push(postCreate.body.id)
     // creating users & accesstokens
 
-    for(let i =0; i < 5; i++){
+    for(let i =0; i < 8; i++){
         await request(app).post(`${URL_PATH.users}`)
                         .set("Authorization", AuthPassword)
                         .send(users[i])
@@ -43,13 +44,14 @@ export async function fillSystem(blogs: BlogInputType[],
                             "loginOrEmail": users[i].login,
                             "password":     users[i].password
                         })
+        await new Promise((resolve) => {setTimeout(resolve, 2000)})
         accessToken.push(token.body.accessToken)
     }
     
     // creating comments
      
     for(let i =0; i < 4; i++){
-        const commentCreate = await request(app).post(`${URL_PATH.posts}/${postCreate.body.id}/comments`)
+        const commentCreate = await request(app).post(`${URL_PATH.posts}/${postId[0]}/comments`)
                         .set("Authorization", 'Bearer ' + accessToken[i])
                         .send(comments[i])
                         .expect(HTTP_STATUSES.CREATED_201);
