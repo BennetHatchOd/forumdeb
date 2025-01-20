@@ -1,5 +1,6 @@
 import { commentQueryRepository } from "../../../instances";
 import { CodStatus, StatusResult } from "../../../types/types";
+import { CommentModel } from "../../comments/domain/comment.entity";
 import { CommentRepository } from "../../comments/repositories/comment.repository";
 import { LikeRepository } from "../repositories/like.repository";
 import { Rating } from "../types";
@@ -10,9 +11,9 @@ export class LikeService{
                 private commentRepository: CommentRepository
     ){}
 
-    async userRatingForComment(commentId: string, userId: string): Promise<Rating>{
-        const isLike = await this.likeRepository.hasCommentLike(commentId, userId)
-        const isDislike = await this.likeRepository.hasCommentDislike(commentId, userId)
+    async getUserRatingForComment(commentId: string, userId: string): Promise<Rating>{
+        const isLike = await this.likeRepository.hasCommentLike(commentId, userId, "myCommentRating")
+        const isDislike = await this.likeRepository.hasCommentDislike(commentId, userId, "myCommentRating")
 
 
         if(isLike)
@@ -28,12 +29,13 @@ export class LikeService{
 
         if(existAnswer.codResult == CodStatus.NotFound)
             return existAnswer
-        
-        const isLike =await this.likeRepository.hasCommentLike(commentId, userId)
-        const isDislike =await this.likeRepository.hasCommentDislike(commentId, userId)
+
+        const isLike =await this.likeRepository.hasCommentLike(commentId, userId, "myCommentRating")
+        const isDislike =await this.likeRepository.hasCommentDislike(commentId, userId, "myCommentRating")
 
         const isNone = !isLike && !isDislike
         
+
         if(likeStatus == Rating.Like){
             if(isNone){
                 await this.addLike(commentId, userId)
@@ -67,19 +69,19 @@ export class LikeService{
     }
 
     async deleteLike(commentId: string, userId: string){
-        await this.likeRepository.deleteUserLike(commentId, userId)
-        await this.likeRepository.decCommentLike(commentId)
+        await this.likeRepository.deleteUserLike(commentId, userId, "myCommentRating")
+        await this.likeRepository.decrementLike(CommentModel, commentId)
     }
     async deleteDislike(commentId: string, userId: string){
-        await this.likeRepository.deleteUserDislike(commentId, userId)
-        await this.likeRepository.decCommentDislike(commentId)
+        await this.likeRepository.deleteUserDislike(commentId, userId, "myCommentRating")
+        await this.likeRepository.decrementDislike(CommentModel, commentId)
     }
     async addLike(commentId: string, userId: string){
-        await this.likeRepository.addUserLike(commentId, userId)
-        await this.likeRepository.incCommentLike(commentId)
+        await this.likeRepository.addUserLike(commentId, userId, "myCommentRating")
+        await this.likeRepository.incrementLike(CommentModel, commentId)
     }
     async addDislike(commentId: string, userId: string){                
-        await this.likeRepository.addUserDislike(commentId, userId)
-        await this.likeRepository.incCommentDisLike(commentId)
+        await this.likeRepository.addUserDislike(commentId, userId, "myCommentRating")
+        await this.likeRepository.incrementDisLike(CommentModel, commentId)
     }
 }

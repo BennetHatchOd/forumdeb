@@ -2,17 +2,25 @@ import { ObjectId } from "mongodb";
 import mongoose, { HydratedDocument, Model, model } from "mongoose";
 import { Rating } from "../types";
 
-export type LikesCommentType = {
+export interface Likeable {
+    likesInfo: {
+        incrementLikes: () => Promise<void>;
+        incrementDislikes: () => Promise<void>;
+        decrementLikes: () => Promise<void>;
+        decrementDislikes: () => Promise<void>;
+    };
+  }
+
+export type LikesRecipientType = {
     likes: number;
     dislikes: number;
-    //myStatus:   Rating;
-    incLikes():Promise<void>;
-    incDislikes():Promise<void>;
-    decLikes():Promise<void>;
-    decDislikes():Promise<void>;
+    incrementLikes():Promise<void>;
+    incrementDislikes():Promise<void>;
+    decrementLikes():Promise<void>;
+    decrementDislikes():Promise<void>;
 }
 
-export const likesCommentSchema = new mongoose.Schema<LikesCommentType>({
+export const likesRecipientSchema = new mongoose.Schema<LikesRecipientType>({
       likes: { type:      Number, 
                min: 0,
                default: 0,
@@ -27,33 +35,20 @@ export const likesCommentSchema = new mongoose.Schema<LikesCommentType>({
                   validator: Number.isInteger, 
                   message: "Value should be integer",}
               },
-    //    myStatus: { type: String,
-    //                 item: Rating,
-    //                 required: true}
 })
-
-likesCommentSchema.methods.incLikes = async function(): Promise<void>{
+likesRecipientSchema.methods.incrementLikes = async function(): Promise<void>{
     this.likes++
-    await this.ownerDocument().save()
-
 }
-likesCommentSchema.methods.incDislikes = async function(): Promise<void>{
+likesRecipientSchema.methods.incrementDislikes = async function(): Promise<void>{
     this.dislikes++
-    await this.ownerDocument().save()
-
 }
-likesCommentSchema.methods.decLikes = async function(): Promise<void>{
+likesRecipientSchema.methods.decrementLikes = async function(): Promise<void>{
     if(this.likes == 0)
         throw "likes shouldn't be negative"
     this.likes--
-    await this.ownerDocument().save()
-
-
 }
-likesCommentSchema.methods.decDislikes = async function(): Promise<void>{
+likesRecipientSchema.methods.decrementDislikes = async function(): Promise<void>{
     if(this.dislikes == 0)
         throw "likes shouldn't be negative"
     this.dislikes--
-    await this.ownerDocument().save()
-
 }

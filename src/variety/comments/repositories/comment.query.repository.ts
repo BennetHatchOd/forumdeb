@@ -18,7 +18,7 @@ export class CommentQueryRepository {
 
         let likeStatus: Rating = Rating.None
         if(userId)
-            likeStatus = await this.likeService.userRatingForComment(commentId, userId)
+            likeStatus = await this.likeService.getUserRatingForComment(commentId, userId)
         
         return searchItem 
                 ? this.mapDbToView(searchItem, likeStatus) 
@@ -40,7 +40,7 @@ export class CommentQueryRepository {
                                 .sort({[queryReq.sortBy]: queryReq.sortDirection})
         const items = await Promise.all(searchItem.map(async s => { 
                                                                                     let statusLike: Rating = userId 
-                                                                                            ? await this.likeService.userRatingForComment(s._id.toString(), userId)
+                                                                                            ? await this.likeService.getUserRatingForComment(s._id.toString(), userId)
                                                                                             : Rating.None
                                                                     return this.mapDbToView(s, statusLike)}))
 

@@ -1,71 +1,67 @@
 import { ObjectId } from "mongodb";
-import mongoose, { HydratedDocument, Model, model } from "mongoose";
+import mongoose from "mongoose";
 import { likesSchema, LikesType } from "./likes.entity";
 
 
-export type MyCommentRatingType = {
-    likes:      Array<LikesType>,
-    dislikes:   Array<LikesType>
-    hasLikes(comment: ObjectId): boolean;
-    hasDislikes(comment: ObjectId): boolean;
-    addLikes(comment: ObjectId):Promise<void>;
-    addDislikes(comment: ObjectId):Promise<void>;
-    stopLikes(comment: ObjectId):Promise<void>;
-    stopDislikes(comment: ObjectId):Promise<void>;
+export type MyRatingType = {
+    likes:      Array<LikesType>;
+    dislikes:   Array<LikesType>;
+
+    hasLikes(   entity: ObjectId): boolean;
+    hasDislikes(entity: ObjectId): boolean;
+    
+    addLikes(   entity: ObjectId):Promise<void>;
+    addDislikes(entity: ObjectId):Promise<void>;
+    
+    stopLikes(  entity: ObjectId):Promise<void>;
+    stopDislikes(entity: ObjectId):Promise<void>;
   }
 
-export const myCommentRatingSchema = new mongoose.Schema<MyCommentRatingType>({
+export const myRatingSchema = new mongoose.Schema<MyRatingType>({
     likes:      {type: [likesSchema], required: true},
     dislikes:   {type: [likesSchema], required: true}
 })
 
-myCommentRatingSchema.methods.hasLikes = function(comment: ObjectId): boolean{
-    return this.likes.some((s: LikesType) => s.targetId.equals(comment) && s.active === true)
+myRatingSchema.methods.hasLikes = function(entity: ObjectId): boolean{
+    return this.likes.some((s: LikesType) => s.targetId.equals(entity) && s.active === true)
 }
 
-myCommentRatingSchema.methods.hasDislikes = function(comment: ObjectId): boolean{
-    return this.dislikes.some((s: LikesType) => s.targetId.equals(comment) && s.active === true)
+myRatingSchema.methods.hasDislikes = function(entity: ObjectId): boolean{
+    return this.dislikes.some((s: LikesType) => s.targetId.equals(entity) && s.active === true)
 }
 
-myCommentRatingSchema.methods.addLikes = async function(comment: ObjectId){
-    const index = this.likes.findIndex((s: LikesType) => s.targetId.equals(comment))
+myRatingSchema.methods.addLikes = async function(entity: ObjectId){
+    const index = this.likes.findIndex((s: LikesType) => s.targetId.equals(entity))
     if(index !== -1){
         this.likes[index].active = true
     }else    
         this.likes.push({active:    true,
                         createdAt:  new Date(),
-                        targetId:   comment})
-    await this.ownerDocument().save()
+                        targetId:   entity})
 }
 
-myCommentRatingSchema.methods.addDislikes = async function(comment: ObjectId){
-    const index = this.dislikes.findIndex((s: LikesType) => s.targetId.equals(comment))
+myRatingSchema.methods.addDislikes = async function(entity: ObjectId){
+    const index = this.dislikes.findIndex((s: LikesType) => s.targetId.equals(entity))
     if(index !== -1){
         this.dislikes[index].active = true
     }else    
         this.dislikes.push({active:    true,
                         createdAt:  new Date(),
-                        targetId:   comment})
-    await this.ownerDocument().save()
-
+                        targetId:   entity})
 }
 
-myCommentRatingSchema.methods.stopLikes = async function(comment: ObjectId){
-    const index = this.likes.findIndex((s: LikesType) => s.targetId.equals(comment))
+myRatingSchema.methods.stopLikes = async function(entity: ObjectId){
+    const index = this.likes.findIndex((s: LikesType) => s.targetId.equals(entity))
     if(index !== -1){
         this.likes[index].active = false
-        await this.ownerDocument().save()
     }else
         throw 'like not found'
-    
 }
 
-myCommentRatingSchema.methods.stopDislikes = async function(comment: ObjectId){
-    const index = this.dislikes.findIndex((s: LikesType) => s.targetId.equals(comment))
+myRatingSchema.methods.stopDislikes = async function(entity: ObjectId){
+    const index = this.dislikes.findIndex((s: LikesType) => s.targetId.equals(entity))
     if(index !== -1){
         this.dislikes[index].active = false
-        await this.ownerDocument().save()
     }else
         throw 'dislike not found'
-    
 }
