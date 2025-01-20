@@ -216,21 +216,17 @@ describe('/likes', () => {
         let commentResponce = await request(app).get(`${URL_PATH.posts}/${postId[0]}/comments`)
                                                 .set("Authorization", 'Bearer ' + accessToken[2])
         
-        console.log(mapLikesInfo(commentResponce.body.items[3]))
-        // expect(commentResponce.body.likesInfo).toEqual({ likesCount: 3,
-        //                                                 dislikesCount: 4,
-        //                                                 myStatus: Rating.Like })
-        console.log(mapLikesInfo(commentResponce.body.items[3]))
-        // expect(commentResponce.body.likesInfo).toEqual({ likesCount: 3,
-        //                                                 dislikesCount: 4,
-        //                                                 myStatus: Rating.Like })       
-        console.log(mapLikesInfo(commentResponce.body.items[3]))
-        // expect(commentResponce.body.likesInfo).toEqual({ likesCount: 3,
-        //                                                 dislikesCount: 4,
-        //                                                 myStatus: Rating.Like })
-        console.log(mapLikesInfo(commentResponce.body.items[3]))
-        // expect(commentResponce.body.likesInfo).toEqual({ likesCount: 3,
-        //                                                 dislikesCount: 4,
-        //                                                 myStatus: Rating.Like })
+        expect(mapLikesInfo(commentResponce.body.items[3])).toEqual({ likesCount: 3,
+                                                        dislikesCount: 4,
+                                                        myStatus: Rating.Like })
+        expect(mapLikesInfo(commentResponce.body.items[2])).toEqual({ likesCount: 5,
+                                                        dislikesCount: 1,
+                                                        myStatus: Rating.Dislike })       
+        expect(mapLikesInfo(commentResponce.body.items[1])).toEqual({ likesCount: 3,
+                                                        dislikesCount: 1,
+                                                        myStatus: Rating.Like })
+        expect(mapLikesInfo(commentResponce.body.items[0])).toEqual({ likesCount: 0,
+                                                        dislikesCount: 6,
+                                                        myStatus: Rating.Dislike })
         })
 })
