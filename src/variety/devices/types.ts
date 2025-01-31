@@ -16,15 +16,6 @@ export type DeviceViewType = {
     expiresAt:  Date
 }
 
-// export type payloadFromSessionType = {
-//   id:         string,
-//   userId:     string,
-//   version:    string,
-//   deviceId:   string,
-//   iat:        number,
-//   exp:        number
-// }
-
 export type updateSessionType = {
   userId:     string,
   version:    string,

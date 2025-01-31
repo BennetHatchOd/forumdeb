@@ -1,26 +1,90 @@
 import { ObjectId } from "mongodb";
-import { UserDocument, UserModel, UserType } from "../../users/domain/user.entity";
 import { HydratedDocument, Model } from "mongoose";
 import { Likeable } from "../domain/likes.recipient.entity";
+import {Rating } from "../types";
+import { LikeType } from "../domain/likes.entity";
 
 export class LikeRepository{
     constructor(){}
 
-    async hasCommentLike(commentId: string, userId: string, likeRecipient: keyof Pick<UserType, "myCommentRating" | "myPostRating">):Promise<boolean>{
-        const user: UserDocument|null = await UserModel.findOne({_id: new ObjectId(userId)})
-        if(!user)
-            throw "User not found"
-        return user[likeRecipient]!.hasLikes(new ObjectId(commentId))
+    async hasLikeDislike<T extends LikeType>( model: Model<T>, entityId: string, userId: string):Promise<Array<{active: boolean, rating: Rating}>>{
+    
+        return await model.find({targetId: new ObjectId(entityId), ownerId: new ObjectId(userId), active: true}).select({_id: 0, rating: 1}).exec()
+    
     }
 
-    async hasCommentDislike(commentId: string, userId: string, likeRecipient: keyof Pick<UserType, "myCommentRating" | "myPostRating">):Promise<boolean>{
-        const user: UserDocument|null = await UserModel.findOne({_id: new ObjectId(userId)})
-        if(!user)
-            throw "User not found"
-        return user[likeRecipient]!.hasDislikes(new ObjectId(commentId))
+    async hasArrayLikeDislikes<T extends LikeType>( model: Model<T>, entitiesId: Array<string>, userId: string){
+        const answer = await model.find({ targetId: {$in: entitiesId.map(s => new ObjectId(s))}, ownerId: new ObjectId(userId), active: true}).select({_id: 0, targetId: 1, rating: 1}).lean().exec()
+        if(answer.length == 0)
+            return []
+        return answer.map(s => {return {targetId: s.targetId!.toString(), rating: s.rating}})
     }
+
+     // User likes and dislikes
  
-    // Comment likes and dilikes
+    async stopLike<T extends LikeType>( model: Model<T>, entityId: string, userId: string){
+        const count: number = await model.countDocuments({targetId: new ObjectId(entityId), ownerId: new ObjectId(userId), rating: Rating.Like})
+        if(count > 1)
+            throw new Error("Wrong likes in documents")
+        if(count == 0)
+            throw new Error("Like not found")
+        const document: HydratedDocument<T> | null = await model.findOne({targetId: new ObjectId(entityId), ownerId: new ObjectId(userId), rating: Rating.Like})
+        document!.active = false
+        await document!.save()
+    }
+
+    async stopDislike<T extends LikeType>( model: Model<T>, entityId: string, userId: string){
+        const count: number = await model.countDocuments({targetId: new ObjectId(entityId), ownerId: new ObjectId(userId), rating: Rating.Dislike})
+        if(count > 1)
+            throw new Error("Wrong dislikes in documents")
+        if(count == 0)
+            throw new Error("Dislike not found")
+
+        const document: HydratedDocument<T> | null = await model.findOne({targetId: new ObjectId(entityId), ownerId: new ObjectId(userId), rating: Rating.Dislike})
+
+        document!.active = false
+        await document!.save()
+    }
+
+    async addDislike<T extends LikeType>( model: Model<T>, entityId: string, userId: string){
+        const count: number = await model.countDocuments({targetId: new ObjectId(entityId), ownerId: new ObjectId(userId), rating: Rating.Dislike})
+        if(count > 1)
+            throw new Error("Wrong dislikes in documents")
+        if(count == 0){
+            await model.create({
+                active:     true,
+                createdAt:  new Date(),
+                targetId:   entityId,
+                ownerId:    userId,
+                rating:     Rating.Dislike})
+            return
+        }
+
+        let document: HydratedDocument<T> | null = await model.findOne({targetId: new ObjectId(entityId), ownerId: new ObjectId(userId), rating: Rating.Dislike})
+            document!.active = true
+            await document!.save()
+    }
+    
+    async addLike<T extends LikeType>( model: Model<T>, entityId: string, userId: string){
+        const count: number = await model.countDocuments({targetId: new ObjectId(entityId), ownerId: new ObjectId(userId), rating: Rating.Like})
+        if(count > 1)
+            throw new Error("Wrong likes in documents")
+        if(count == 0){
+            await model.create({
+                active:     true,
+                createdAt:  new Date(),
+                targetId:   entityId,
+                ownerId:    userId,
+                rating:     Rating.Like})
+            return
+        }
+
+        let document: HydratedDocument<T> | null = await model.findOne({targetId: new ObjectId(entityId), ownerId: new ObjectId(userId), rating: Rating.Like})
+            document!.active = true
+            await document!.save()
+    }
+    
+    // Entity likes and dilikes
 
     async decrementLike<T extends Likeable>( model: Model<T>, id: string): Promise<void> {
         const document: HydratedDocument<T> | null = await model.findOne({ _id: new ObjectId(id)});
@@ -28,7 +92,7 @@ export class LikeRepository{
         if (!document) {
           throw new Error("Document not found");
         }
-        await document.likesInfo.decrementLikes()  
+        document.likesInfo.likesCount--  
         await document.save()
     }
     
@@ -38,7 +102,7 @@ export class LikeRepository{
         if (!document) {
           throw new Error("Document not found");
         }
-        await document.likesInfo.decrementDislikes()
+        document.likesInfo.dislikesCount--
         await document.save()
     }   
     
@@ -48,51 +112,22 @@ export class LikeRepository{
         if (!document) {
           throw new Error("Document not found");
         }
-        await document.likesInfo.incrementLikes()
+        document.likesInfo.likesCount++
         await document.save()
     }   
     
     async incrementDisLike<T extends Likeable>( model: Model<T>, id: string): Promise<void> {
+        
+        //await model.updateOne({ _id: new ObjectId(id)}, {$inc : {"likesInfo.likes": 1}})
+
         const document: HydratedDocument<T> | null = await model.findOne({ _id: new ObjectId(id)});
   
         if (!document) {
           throw new Error("Document not found");
         }
-        await document.likesInfo.incrementDislikes()
+        document.likesInfo.dislikesCount++
         await document.save()
     }
 
-    // User likes and dislikes
 
-    async deleteUserLike(commentId: string, userId: string, likeRecipient: keyof Pick<UserType, "myCommentRating" | "myPostRating">){
-        const user: UserDocument|null = await UserModel.findOne({_id: new ObjectId(userId)})
-        if(!user)
-            throw "User not found"
-        await user[likeRecipient]!.stopLikes(new ObjectId(commentId))
-        await user.save()
-    }
-    
-    async deleteUserDislike(commentId: string, userId: string, likeRecipient: keyof Pick<UserType, "myCommentRating" | "myPostRating">){
-        const user: UserDocument|null = await UserModel.findOne({_id: new ObjectId(userId)})
-        if(!user)
-            throw "User not found"
-        await user[likeRecipient]!.stopDislikes(new ObjectId(commentId))
-        await user.save()
-    }
-    
-    async addUserDislike(commentId: string, userId: string, likeRecipient: keyof Pick<UserType, "myCommentRating" | "myPostRating">){
-        const user: UserDocument|null = await UserModel.findOne({_id: new ObjectId(userId)})
-        if(!user)
-            throw "User not found"
-        await user[likeRecipient]!.addDislikes(new ObjectId(commentId))
-        await user.save()
-    }
-
-    async addUserLike(commentId: string, userId: string, likeRecipient: keyof Pick<UserType, "myCommentRating" | "myPostRating">){
-        const user: UserDocument|null = await UserModel.findOne({_id: new ObjectId(userId)})
-        if(!user)
-            throw "User not found"
-        await user[likeRecipient]!.addLikes(new ObjectId(commentId))
-        await user.save()
-    }
 }

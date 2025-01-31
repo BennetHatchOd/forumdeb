@@ -1,6 +1,6 @@
 import { PostRepository } from "../repositories/post.repository";
 import { BlogRepository } from "../../blogs/repositories/blog.repository";
-import { PostInputType } from "../types";
+import { PostFullType, PostInputType } from "../types";
 import { APIErrorResult, CodStatus, StatusResult } from "../../../types/types";
 import { PostType } from "../domain/post.entity";
 
@@ -31,10 +31,14 @@ export class PostService {
         const checkParentBlog = await this.findBlogName(createItem.blogId)
         if(checkParentBlog.codResult == CodStatus.BadRequest) return checkParentBlog
 
-        const newPost: PostType = {
+        const newPost: PostFullType = {
                         ...createItem, 
                         blogName: checkParentBlog.data as string,
                         createdAt: new Date(),
+                        likesInfo:{
+                            likes: 0,
+                            dislikes: 0,
+                        }
                     }
         return await this.postRepository.create(newPost)
     }

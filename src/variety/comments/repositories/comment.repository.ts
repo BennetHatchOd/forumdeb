@@ -1,7 +1,7 @@
-import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "mongodb";
-import { CommentFullType, CommentInputType, CommentViewType } from "../types";
+import { DeleteResult, ObjectId, UpdateResult, WithId } from "mongodb";
+import { CommentInputType } from "../types";
 import { CodStatus, StatusResult } from "../../../types/types";
-import { CommentDocument, CommentModel } from "../domain/comment.entity";
+import { CommentDocument, CommentModel, CommentType } from "../domain/comment.entity";
 
 export class CommentRepository {
 
@@ -20,7 +20,7 @@ export class CommentRepository {
                 : {codResult: CodStatus.NotFound};
     }
  
-    async findById(id: string): Promise < StatusResult<CommentFullType|undefined> > {           
+    async findById(id: string): Promise < StatusResult<WithId<CommentType>|undefined> > {           
          
         if(!ObjectId.isValid(id))
             return {codResult: CodStatus.NotFound};
@@ -30,7 +30,7 @@ export class CommentRepository {
             : {codResult: CodStatus.NotFound};
     }
 
-    async create(createItem: Omit<CommentFullType, 'id'>): Promise <StatusResult<string|undefined>>{      
+    async create(createItem: CommentType): Promise <StatusResult<string|undefined>>{      
         const answerInsert: CommentDocument = await CommentModel.create(createItem)
         return {codResult: CodStatus.Created, data: answerInsert._id.toString()}  
     }
@@ -62,19 +62,18 @@ export class CommentRepository {
         throw "error of deleting collection";
     
     }
-    mapDbToFull(item:CommentDocument): CommentFullType {
+    mapDbToFull(item:CommentDocument): WithId<CommentType> {
         
         return {
-            id: item._id.toString(),
+            _id: item._id,
             content: item.content,
             createdAt: item.createdAt,
             commentatorInfo: {  userId: item.commentatorInfo.userId,
                                 userLogin: item.commentatorInfo.userLogin},
             parentPostId: item.parentPostId,
             likesInfo:{
-                likes: item.likesInfo.likes,
-                dislikes: item.likesInfo.dislikes,
-//                myStatus:  item.likesInfo.myStatus
+                likesCount: item.likesInfo.likesCount,
+                dislikesCount: item.likesInfo.dislikesCount,
             }
         }       
     }

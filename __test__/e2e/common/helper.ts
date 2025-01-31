@@ -2,7 +2,8 @@ import request from "supertest";
 import { app } from "../../../src/app";
 import { HTTP_STATUSES, URL_PATH } from "../../../src/setting/setting.path.name";
 import { DeviceViewType } from "../../../src/variety/devices/types";
-import { CommentViewType, LikesCommentType, LikesCommentViewType } from "../../../src/variety/comments/types";
+import { CommentViewType} from "../../../src/variety/comments/types";
+import { LikesEntityViewType } from "../../../src/variety/likes/types";
 
 export function compareArr(arr1: Array<string>, arr2: Array<DeviceViewType>){
     let deviceNamesSource: Array<DeviceViewType> = arr2
@@ -14,7 +15,7 @@ export function compareArr(arr1: Array<string>, arr2: Array<DeviceViewType>){
     return check                    
         }
 
-export async function checkCommentLike(commentsId: string, accessToken: string, likeStatus: string): Promise<LikesCommentViewType & {myStatus:string}>{
+export async function checkCommentLike(commentsId: string, accessToken: string, likeStatus: string): Promise<LikesEntityViewType & {myStatus:string}>{
 
             await request(app).put(`${URL_PATH.comments}/${commentsId}/like-status`)
                         .set("Authorization", 'Bearer ' + accessToken)
@@ -31,5 +32,5 @@ export async function checkCommentLike(commentsId: string, accessToken: string, 
 }
 
 export function mapLikesInfo(comment: CommentViewType){
-    return {...comment.likesInfo, myStatus: comment.myStatus}
+    return {...comment.likesInfo, myStatus: comment.likesInfo.myStatus}
 }

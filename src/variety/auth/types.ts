@@ -10,7 +10,6 @@ export type AuthorizationType = {
   ip:           string
 }
 
-
 export type AboutUser = {
     email:      string,
     login:      string,

@@ -1,38 +1,13 @@
-import { Rating } from "../likes/types"
-
-export type CommentatorInfo ={
-    userId:	    string,
-    userLogin:  string	
-}
-
-export type LikesCommentViewType = {
-    likesCount:      number,
-    dislikesCount:   number,
-}
+import { LikesRecipientType } from "../likes/domain/likes.recipient.entity"
+import { LikesEntityViewType } from "../likes/types"
+import { CommentatorInfoType } from "./domain/comment.entity"
 
 export type CommentViewType ={
     id:                 string,
     content:	        string
-    commentatorInfo:	CommentatorInfo,
+    commentatorInfo:	CommentatorInfoType,
     createdAt:	        string,
-    likesInfo:          LikesCommentViewType,
-    myStatus:   Rating
-}
-
-export type CommentFullType ={
-    id:                 string,
-    content:	        string
-    commentatorInfo:	CommentatorInfo,
-    createdAt:	        Date,
-    parentPostId:       string,
-    likesInfo:          LikesCommentType,
-//    myStatus:           Rating
-}
-
-export type LikesCommentType = {
-    likes: number;
-    dislikes: number;
-//    myStatus:   Rating;
+    likesInfo:          LikesEntityViewType
 }
 
 export type CommentInputType = {

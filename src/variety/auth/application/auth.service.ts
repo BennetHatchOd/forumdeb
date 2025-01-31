@@ -14,7 +14,7 @@ import { UserService } from "../../users/application/user.service";
 import { DeviceRepository } from "../../devices/repositories/device.repository";
 import { UserType } from "../../users/domain/user.entity";
 import { newPasswordType } from "../domain/newPassword.entity";
-import { ConfirmEmailType } from "../domain/auth.entity";
+import { ConfirmEmailType } from "../domain/confirm.email.entity";
 
 export class AuthService {
 

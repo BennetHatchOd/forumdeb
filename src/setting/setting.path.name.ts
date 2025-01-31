@@ -13,6 +13,9 @@ export const REQUEST_COLLECTION_NAME = 'requests'
 export const NEWPASSWORD_COLLECTION_NAME = 'askpasswords'
 export const SESSION_COLLECTION_NAME = 'sessions'
 
+export const LIKE_COMMENT_COLLECTION_NAME = 'likescomments' 
+export const LIKE_POST_COLLECTION_NAME = 'likesposts' 
+
 export const HTTP_STATUSES = {
     OK_200:                 200,
     CREATED_201:            201,

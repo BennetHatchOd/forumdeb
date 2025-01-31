@@ -1,7 +1,6 @@
 import mongoose, { HydratedDocument, Model, model } from "mongoose";
 import { USER_COLLECTION_NAME } from "../../../setting/setting.path.name";
-import { myRatingSchema, MyRatingType } from "../../likes/domain/likes.user.entity";
-import { confirmEmailSchema, ConfirmEmailType } from "../../auth/domain/auth.entity";
+import { confirmEmailSchema, ConfirmEmailType } from "../../auth/domain/confirm.email.entity";
 
 export type UserType = {
     login:	            string,
@@ -9,9 +8,7 @@ export type UserType = {
     password:           string,
     createdAt:	        Date, 
     isConfirmEmail?:    boolean,
-    confirmEmail:       ConfirmEmailType,
-    myCommentRating?:   MyRatingType,    
-    myPostRating?:      MyRatingType    
+    confirmEmail:       ConfirmEmailType 
 }
 
 type UserModel = Model<UserType>
@@ -24,7 +21,7 @@ export const userSchema = new mongoose.Schema<UserType>({
     createdAt:	    { type: Date, required: true },
     isConfirmEmail: { type: Boolean, default: false},
     confirmEmail:   { type: confirmEmailSchema},
-    myCommentRating:{ type: myRatingSchema, default: () => ({ likes: [], dislikes: [] }) }
+    //myCommentRating:{ type: myRatingSchema, default: () => ({ likes: [], dislikes: [] }) }
     // myPostRating:   { type: myRatingSchema, default: () => ({ likes: [], dislikes: [] }) }
   });
   

@@ -4,7 +4,7 @@ import { PostRepository } from "../../posts/repositories/post.repository";
 import { UserQueryRepository } from "../../users/repositories/user.query.repository";
 import { CommentType } from "../domain/comment.entity";
 import { CommentRepository } from "../repositories/comment.repository";
-import { CommentFullType, CommentInputType} from "../types";
+import { CommentInputType} from "../types";
 
 export class CommentService {
 
@@ -21,16 +21,15 @@ export class CommentService {
         }
         
         const userLogin: string = (await this.userQueryRepository.findById(userId))!.login
-        const newComment: Omit<CommentFullType, 'id'> = {
+        const newComment: CommentType = {
                                 content: createItem.content,
                                 parentPostId: parentPostId,
                                 commentatorInfo: { userId: userId,
                                                    userLogin: userLogin},
                                 createdAt: new Date(),
                                 likesInfo:{
-                                    likes: 0,
-                                    dislikes: 0,
-    //                                myStatus: Rating.None
+                                    likesCount: 0,
+                                    dislikesCount: 0,
                                 }
                             }
         return await this.commentRepository.create(newComment)
@@ -39,7 +38,7 @@ export class CommentService {
  
     async edit(id: string, userId: string, editData: CommentInputType): Promise < StatusResult >{    
        
-        const oldComment: StatusResult<CommentFullType | undefined> = await this.commentRepository.findById(id)
+        const oldComment: StatusResult<CommentType | undefined> = await this.commentRepository.findById(id)
        
         if(oldComment.codResult == CodStatus.NotFound)
             return {codResult: CodStatus.NotFound}
@@ -52,7 +51,7 @@ export class CommentService {
 
    async delete(id: string, userId: string): Promise < StatusResult > {     
 
-        const foundResult: StatusResult<CommentFullType | undefined> = await this.commentRepository.findById(id)
+        const foundResult: StatusResult<CommentType | undefined> = await this.commentRepository.findById(id)
 
         if (foundResult.codResult != CodStatus.Ok )
             return foundResult as StatusResult;

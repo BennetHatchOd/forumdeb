@@ -1,54 +1,57 @@
-import { ObjectId } from "mongodb";
-import mongoose, { HydratedDocument, Model, model } from "mongoose";
-import { Rating } from "../types";
+import mongoose from "mongoose";
 
 export interface Likeable {
     likesInfo: {
-        incrementLikes: () => Promise<void>;
-        incrementDislikes: () => Promise<void>;
-        decrementLikes: () => Promise<void>;
-        decrementDislikes: () => Promise<void>;
-    };
+        likesCount:         number;
+        dislikesCount:      number;
+    //     incrementLikes: () => void;
+    //     incrementDislikes: () => void;
+    //     decrementLikes: () => void;
+    //     decrementDislikes: () => void;
+     };
   }
 
 export type LikesRecipientType = {
-    likes: number;
-    dislikes: number;
-    incrementLikes():Promise<void>;
-    incrementDislikes():Promise<void>;
-    decrementLikes():Promise<void>;
-    decrementDislikes():Promise<void>;
+    likesCount:         number;
+    dislikesCount:      number;
+    // incrementLikes():   void;
+    // incrementDislikes():void;
+    // decrementLikes():   void;
+    // decrementDislikes():void;
 }
 
 export const likesRecipientSchema = new mongoose.Schema<LikesRecipientType>({
-      likes: { type:      Number, 
-               min: 0,
-               default: 0,
-               validate: {
-                  validator: Number.isInteger, 
-                  message: "Value should be integer",}
-              },
-      dislikes: { type:   Number, 
-                min:      0,
-                default: 0,
-                validate: {
-                  validator: Number.isInteger, 
-                  message: "Value should be integer",}
-              },
+      likesCount: { type:       Number, 
+                    min:        0,
+                    default:    0,
+                    validate:   {
+                        validator: Number.isInteger, 
+                        message: "Value should be integer",}
+                    },
+      dislikesCount: {type:   Number, 
+                      min:      0,
+                      default:  0,
+                      validate: {
+                        validator: Number.isInteger, 
+                        message: "Value should be integer",}
+                    },
 })
-likesRecipientSchema.methods.incrementLikes = async function(): Promise<void>{
-    this.likes++
-}
-likesRecipientSchema.methods.incrementDislikes = async function(): Promise<void>{
-    this.dislikes++
-}
-likesRecipientSchema.methods.decrementLikes = async function(): Promise<void>{
-    if(this.likes == 0)
-        throw "likes shouldn't be negative"
-    this.likes--
-}
-likesRecipientSchema.methods.decrementDislikes = async function(): Promise<void>{
-    if(this.dislikes == 0)
-        throw "likes shouldn't be negative"
-    this.dislikes--
-}
+
+// likesRecipientSchema.methods.incrementLikes = function(): void{
+//     this.likesCount++
+// }
+// likesRecipientSchema.methods.incrementDislikes = function(): void{
+//     this.dislikesCount++
+// }
+// likesRecipientSchema.methods.decrementLikes =  function(): void{
+//     if(this.likesCount == 0)
+//         throw "likes shouldn't be negative"
+//     this.likesCount--
+// }
+// likesRecipientSchema.methods.decrementDislikes = function(): void{
+//     if(this.dislikesCount == 0)
+//         throw "likes shouldn't be negative"
+//     this.dislikesCount--
+// }
+
+// export const LikesRecipientModel = mongoose.model('LikesRecipient', likesRecipientSchema);

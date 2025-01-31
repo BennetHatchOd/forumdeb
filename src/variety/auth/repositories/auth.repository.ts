@@ -1,10 +1,10 @@
-import { DeleteResult, InsertOneResult, ObjectId, UpdateResult, WithId } from "mongodb";
+import { DeleteResult, ObjectId } from "mongodb";
 import { CodStatus, StatusResult } from "../../../types/types";
 import { UserDocument, UserModel, UserType } from "../../users/domain/user.entity";
 import { RequestModel } from "../domain/request.entity";
 import { NewPasswordDocument, NewPasswordModel, newPasswordType } from "../domain/newPassword.entity";
 import { UserIdType } from "../../users/types";
-import { ConfirmEmailType } from "../domain/auth.entity";
+import { ConfirmEmailType } from "../domain/confirm.email.entity";
 
 export class AuthRepository {
   
@@ -39,22 +39,6 @@ export class AuthRepository {
         await searchItem.save()
     }
 
-    // async checkUniq(loginCheck: string, emailCheck: string): Promise<StatusResult<string[]|undefined>> {
-    // // checking for unverified users
-
-    //     const existEmail = await AuthModel.countDocuments({ "user.email": emailCheck })
-    //     const existLogin = await AuthModel.countDocuments({ "user.login": loginCheck })
-
-    //     let arrayErrors: Array<string> = [] 
-    //     if(existEmail > 0) 
-    //         arrayErrors.push('email') 
-    //     if(existLogin > 0) 
-    //         arrayErrors.push('login')
-
-    //     return arrayErrors.length == 0
-    //         ?  {codResult: CodStatus.Ok}
-    //         :  {codResult: CodStatus.BadRequest, data: arrayErrors};
-    // }
 
     async checkNotVerifEmail(mail: string):  Promise <number>{      
         const searchItem: UserDocument | null  
@@ -113,18 +97,6 @@ export class AuthRepository {
         await NewPasswordModel.deleteOne({userId: userId})
     }
 
-    // async isExist(id: string): Promise<StatusResult>{     
-        
-    //     if(!ObjectId.isValid(id))    
-    //         return {codResult : CodStatus.NotFound};
-
-    //     const exist: number = await UserModel.countDocuments({_id: new ObjectId(id)})           
-        
-    //     return exist == 1  
-    //             ? {codResult: CodStatus.Ok} 
-    //             : {codResult: CodStatus.NotFound};
-    // }
- 
     async delete(id: string):  Promise <StatusResult>{      
         const answerDelete: DeleteResult = await UserModel.deleteOne({_id: new ObjectId(id)})
 
@@ -132,16 +104,6 @@ export class AuthRepository {
             return {codResult: CodStatus.NoContent}  
         throw 'the server didn\'t confirm the delete operation';
     }
-
-    // mapUserToFull(user: UserDocument): UserPasswordType {
-    //     return { 
-    //         id:         user._id.toString(),
-    //         email:      user.email,      
-    //         login:      user.login,
-    //         password:   user.password,
-    //         createdAt:	user.createdAt
-    //         }
-    // }
 
     mapUserToFull(user: UserDocument): UserIdType  {
         return { 
@@ -151,7 +113,6 @@ export class AuthRepository {
             password:   user.password,
             createdAt:	user.createdAt,
             isConfirmEmail: user.isConfirmEmail!,
-            myCommentRating: user.myCommentRating!,
             confirmEmail: user.confirmEmail
         }
     }

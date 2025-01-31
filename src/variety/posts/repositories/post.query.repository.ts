@@ -2,20 +2,27 @@ import { QueryType, PaginatorType} from "../../../types/types";
 import { ObjectId } from "mongodb";
 import { emptyPaginator } from "../../../utility/paginator";
 import { PostViewType } from "../types";
-import { PostDocument, PostModel } from "../domain/post.entity";
+import { PostDocument, PostModel, PostType } from "../domain/post.entity";
+import { LikePost, Rating } from "../../likes/types";
+import { LikeService } from "../../likes/application/like.service";
 
 export class PostQueryRepository {
 
- 
-    async findById(id: string): Promise < PostViewType | null > {      
+    constructor(private likeService: LikeService){}
+
+    async findById(postId: string, userId: string|undefined): Promise < PostViewType | null > {      
         
-        if(!ObjectId.isValid(id))
-            return null;
-        const searchItem: PostDocument | null = 
-            await PostModel.findOne({_id: new ObjectId(id)})
+    
+        const searchItem: PostDocument | null 
+                = await PostModel.findOne({_id: postId})
         
+        let likeStatus: Rating = Rating.None
+        if(userId)
+            likeStatus = await this.likeService.getUserRatingForEntity<PostType>(postId, userId, LikePost)
+    
+
         return searchItem 
-            ? this.mapDbToOutput(searchItem) 
+            ? this.mapDbToView(searchItem, likeStatus) 
             : null;
     }
 
@@ -42,13 +49,13 @@ export class PostQueryRepository {
                 page: queryReq.pageNumber > pagesCount ? pagesCount : queryReq.pageNumber,
                 pageSize: queryReq.pageSize,
                 totalCount: totalCount,
-                items: searchItem.map(s => this.mapDbToOutput(s))
+                items: searchItem.map(s => this.mapDbToView(s))
             } 
  
 
     }
 
-    mapDbToOutput(item: PostDocument): PostViewType {
+    mapDbToView(item: PostDocument, myStatus: Rating): PostViewType {
         
         return { 
             id: item._id.toString(),
@@ -56,8 +63,13 @@ export class PostQueryRepository {
             shortDescription: item.shortDescription,
             content: item.content,
             createdAt: item.createdAt.toISOString(),
-            blogId:	item.blogId,
-            blogName:	item.blogName
+            blogId:	item.blogId.toString(),
+            blogName:	item.blogName,
+            extendedLikesInfo:{
+                likesCount: item.likesInfo.likesCount,
+                dislikesCount: item.likesInfo.dislikesCount,
+                myStatus:  myStatus
+            },
         }       
     }
  

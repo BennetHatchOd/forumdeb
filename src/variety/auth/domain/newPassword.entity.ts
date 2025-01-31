@@ -7,7 +7,6 @@ export type newPasswordType = {
     expirationTime: Date
 }
 
-
 type NewPasswordModel = Model<newPasswordType>
 export type NewPasswordDocument = HydratedDocument<newPasswordType>
 

@@ -43,14 +43,14 @@ export const commentRepository = new CommentRepository()
 export const deviceRepository = new DeviceRepository()
 export const postRepository = new PostRepository()
 
-export const likeService = new LikeService(likeRepository, commentRepository)
+export const likeService = new LikeService(likeRepository)
 
 export const userQueryRepository = new UserQueryRepository()
 export const authQueryRepository = new AuthRepository()
 export const blogQueryRepository = new BlogQueryRepository()
 export const commentQueryRepository = new CommentQueryRepository(likeService)
 export const deviceQueryRepository = new DeviceQueryRepository()
-export const postQueryRepository = new PostQueryRepository()
+export const postQueryRepository = new PostQueryRepository(likeService)
 
 export const userService = new UserService(userRepository, authRepository, passwordHashAdapter)
 export const deviceService = new DeviceService(deviceRepository)

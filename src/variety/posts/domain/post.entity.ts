@@ -9,7 +9,7 @@ export type PostType = {
     createdAt:        Date,
     blogId:	          string,
     blogName:	        string,
-    // likesInfo:        LikesRecipientType
+    likesInfo:        LikesRecipientType
 }
 
 type PostModel = Model<PostType>
@@ -22,7 +22,7 @@ const postSchema = new mongoose.Schema<PostType>({
         createdAt:        { type: Date,   required: true },
         blogId:	          { type: String, required: true },
         blogName:	        { type: String, required: true },
-        // likesInfo:        {type: likesRecipientSchema, required: true},       
+        likesInfo:        {type: likesRecipientSchema, required: true},       
   });
 
 export const PostModel = model<PostType, PostModel>(POST_COLLECTION_NAME, postSchema);

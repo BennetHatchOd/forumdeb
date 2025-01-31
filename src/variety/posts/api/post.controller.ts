@@ -5,6 +5,7 @@ import { paginator } from "../../../utility/paginator";
 import { HTTP_STATUSES } from "../../../setting/setting.path.name";
 import { PostService} from "../application/post.service";
 import { PostQueryRepository } from "../repositories/post.query.repository";
+import { convertToObjectId } from "../../../setting/helper";
 
 export class PostControllers {   
     
@@ -16,7 +17,9 @@ export class PostControllers {
 
         const queryPaginator:  QueryType = paginator(req.query)
         try{
-            const blogPaginator: PaginatorType<PostViewType> = await this.postQueryRepository.find(queryPaginator)  
+            const userId = req.user?.id
+
+            const blogPaginator: PaginatorType<PostViewType> = await this.postQueryRepository.find(queryPaginator, userId)  
             res.status(HTTP_STATUSES.OK_200).json(blogPaginator)
         }
         catch(err){
@@ -27,7 +30,11 @@ export class PostControllers {
 
     async getById(req: Request<{id: string}>, res: Response<PostViewType>){
         try{    
-            const foundPost: PostViewType | null = await this.postQueryRepository.findById(req.params.id);
+            const userId = req.user?.id
+            
+            const postId =req.params.id
+
+            const foundPost: PostViewType | null = await this.postQueryRepository.findById(postId, userId);
             
             if(!foundPost){
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
@@ -46,7 +53,7 @@ export class PostControllers {
         try{
             const answer: StatusResult<string | APIErrorResult>  = await this.postService.create(req.body); 
             if(answer.codResult == CodStatus.Created){ 
-                const blog: PostViewType | null = await this.postQueryRepository.findById(answer.data as string)
+                const blog: PostViewType | null = await this.postQueryRepository.findById(answer.data as ObjectId)
                 if(!blog) throw "can't find blog"
                 res.status(HTTP_STATUSES.CREATED_201).json(blog)
                 return;
@@ -85,14 +92,15 @@ export class PostControllers {
        
         const queryPaginator: QueryType = paginator({...req.query, blogId: req.params.id})
         try{
-                const postPaginator: PaginatorType<PostViewType> = await this.postQueryRepository.find(queryPaginator)
+            const userId: string|undefined = req.user?.id
+            const postPaginator: PaginatorType<PostViewType> = await this.postQueryRepository.find(queryPaginator, userId)
     
-                const status = (postPaginator.totalCount == 0) 
-                            ?   HTTP_STATUSES.NOT_FOUND_404  
-                            :   HTTP_STATUSES.OK_200
-                 
-                res.status(status).json(postPaginator)
-                return;
+            const status = (postPaginator.totalCount == 0) 
+                        ?   HTTP_STATUSES.NOT_FOUND_404  
+                        :   HTTP_STATUSES.OK_200
+                
+            res.status(status).json(postPaginator)
+            return;
         }
         catch(err){
                 console.log(err)
