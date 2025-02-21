@@ -14,7 +14,7 @@ export async function fillSystem(blogs: BlogInputType[],
                         comments: CommentInputType[],
                      accessToken: string[],
                       commentsId: Array<string>,
-                          postId: Array<string>){
+                          postsId: Array<string>){
 
     // creating blog                    
        
@@ -23,14 +23,18 @@ export async function fillSystem(blogs: BlogInputType[],
                                     .send(blogs[0]) 
                                     .expect(HTTP_STATUSES.CREATED_201)
                     
-    // creating post                                
-    posts[0].blogId = blogCreate.body.id
+    // creating posts
+    
+    for(let i = 0; i < posts.length; i++){
+        posts[i].blogId = blogCreate.body.id
 
-    const postCreate = await request(app).post(URL_PATH.posts)
-                                    .set("Authorization", AuthPassword)
-                                    .send(posts[0]) 
-                                    .expect(HTTP_STATUSES.CREATED_201)
-    postId.push(postCreate.body.id)
+        const postCreate = await request(app).post(URL_PATH.posts)
+                                        .set("Authorization", AuthPassword)
+                                        .send(posts[i]) 
+                                        .expect(HTTP_STATUSES.CREATED_201)
+        postsId.push(postCreate.body.id)
+    }
+    
     // creating users & accesstokens
 
     for(let i =0; i < 8; i++){
@@ -51,7 +55,7 @@ export async function fillSystem(blogs: BlogInputType[],
     // creating comments
      
     for(let i =0; i < 4; i++){
-        const commentCreate = await request(app).post(`${URL_PATH.posts}/${postId[0]}/comments`)
+        const commentCreate = await request(app).post(`${URL_PATH.posts}/${postsId[0]}/comments`)
                         .set("Authorization", 'Bearer ' + accessToken[i])
                         .send(comments[i])
                         .expect(HTTP_STATUSES.CREATED_201);
