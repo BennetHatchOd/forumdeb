@@ -60,7 +60,7 @@ export class UserService {
     
     async delete(id: string): Promise<StatusResult> {     
         let isExistUser = await this.userRepository.isExist(id);
-        if (isExistUser.codResult == CodStatus.Ok)
+        if (isExistUser)
             return await this.userRepository.delete(id);
 
         return {codResult : CodStatus.NotFound}        

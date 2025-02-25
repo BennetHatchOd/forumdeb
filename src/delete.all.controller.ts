@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { HTTP_STATUSES } from "./setting/setting.path.name";
-import { authService, blogService, commentService, deviceService, postService, userService } from "./instances";
+import { authService, blogService, commentService, deviceService, likeService, postService, userService } from "./instances";
 
 
 export const deleteAllController = async (req: Request, res: Response) =>{
@@ -10,6 +10,8 @@ export const deleteAllController = async (req: Request, res: Response) =>{
     await userService.clear()
     await commentService.clear()
     await deviceService.clear()
+    await likeService.clear()
+    
     
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
 

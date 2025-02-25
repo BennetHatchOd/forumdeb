@@ -35,8 +35,8 @@ export const mailAdapter = new MailAdapter()
 export const mailManager = new MailManager(mailAdapter)
 
 
-export const likeRepository = new LikeRepository()
 export const userRepository = new UserRepository()
+export const likeRepository = new LikeRepository(userRepository)
 export const authRepository = new AuthRepository()
 export const blogRepository = new BlogRepository()
 export const commentRepository = new CommentRepository()

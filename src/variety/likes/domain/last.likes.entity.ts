@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { ObjectId } from "mongoose";
 import mongoose, { Schema } from "mongoose";
 
 export type LastLikesType = {

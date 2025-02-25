@@ -1,11 +1,15 @@
-import { ObjectId } from "mongodb";
 import { HydratedDocument, Model } from "mongoose";
 import { Likeable } from "../domain/likes.recipient.entity";
-import {Rating } from "../types";
-import { LikeType } from "../domain/likes.entity";
+import {LastLikesViewType, PostsLastLikesViewType, Rating } from "../types";
+import { LikeCommentModel, LikePostModel, LikeType } from "../domain/likes.entity";
+import { LastLikesType } from "../domain/last.likes.entity";
+import { UserRepository } from "../../users/repositories/user.repository";
+import { ObjectId } from "mongodb";
+import { create } from "domain";
+import { CodStatus, StatusResult } from "../../../types/types";
 
 export class LikeRepository{
-    constructor(){}
+    constructor(private userRepository: UserRepository){}
 
     async hasLikeDislike<T extends LikeType>( model: Model<T>, entityId: string, userId: string):Promise<Array<{active: boolean, rating: Rating}>>{
     
@@ -18,6 +22,85 @@ export class LikeRepository{
         if(answer.length == 0)
             return []
         return answer.map(s => {return {targetId: s.targetId!.toString(), rating: s.rating}})
+    }
+
+    async getLastLikes(postId: string): Promise<Array<LastLikesViewType>>{
+
+        const lastLikes = await LikePostModel.find({targetId:   postId, 
+                                                    active:     true, 
+                                                    rating:     Rating.Like})
+                                             .limit(3)
+                                             .sort({createdAt: -1})
+
+        const users = await this.userRepository.getLoginsUsers(lastLikes.map(s => s.ownerId))
+                                        
+        return lastLikes.map(s => { const user = users.find(el => el.userId === s.ownerId)
+                                        return {
+                                        addedAt:  s.createdAt.toString(),
+                                        userId:   s.ownerId,
+                                        login:    user!.login}
+                                    })                                
+    }
+
+    async getArrayLastLikes(postIds: string[]): Promise<Array<PostsLastLikesViewType>>{
+
+        const lastLikes = await LikePostModel.aggregate([
+                                                {$match: {  active:     true, 
+                                                            rating:     Rating.Like, 
+                                                            targetId:   {$in: postIds}}},
+                                                {$sort: {createdAt: -1}},
+                                                {$group: {
+                                                    _id: "$targetId",
+                                                    likes: {$push: {addedAt: "$createdAt",
+                                                                     userId: "$ownerId" }}
+                                                }},
+                                                {$project: {
+                                                    targetId:   "$_id", 
+                                                    likes:      { $slice: ["$likes", 3]}
+                                                }}
+                                            ]) 
+        const usersId: string[] = []
+
+        for(let targets of lastLikes){
+            for(let likes of targets.likes){
+                usersId.push(likes.userId)
+            }
+        }                                    
+
+        const users: { userId: string;
+                        login:  string }[] = await this.userRepository.getLoginsUsers(usersId)
+        let fullLastLikes = []
+
+        for(let targets of lastLikes){
+            let newLikes: LastLikesViewType[] = []
+            for(let likes of targets.likes){
+                const loginUser = users.find(el => likes.userId === el.userId)
+                newLikes.push({
+                                addedAt:    likes.addedAt.toString(),
+                                userId:     likes.userId.toString(), 
+                                login:      loginUser!.login})
+            }
+            fullLastLikes.push({postId: targets.targetId as string, newestLikes: newLikes})
+        }  
+ 
+        if(fullLastLikes.length != postIds.length){
+            const postWithLikes: string[] = fullLastLikes.map(s => s.postId)
+            const emptyLikes: string[] = postIds.filter(s => !postWithLikes.includes(s)) 
+            for(let post of emptyLikes)
+                fullLastLikes.push({postId: post, newestLikes: []})  
+        }
+
+        return fullLastLikes                                
+    }
+
+    async clear() {
+        await LikeCommentModel.deleteMany()
+        await LikePostModel.deleteMany()
+
+        if(await LikeCommentModel.countDocuments({}) == 0 && await LikePostModel.countDocuments({}) == 0)
+            return     
+        
+        throw "the server can\'t clear blog"
     }
 
      // User likes and dislikes

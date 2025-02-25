@@ -1,4 +1,4 @@
-import { DeleteResult, ObjectId, WithId } from "mongodb";
+import { DeleteResult, ObjectId } from "mongodb";
 import { CodStatus, StatusResult } from "../../../types/types";
 import { AboutUser } from "../../auth/types";
 import { UserDocument, UserModel, UserType } from "../domain/user.entity";
@@ -9,16 +9,16 @@ export class UserRepository {
         // private user = new UserModel()
     }
   
-    async isExist(id: string): Promise<StatusResult>{     
+    async isExist(id: string): Promise<boolean>{     
         
         if(!ObjectId.isValid(id))    
-            return {codResult : CodStatus.NotFound};
+            return false;
 
         const exist: number = await UserModel.countDocuments({_id: new ObjectId(id)})           
         
         return exist != 0  
-                ? {codResult: CodStatus.Ok} 
-                : {codResult: CodStatus.NotFound};
+                ? true 
+                : false;
     }
  
     async findIdByEmail(email: string): Promise<StatusResult<string|undefined>>{     
@@ -62,6 +62,13 @@ export class UserRepository {
             ? {codResult: CodStatus.NotFound} 
             : {codResult: CodStatus.Ok, data: {id:       checkedUser._id.toString(), 
                                                passHash: checkedUser.password}};
+    }
+
+    async getLoginsUsers(users: Array<string>){
+        const usersLogins = await UserModel.find({_id: {$in: users.map(s => new ObjectId(s))}})
+        
+        return usersLogins.map(s => {return {userId:    s._id.toString(),
+                                            login:      s.login }})
     }
 
     async findForOwnerById(id: string): Promise < StatusResult<AboutUser|undefined> > {     

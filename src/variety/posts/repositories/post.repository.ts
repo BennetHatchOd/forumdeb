@@ -5,25 +5,28 @@ import { PostDocument, PostModel, PostType } from "../domain/post.entity";
 
 export class PostRepository {
  
-    async isExist(id: ObjectId): Promise<StatusResult> {     
+    async isExist(id: string): Promise<boolean> {     
         
-        const exist: number = await PostModel.countDocuments({_id: id})           
+        if(!ObjectId.isValid(id))
+            return false
+
+        const exist: number = await PostModel.countDocuments({_id: new ObjectId(id)})           
         
         return exist != 0  
-                ? {codResult: CodStatus.Ok} 
-                : {codResult: CodStatus.NotFound};
+                ? true 
+                : false;
 
     }
      
-    async create(createItem: PostType): Promise <StatusResult<ObjectId>>{ 
+    async create(createItem: PostType): Promise <StatusResult<string>>{ 
         const post: PostDocument = await PostModel.create(createItem);
 
-        return {codResult: CodStatus.Created, data: post._id}  
+        return {codResult: CodStatus.Created, data: post._id.toString()}  
     }
 
-    async edit(id: ObjectId, editData: PostInputType, addingData: {blogName: string}): Promise<StatusResult<{}>>{
+    async edit(id: string, editData: PostInputType, addingData: {blogName: string}): Promise<StatusResult<{}>>{
               
-        const answerUpdate: UpdateResult = await PostModel.updateOne({_id: id}, {$set: {...editData, ...addingData}});
+        const answerUpdate: UpdateResult = await PostModel.updateOne({_id: new ObjectId(id)}, {$set: {...editData, ...addingData}});
         if(!answerUpdate.acknowledged)
             throw 'the server didn\'t confirm the edit-operation'
         
@@ -33,7 +36,8 @@ export class PostRepository {
 
     }
     
-    async delete(id: ObjectId): Promise <StatusResult>{ 
+    async delete(id: string): Promise <StatusResult>{
+         
         const answerDelete: DeleteResult = await PostModel.deleteOne({_id: id})
 
         return answerDelete.deletedCount == 1 

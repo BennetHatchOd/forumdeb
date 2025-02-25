@@ -8,16 +8,16 @@ export class CommentRepository {
     constructor(){
     }
 
-    async isExist(id: string): Promise < StatusResult > {     
+    async isExist(id: string): Promise<boolean>{     
         
         if(!ObjectId.isValid(id))    
-            return {codResult : CodStatus.NotFound};
+            return true;
 
         const exist: number = await CommentModel.countDocuments({_id: new ObjectId(id)})           
         
         return exist != 0  
-                ? {codResult: CodStatus.Ok} 
-                : {codResult: CodStatus.NotFound};
+                ? true 
+                : false;
     }
  
     async findById(id: string): Promise < StatusResult<WithId<CommentType>|undefined> > {           

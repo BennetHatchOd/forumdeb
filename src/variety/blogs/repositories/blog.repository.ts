@@ -5,16 +5,16 @@ import { BlogDocument, BlogModel, BlogType } from "../domain/blog.entity";
 
 export class BlogRepository {
 
-    async isExist(id: string): Promise < StatusResult > {     
+    async isExist(id: string): Promise<boolean>{     
         
         if(!ObjectId.isValid(id))    
-            return {codResult : CodStatus.NotFound};
+            return true;
 
         const exist: number = await BlogModel.countDocuments({_id: new ObjectId(id)})           
         
         return exist != 0  
-                ? {codResult: CodStatus.Ok} 
-                : {codResult: CodStatus.NotFound};
+                ? true 
+                : false;
     }
  
     async findById(id: string): Promise < StatusResult<BlogViewType|undefined> > {     
@@ -59,14 +59,14 @@ export class BlogRepository {
     }
 
 
-    async clear(): Promise <StatusResult> {
-        await BlogModel.deleteMany()
+async clear(): Promise <StatusResult> {
+    await BlogModel.deleteMany()
 
-        if(await BlogModel.countDocuments({}) == 0)
-           return {codResult: CodStatus.NoContent }
-        
-        throw "the server can\'t clear blog"
-    }
+    if(await BlogModel.countDocuments({}) == 0)
+        return {codResult: CodStatus.NoContent }
+    
+    throw "the server can\'t clear blog"
+}
 
     mapDbToView(item: BlogDocument): BlogViewType {
         

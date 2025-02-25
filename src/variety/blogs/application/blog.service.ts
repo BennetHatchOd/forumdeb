@@ -19,19 +19,19 @@ export class BlogService {
     }
  
     async edit(id: string, editData: BlogInputType): Promise < StatusResult >{    
-        const existResult: StatusResult = await this.blogRepository.isExist(id)
+        const existResult: boolean = await this.blogRepository.isExist(id)
         
-        if (existResult.codResult != CodStatus.Ok )
-            return existResult;
+        if (!existResult)
+            return {codResult: CodStatus.NotFound};
 
         return await this.blogRepository.edit(id, editData);         
     }
 
    async delete(id: string): Promise < StatusResult > {     
-        const existResult: StatusResult = await this.blogRepository.isExist(id)
+        const existResult: boolean = await this.blogRepository.isExist(id)
 
-        if (existResult.codResult != CodStatus.Ok )
-            return existResult;
+        if (!existResult)
+            return {codResult: CodStatus.NotFound};
 
         return await this.blogRepository.delete(id);
     }

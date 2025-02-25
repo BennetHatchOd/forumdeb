@@ -10,16 +10,16 @@ export class CommentQueryRepository {
 
     constructor(private likeService: LikeService){}
     
-    async findById(commentId: string, userId: string|undefined): Promise <CommentViewType | null > {      
+    async findById(entityId: string, userId: string|undefined): Promise <CommentViewType | null > {      
         
-        if(!ObjectId.isValid(commentId))
+        if(!ObjectId.isValid(entityId))
             return null;                   
         const searchItem: CommentDocument | null 
-                = await CommentModel.findOne({_id: new ObjectId(commentId)})           
+                = await CommentModel.findOne({_id: new ObjectId(entityId)})           
 
         let likeStatus: Rating = Rating.None
         if(userId)
-            likeStatus = await this.likeService.getUserRatingForEntity<CommentType>(commentId, userId, LikeComment)
+            likeStatus = await this.likeService.getUserRatingForEntity<CommentType>(entityId, userId, LikeComment)
         
         return searchItem 
                 ? this.mapDbToView(searchItem, likeStatus) 
@@ -56,7 +56,7 @@ export class CommentQueryRepository {
         const items: CommentViewType[] = []
 
         for (let i = 0; i < commentIds.length; i++){
-            items[i] = this.mapDbToView(searchItem[i], statusLike[i].rating)
+            items.push(this.mapDbToView(searchItem[i], statusLike[i].rating))
         }
         return {
                 pagesCount: pagesCount,

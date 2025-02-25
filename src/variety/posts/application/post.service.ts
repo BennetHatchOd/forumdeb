@@ -1,6 +1,6 @@
 import { PostRepository } from "../repositories/post.repository";
 import { BlogRepository } from "../../blogs/repositories/blog.repository";
-import { PostFullType, PostInputType } from "../types";
+import { PostInputType } from "../types";
 import { APIErrorResult, CodStatus, StatusResult } from "../../../types/types";
 import { PostType } from "../domain/post.entity";
 
@@ -13,7 +13,7 @@ export class PostService {
     async findBlogName(blogId: string): Promise<StatusResult<APIErrorResult|string>>{
         const checkParentBlog = await this.blogRepository.isExist(blogId)
         
-        if(checkParentBlog.codResult != CodStatus.Ok)
+        if(!checkParentBlog)
             return {codResult: CodStatus.BadRequest, data: {errorsMessages: [{
                                                                 message: "blogName isn't exist",
                                                                 field: "blogId"
@@ -31,13 +31,13 @@ export class PostService {
         const checkParentBlog = await this.findBlogName(createItem.blogId)
         if(checkParentBlog.codResult == CodStatus.BadRequest) return checkParentBlog
 
-        const newPost: PostFullType = {
+        const newPost: PostType = {
                         ...createItem, 
                         blogName: checkParentBlog.data as string,
                         createdAt: new Date(),
                         likesInfo:{
-                            likes: 0,
-                            dislikes: 0,
+                            likesCount: 0,
+                            dislikesCount: 0,
                         }
                     }
         return await this.postRepository.create(newPost)
@@ -45,8 +45,8 @@ export class PostService {
     
     async edit(id: string, editData: PostInputType): Promise <StatusResult<APIErrorResult|{}>> {   
 
-        const existResult: StatusResult = await this.postRepository.isExist(id)
-        if (existResult.codResult != CodStatus.Ok )
+        const existResult: boolean = await this.postRepository.isExist(id)
+        if (!existResult)
             return {codResult: CodStatus.NotFound, data: {}};
                     
         const checkParentBlog = await this.findBlogName(editData.blogId)

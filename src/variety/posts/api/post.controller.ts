@@ -5,7 +5,6 @@ import { paginator } from "../../../utility/paginator";
 import { HTTP_STATUSES } from "../../../setting/setting.path.name";
 import { PostService} from "../application/post.service";
 import { PostQueryRepository } from "../repositories/post.query.repository";
-import { convertToObjectId } from "../../../setting/helper";
 
 export class PostControllers {   
     
@@ -33,7 +32,6 @@ export class PostControllers {
             const userId = req.user?.id
             
             const postId =req.params.id
-
             const foundPost: PostViewType | null = await this.postQueryRepository.findById(postId, userId);
             
             if(!foundPost){
@@ -53,7 +51,7 @@ export class PostControllers {
         try{
             const answer: StatusResult<string | APIErrorResult>  = await this.postService.create(req.body); 
             if(answer.codResult == CodStatus.Created){ 
-                const blog: PostViewType | null = await this.postQueryRepository.findById(answer.data as ObjectId)
+                const blog: PostViewType | null = await this.postQueryRepository.findById(answer.data as string, undefined)
                 if(!blog) throw "can't find blog"
                 res.status(HTTP_STATUSES.CREATED_201).json(blog)
                 return;
@@ -113,7 +111,7 @@ export class PostControllers {
             const answerCreate: StatusResult<string| APIErrorResult>  =  await this.postService.create({...req.body, blogId: req.params.id})
     
             if(answerCreate.codResult == CodStatus.Created){ 
-                const postOut: PostViewType | null = await this.postQueryRepository.findById(answerCreate.data as string)
+                const postOut: PostViewType | null = await this.postQueryRepository.findById(answerCreate.data as string, undefined)
                 res.status(HTTP_STATUSES.CREATED_201).json(postOut) 
                 return;
             }

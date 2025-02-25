@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { ObjectId } from "mongoose";
 import mongoose, {HydratedDocument, Model, model, Schema } from "mongoose";
 import { LIKE_COMMENT_COLLECTION_NAME, LIKE_POST_COLLECTION_NAME, POST_COLLECTION_NAME } from "../../../setting/setting.path.name";
 import { Rating } from "../types";
@@ -6,8 +6,8 @@ import { Rating } from "../types";
 export interface LikeType {
         active:     boolean;
         createdAt:  Date;
-        targetId:   ObjectId;
-        ownerId:    ObjectId;
+        targetId:   string;
+        ownerId:    string;
         rating:     Rating
 }
 
@@ -19,10 +19,10 @@ export const likeSchema = new mongoose.Schema<LikeType>({
             type:       Date, 
             required:   true },
     targetId: {
-            type:       Schema.Types.ObjectId,
+            type:       String,
             required:   true },
     ownerId: {
-            type:       Schema.Types.ObjectId,
+            type:       String,
             required:   true },
     rating: {
             type:       String,

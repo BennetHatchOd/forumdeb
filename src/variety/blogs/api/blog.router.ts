@@ -13,6 +13,6 @@ blogsRouter.delete('/:id', authAdminByPassword, blogControllers.deleteById.bind(
 blogsRouter.put('/:id', authAdminByPassword, blogValidator, checkInputValidation, blogControllers.put.bind(blogControllers));
 blogsRouter.post('/', authAdminByPassword, blogValidator, checkInputValidation, blogControllers.post.bind(blogControllers));
 
-blogsRouter.get('/:id/posts', throughAccessToken, postControllers.getByBlog.bind(blogControllers));
-blogsRouter.post('/:id/posts', authAdminByPassword, postForBlogValidator, checkInputValidation, postControllers.postByBlog.bind(blogControllers));
+blogsRouter.get('/:id/posts', throughAccessToken, postControllers.getByBlog.bind(postControllers));
+blogsRouter.post('/:id/posts', authAdminByPassword, postForBlogValidator, checkInputValidation, postControllers.postByBlog.bind(postControllers));
   

@@ -15,9 +15,9 @@ export class CommentService {
 
     async create(parentPostId: string, userId: string, createItem: CommentInputType ): Promise < StatusResult<string|undefined>>{ 
 
-        const checkPost: StatusResult = await this.postRepository.isExist(parentPostId)
-        if(checkPost.codResult == CodStatus.NotFound){
-            return checkPost;
+        const checkPost: boolean = await this.postRepository.isExist(parentPostId)
+        if(!checkPost){
+            return {codResult: CodStatus.NotFound};
         }
         
         const userLogin: string = (await this.userQueryRepository.findById(userId))!.login

@@ -3,7 +3,8 @@ import { CodStatus, StatusResult } from "../../../types/types";
 import { LikeType } from "../domain/likes.entity";
 import { Likeable } from "../domain/likes.recipient.entity";
 import { LikeRepository } from "../repositories/like.repository";
-import { LikeRecipient, Rating } from "../types";
+import { LastLikesViewType, LikeRecipient, PostsLastLikesViewType, Rating } from "../types";
+import { LastLikesType } from "../domain/last.likes.entity";
 
 export class LikeService{
 
@@ -70,6 +71,17 @@ export class LikeService{
         return {codResult: CodStatus.NoContent}    
     }
 
+    async getLastLikes(postId: string): Promise<Array<LastLikesViewType>>{
+        
+        return await this.likeRepository.getLastLikes(postId)
+    }
+
+    async getArrayLastLikes(postIds: string[]): Promise<Array<PostsLastLikesViewType>>{
+        
+        return await this.likeRepository.getArrayLastLikes(postIds)
+    }
+
+    
     async hasLikeDislike<T extends LikeType>( model: Model<T>, entityId: string, userId: string):Promise<[boolean, boolean]>{
 
         const documents = await this.likeRepository.hasLikeDislike( model, entityId, userId)
@@ -111,5 +123,9 @@ export class LikeService{
     async addDislike<T extends Likeable>(entityId: string, userId: string, likeRecipient: LikeRecipient<T>){                
         await Promise.all([ this.likeRepository.addDislike(likeRecipient.collectionModel, entityId, userId),
                             this.likeRepository.incrementDisLike(likeRecipient.model, entityId)])
+    }
+
+    async clear() {
+        await this.likeRepository.clear()
     }
 }

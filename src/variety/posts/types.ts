@@ -1,4 +1,4 @@
-import { LikesEntityViewType } from "../likes/types"
+import { ExtendedLikesEntityViewType, LikesEntityViewType } from "../likes/types"
 
 export type PostInputType = {
     title:	string,                 // length 1-30
@@ -14,7 +14,7 @@ export type PostViewType = {
     createdAt: string,
     blogId:	string,
     blogName:	string,
-    extendedLikesInfo: LikesEntityViewType
+    extendedLikesInfo: ExtendedLikesEntityViewType
 }
 
 export type BlogPostInputType = {
