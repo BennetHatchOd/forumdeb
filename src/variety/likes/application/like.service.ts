@@ -103,9 +103,9 @@ export class LikeService{
     }
    
     async deleteLike<T extends Likeable>(entityId: string, userId: string, likeRecipient: LikeRecipient<T>){
-        Promise.all([ this.likeRepository.stopLike(likeRecipient.collectionModel, entityId, userId),
-                      this.likeRepository.decrementLike(likeRecipient.model, entityId)])
-        .then(()=> {})
+        await Promise.all([ this.likeRepository.stopLike(likeRecipient.collectionModel, entityId, userId),
+                            this.likeRepository.decrementLike(likeRecipient.model, entityId)])
+        
     }
 
     async deleteDislike<T extends Likeable>(entityId: string, userId: string, likeRecipient: LikeRecipient<T>){
@@ -114,11 +114,9 @@ export class LikeService{
     }
 
     async addLike<T extends Likeable>(entityId: string, userId: string, likeRecipient: LikeRecipient<T>){
-        Promise.all([ this.likeRepository.addLike(likeRecipient.collectionModel, entityId, userId),
-                      this.likeRepository.incrementLike(likeRecipient.model, entityId)])
-                .then(()=>{})
-
-
+        await Promise.all([ this.likeRepository.addLike(likeRecipient.collectionModel, entityId, userId),
+                             this.likeRepository.incrementLike(likeRecipient.model, entityId)])
+                      .catch((err)=>{throw new Error(err)})
     }
     async addDislike<T extends Likeable>(entityId: string, userId: string, likeRecipient: LikeRecipient<T>){                
         await Promise.all([ this.likeRepository.addDislike(likeRecipient.collectionModel, entityId, userId),
