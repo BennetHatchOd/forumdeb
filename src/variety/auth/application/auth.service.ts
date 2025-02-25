@@ -218,9 +218,9 @@ export class AuthService {
         return {codResult: CodStatus.NoContent}
     }
 
-    // async clear(): Promise < StatusResult > {
-    //     return await this.authRepository.clear()
-    // }  
+    async clear(): Promise <void> {
+        return await this.authRepository.clear()
+    }  
 }
 
 

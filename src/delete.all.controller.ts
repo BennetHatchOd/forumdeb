@@ -11,6 +11,7 @@ export const deleteAllController = async (req: Request, res: Response) =>{
     await commentService.clear()
     await deviceService.clear()
     await likeService.clear()
+    await authService.clear()
     
     
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);

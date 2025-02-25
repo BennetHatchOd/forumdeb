@@ -105,6 +105,15 @@ export class AuthRepository {
         throw 'the server didn\'t confirm the delete operation';
     }
 
+    async clear(): Promise<void>{
+        await NewPasswordModel.deleteMany()
+            
+        if(await NewPasswordModel.deleteMany().countDocuments({}) == 0)
+                return     
+            
+        throw "the server can\'t clear blog"
+    }
+
     mapUserToFull(user: UserDocument): UserIdType  {
         return { 
             id:         user._id.toString(),
