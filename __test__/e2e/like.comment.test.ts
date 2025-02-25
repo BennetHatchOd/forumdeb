@@ -17,22 +17,22 @@ import {setEntityLike } from "./common/helper";
 
 describe('/likes', () => {
     
-    let server:  MongoMemoryServer
+    //let server:  MongoMemoryServer
     let uri : string
-    // let client: MongoClient
+   
 
      jest.setTimeout(35000)
 
     beforeAll(async() =>{  // clear db-array
         
-        server = await MongoMemoryServer.create()//{
+        //server = await MongoMemoryServer.create()//{
             //  binary: {
             //          version: '6.1.0', 
             // },
         //})
         
-        uri = server.getUri()
-        // client = new MongoClient(uri,)
+        //uri = server.getUri()
+        uri = mongoURI
         await mongoose.connect(uri)
         await request(app).delete('/testing/all-data')
 
@@ -40,9 +40,8 @@ describe('/likes', () => {
     })
 
     afterAll(async() =>{
-    //    await server.stop()
         await mongoose.connection.close()
-        await server.stop()
+    //    await server.stop()
     })
 
     // let code: string
@@ -51,6 +50,7 @@ describe('/likes', () => {
     let users: Array<UserInputType> = testSeeder.createManyGoodUsers(8)
     let accessToken: Array<string> = []
     let commentsId: Array<string> = []
+    let userLikes: {userId: string, login: string, addedAt: string}[] = []
     let comments: Array<CommentInputType> = testSeeder.createManyComment(4)
     let posts: Array<PostInputType> = testSeeder.createManyPostsForBlog("")
     let blogs: Array<BlogInputType> = testSeeder.createManyBlogs()
@@ -62,7 +62,7 @@ describe('/likes', () => {
 
     it('Create system of blog, post and comments', async() => {    
         
-        await fillSystem(blogs, posts, users, comments, accessToken, commentsId, postsId)
+        await fillSystem(blogs, posts, users, comments, accessToken, commentsId, postsId, userLikes)
         const commentResponce = await request(app)
                                     .get(`${URL_PATH.comments}/${commentsId[0]}`)
                                     .set("Authorization", 'Bearer ' + accessToken[1])

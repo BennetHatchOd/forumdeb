@@ -9,12 +9,15 @@ import { app } from "../../../src/app";
 import { AuthPassword } from "./test.setting";
 
 export async function fillSystem(blogs: BlogInputType[],
-                           posts: PostInputType[], 
-                           users: UserInputType[],
-                        comments: CommentInputType[],
-                     accessToken: string[],
-                      commentsId: Array<string>,
-                          postsId: Array<string>){
+                                 posts: PostInputType[], 
+                                 users: UserInputType[],
+                              comments: CommentInputType[],
+                           accessToken: string[],
+                            commentsId: Array<string>,
+                               postsId: Array<string>,
+                             userLikes: {userId: string, 
+                                          login: string, 
+                                        addedAt: string}[],){
 
     // creating blog                    
        
@@ -27,21 +30,25 @@ export async function fillSystem(blogs: BlogInputType[],
     
     for(let i = 0; i < posts.length; i++){
         posts[i].blogId = blogCreate.body.id
-
+        
         const postCreate = await request(app).post(URL_PATH.posts)
-                                        .set("Authorization", AuthPassword)
-                                        .send(posts[i]) 
-                                        .expect(HTTP_STATUSES.CREATED_201)
+        .set("Authorization", AuthPassword)
+        .send(posts[i]) 
+        .expect(HTTP_STATUSES.CREATED_201)
         postsId.push(postCreate.body.id)
     }
     
     // creating users & accesstokens
 
     for(let i =0; i < 8; i++){
-        await request(app).post(`${URL_PATH.users}`)
-                        .set("Authorization", AuthPassword)
-                        .send(users[i])
-                        .expect(HTTP_STATUSES.CREATED_201);
+        const userCreate = await request(app).post(`${URL_PATH.users}`)
+                                            .set("Authorization", AuthPassword)
+                                            .send(users[i])
+                                            .expect(HTTP_STATUSES.CREATED_201);
+
+        userLikes.push({userId: userCreate.body.id, 
+                        login:  userCreate.body.login, 
+                      addedAt:  expect.any(String)})
 
         const token = await request(app).post(`${URL_PATH.auth}${AUTH_PATH.login}`)
                         .send({
